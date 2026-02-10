@@ -1,0 +1,16 @@
+{
+  "name": "dev-web-app",
+  "version": "1.0.0",
+  "description": "Index.js + index.html dev server",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.3"
+  }
+}
