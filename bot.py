@@ -3,12 +3,11 @@ from discord.ext import commands, tasks
 from discord import app_commands
 import random
 import asyncio
-import datetime
+import psutil
 import os
 import sys
 from datetime import timedelta
 from dotenv import load_dotenv
-import aiohttp
 
 # --- CONFIGURATION & SECURITY ---
 load_dotenv()
@@ -39,6 +38,7 @@ nature_scenes = [
 async def change_status():
     activity_name = random.choice(nature_scenes)
     activity = discord.Activity(type=discord.ActivityType.playing,
+                                
                                 name=activity_name)
     await bot.change_presence(status=discord.Status.dnd, activity=activity)
     print(f" Status has been changed to: {activity_name}")
@@ -52,11 +52,17 @@ async def before_status():
 # --- EVENTS ---
 @bot.event
 async def on_ready():
-    print("--------")
-    print(f'✅ Logged in as {bot.user.name} - ID: {bot.user.id}')
-    print('✅ Connected to Discord!')
-    print('------')
+    print("==========================")
+    print(f"✅ Logged in as {bot.user.name} - ID: {bot.user.id}")
+    print("==========================")
+    print("✅ Connected to Discord!")
+    print("==========================")
+    print(f"📡 Ping: {round(bot.latency * 1000)}ms")
+    print("==========================")
+
     change_status.start()
+
+
 
 
 # --- ERROR HANDLING ---
@@ -68,7 +74,7 @@ async def on_command_error(ctx, error):
         await ctx.send(
             "⛔ **Access Denied:** You do not have the required permissions.")
     elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send(f"⚠️ **Missing Argument:** Check command usage.")
+        await ctx.send("⚠️ **Missing Argument:** Check command usage.")
     else:
         print(f"Error: {error}")
 
@@ -78,7 +84,7 @@ async def on_command_error(ctx, error):
 async def log_command_usage(ctx):
     """Logs every command used by Discord users"""
     print(
-        f"{ctx.author} used {ctx.command.name} in {ctx.channel.name} or {ctx.channel.id} in the server {ctx.guild.name}"
+        f"{ctx.author} used {ctx.command.name} in {ctx.channel.name} or {ctx.channel.id} in the server {ctx.guild.name} , server id: {ctx.guild.id} with the permission adminstrator: {ctx.author.guild_permissions.administrator}"
     )
 
 
@@ -120,6 +126,9 @@ async def shutdown(ctx):
     if str(ctx.author) != AUTHORIZED_USER:
         return await ctx.send("⛔ Only Luisthegoat7301 can shut me down.")
     await ctx.send("💤 Powering down... Goodbye.")
+    print('==========================')
+    print("bot is shutting down..")
+    print('==========================')
     await bot.close()
     sys.exit()
 
@@ -246,52 +255,43 @@ async def serverinfo(ctx):
     await ctx.send(embed=embed)
 
 
+from discord import ui
+
+
+class UserInfoView(ui.View):
+    def __init__(self, member: discord.Member):
+        super().__init__(timeout=None)
+        self.member = member
+
+    @ui.button(label="Is User Owner?", style=discord.ButtonStyle.primary)
+    async def owner_button(self, interaction: discord.Interaction, button:ui.Button):
+        is_owner = "Yes 👑" if self.member.id == interaction.guild.owner_id else "No ❌"
+        message = f"👤 User===={self.member}\n👑 Is Owner===={is_owner}"
+        await interaction.response.send_message(message, ephemeral=True)
+
+    @ui.button(label="Show All Roles", style=discord.ButtonStyle.secondary)
+    async def roles_button(self, interaction: discord.Interaction, button: ui.Button):
+        roles = [role.mention for role in self.member.roles if role.name != "@everyone"]
+        roles_text = ", ".join(roles) if roles else "None"
+        message = f"👤 User===={self.member}\n🎭 Roles ({len(roles)})===={roles_text}"
+        await interaction.response.send_message(message, ephemeral=True)
+
 @bot.command()
 async def userinfo(ctx, member: discord.Member = None):
-        member = member or ctx.author
+    member = member or ctx.author
 
-        roles = [role.mention for role in member.roles if role.name != "@everyone"]
-        roles_text = ", ".join(roles) if roles else "None"
+    # Permissions
+    perms = [perm.replace("_", " ").title() for perm, value in member.guild_permissions if value]
+    perms_text = ", ".join(perms[:10]) + ("..." if len(perms) > 10 else "")
 
-        perms = [perm.replace("_", " ").title()
-                 for perm, value in member.guild_permissions if value]
-        perms_text = ", ".join(perms[:10]) + ("..." if len(perms) > 10 else "")
+    message = f"""👤 User===={member}
+🆔 ID===={member.id}
+📅 Account Created====<t:{int(member.created_at.timestamp())}:F>
+🚪 Joined Server====<t:{int(member.joined_at.timestamp())}:F>
+🔐 Key Permissions===={perms_text or "None"}"""
 
-        embed = discord.Embed(
-            title=f"👤 User Info — {member}",
-            color=member.color if member.color.value else discord.Color.blurple()
-        )
-
-        embed.set_thumbnail(
-            url=member.avatar.url if member.avatar else member.default_avatar.url
-        )
-
-        embed.add_field(name="🆔 ID", value=member.id, inline=False)
-        embed.add_field(
-            name="📅 Account Created",
-            value=f"<t:{int(member.created_at.timestamp())}:F>",
-            inline=False
-        )
-        embed.add_field(
-            name="🚪 Joined Server",
-            value=f"<t:{int(member.joined_at.timestamp())}:F>",
-            inline=False
-        )
-        embed.add_field(
-            name=f"🎭 Roles ({len(roles)})",
-            value=roles_text,
-            inline=False
-        )
-        embed.add_field(
-            name="🔐 Key Permissions",
-            value=perms_text or "None",
-            inline=False
-        )
-
-        embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar.url)
-
-        await ctx.send(embed=embed)
-
+    view = UserInfoView(member)
+    await ctx.send(message, view=view)
 
 
 @bot.command()
@@ -311,7 +311,7 @@ async def uptime(ctx):
 @bot.command()
 async def invite(ctx):
     await ctx.send(
-        f"Invite me: https://discord.com/oauth2/authorize?client_id=1360329809670045731&scope=identify+bot%20applications.commands&permissions=1099511627775&redirect_uri=https%3A%2F%2Fsites.google.com%2Fview%2Finfo-about-anna%2Fhome&response_type=code"
+        "Invite me: https://discord.com/oauth2/authorize?client_id=1360329809670045731&scope=identify+bot%20applications.commands&permissions=1099511627775&redirect_uri=https%3A%2F%2Fsites.google.com%2Fview%2Finfo-about-anna%2Fhome&response_type=code"
     )
 
 
@@ -354,14 +354,9 @@ async def slap(ctx, member: discord.Member):
     await ctx.send(embed=embed)
 
 
-@bot.command()
-async def hug(ctx, member: discord.Member):
-    embed = discord.Embed(
-        description=f"**{ctx.author.name}** hugged **{member.name}**!",
-        color=discord.Color.pink())
-    embed.set_image(
-        url="https://media.giphy.com/media/od5H3PmEG5EVq/giphy.gif")
-    await ctx.send(embed=embed)
+
+
+ 
 
 
 @bot.command()
@@ -516,6 +511,26 @@ async def clearwarns(ctx, member: discord.Member):
     warnings[member.id] = []
     await ctx.send(f"🧼 Cleared {member.name}")
 
+@bot.command()
+async def joinvc(ctx):
+    if ctx.author.voice is None:
+        await ctx.send("You must be in a voice channel first!")
+        return
+
+    channel = ctx.author.voice.channel
+
+    # Connect to the voice channel (or move if already connected)
+    if ctx.voice_client is None:
+        vc = await channel.connect()
+    else:
+        vc = ctx.voice_client
+        await vc.move_to(channel)
+
+    # Ensure bot is unmuted and undeafened
+    await vc.guild.me.edit(mute=False, deafen=False)
+
+    await ctx.send(f"Joined **{channel.name}** and I'm unmuted & undeafened!")
+
 
 @bot.command()
 @commands.has_permissions(administrator=True)
@@ -644,7 +659,7 @@ async def iq(ctx):
 
 @bot.command()
 async def remindme(ctx, time: int, *, task):
-    await ctx.send(f"⏰ Noted.")
+    await ctx.send("⏰ Noted.")
     await asyncio.sleep(time)
     await ctx.send(f"🔔 {ctx.author.mention}: {task}")
 
@@ -854,7 +869,7 @@ async def give_role(ctx, target: str, role: discord.Role):
     # --- MODE: ALL ---
     if target.lower() == "all":
         status_msg = await ctx.send(
-            f"⏳ Starting mass-role for **all** members. This may take a while..."
+            "⏳ Starting mass-role for **all** members. This may take a while..."
         )
         count = 0
 

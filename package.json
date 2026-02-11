@@ -8,9 +8,13 @@
     "dev": "nodemon index.js"
   },
   "dependencies": {
+    "discord-rpc": "^4.0.1",
     "express": "^4.19.2"
   },
   "devDependencies": {
     "nodemon": "^3.0.3"
-  }
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
 }

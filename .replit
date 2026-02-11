@@ -2,6 +2,9 @@ modules = ["nodejs-20", "python-3.11"]
 
 [userenv]
 
+[userenv.shared]
+DISCORD_TOKEN = "MTM2MDMyOTgwOTY3MDA0NTczMQ.GLJsTj.DWHaO6L4NFviUTIMPgVHY9jxIH-hvHq8NF4yww"
+
 
 [workflows]
 runButton = "Run Project"
