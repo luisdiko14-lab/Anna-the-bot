@@ -38,7 +38,7 @@ nature_scenes = [
 async def change_status():
     activity_name = random.choice(nature_scenes)
     activity = discord.Activity(type=discord.ActivityType.playing,
-                                
+
                                 name=activity_name)
     await bot.change_presence(status=discord.Status.dnd, activity=activity)
     print(f" Status has been changed to: {activity_name}")
@@ -234,7 +234,7 @@ async def help(ctx):
     embed.add_field(
         name="Cool/Custom",
         value=
-        "`mewmew`, `emojify`, `spoiler`, `reverse`, `mock`, `vaporwave`, `binary`, `morse`, `piglatin`, `advice`, `truth`, `dare`, `joke`, `iq`, `remindme`"
+        "`emojify`, `spoiler`, `reverse`, `mock`, `vaporwave`, `binary`, `morse`, `advice`, `truth`, `dare`, `joke`, `iq`, `remindme`, `meme`, `choose`, `hug`, `kill`, `fact`, `translate`, `pickagain`"
     )
     await ctx.send(embed=embed)
 
@@ -249,8 +249,10 @@ async def serverinfo(ctx):
     guild = ctx.guild
     embed = discord.Embed(title=f"{guild.name} Info",
                           color=discord.Color.blue())
-    embed.add_field(name="Owner", value=guild.owner)
+    embed.add_field(name="Owner", value=guild.owner.mention if guild.owner else "Unknown")
     embed.add_field(name="Members", value=guild.member_count)
+    embed.add_field(name="Channels", value=len(guild.channels))
+    embed.add_field(name="Roles", value=len(guild.roles))
     if guild.icon: embed.set_thumbnail(url=guild.icon.url)
     await ctx.send(embed=embed)
 
@@ -297,10 +299,30 @@ async def userinfo(ctx, member: discord.Member = None):
 @bot.command()
 async def avatar(ctx, member: discord.Member = None):
     member = member or ctx.author
-    embed = discord.Embed(title=f"{member.name}'s Avatar")
+    embed = discord.Embed(title=f"{member.name}'s Avatar", color=discord.Color.random())
     embed.set_image(
         url=member.avatar.url if member.avatar else member.default_avatar.url)
     await ctx.send(embed=embed)
+
+
+@bot.command()
+async def meme(ctx):
+    """Get a random nature meme (simulated)"""
+    memes = [
+        "https://i.imgflip.com/2/Nature-Meme.jpg",
+        "https://i.kym-cdn.com/photos/images/newsfeed/001/431/201/40f.jpg"
+    ]
+    embed = discord.Embed(title="🍃 Nature Meme", color=discord.Color.green())
+    embed.set_image(url=random.choice(memes))
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def choose(ctx, *options):
+    """Pick between multiple options"""
+    if not options:
+        return await ctx.send("Give me some options to choose from!")
+    await ctx.send(f"🤔 I choose: **{random.choice(options)}**")
 
 
 @bot.command()
@@ -335,13 +357,33 @@ async def eightball(ctx, *, question):
 
 
 @bot.command()
-async def roll(ctx, sides: int = 6):
-    await ctx.send(f"🎲 Rolled a **{random.randint(1, sides)}**!")
+async def roll(ctx, dice: str = "1d6"):
+    """Roll dice in NdN format (e.g. 2d20)"""
+    try:
+        rolls, limit = map(int, dice.split('d'))
+    except Exception:
+        await ctx.send('Format has to be NdN! (Example: 1d6)')
+        return
+
+    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    await ctx.send(f"🎲 Result: {result}")
+
+
+@bot.command(aliases=['coinflip'])
+async def coin(ctx):
+    """Flip a coin"""
+    res = random.choice(["Heads", "Tails"])
+    await ctx.send(f"🪙 It's **{res}**!")
 
 
 @bot.command()
-async def coinflip(ctx):
-    await ctx.send(f"🪙 It's **{random.choice(['Heads', 'Tails'])}**!")
+async def hug(ctx, member: discord.Member):
+    """Give someone a hug!"""
+    embed = discord.Embed(
+        description=f"**{ctx.author.name}** gives **{member.name}** a big warm hug! 🤗",
+        color=discord.Color.blue())
+    embed.set_image(url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2Z4N3R6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/u9BxQbM5bxAHK/giphy.gif")
+    await ctx.send(embed=embed)
 
 
 @bot.command()
@@ -356,7 +398,7 @@ async def slap(ctx, member: discord.Member):
 
 
 
- 
+
 
 
 @bot.command()
@@ -691,6 +733,18 @@ async def weather(ctx):
 
 
 @bot.command()
+async def killperson(ctx, member: discord.Member):
+    """A funny command to 'kill' someone in a joke way"""
+    responses = [
+        f"{ctx.author.name} tried to kill {member.name} but slipped on a banana peel! 🍌",
+        f"{member.name} was hit by a flying piano! 🎹",
+        f"{ctx.author.name} poked {member.name} too hard. They are now a ghost. 👻",
+        f"{member.name} was defeated by a wild Magikarp! 🐟"
+    ]
+    await ctx.send(random.choice(responses))
+
+
+@bot.command()
 async def fact(ctx):
     facts = [
         "🌳 Forests produce 28% of the world's oxygen.",
@@ -699,16 +753,106 @@ async def fact(ctx):
         "🌊 Octopuses have three hearts.",
         "🦗 Grasshoppers have been on Earth for 300 million years.",
         "🌺 Sunflowers can track the sun across the sky.",
+        "🍕 Pizza was once used as currency in ancient Rome (just kidding).",
+        "🌌 There are more stars in the universe than grains of sand on Earth."
     ]
-    await ctx.send(random.choice(facts))
+    await ctx.send(f"📖 **Did you know?** {random.choice(facts)}")
 
 
 @bot.command()
 async def pickagain(ctx):
+    """Pick a random color for nature"""
     colors = [
-        "Red", "Blue", "Green", "Purple", "Yellow", "Orange", "Pink", "Black"
+        "Emerald Green 🌿", "Sky Blue ☁️", "Sunset Orange 🌅", 
+        "Autumn Red 🍂", "Lavender Purple 🌸", "Ocean Teal 🌊"
     ]
-    await ctx.send(f"🎨 Your random color is: **{random.choice(colors)}**")
+    await ctx.send(f"🎨 The forest chooses: **{random.choice(colors)}**")
+
+
+@bot.command()
+async def translate(ctx, *, text):
+    """Translate text to nature-speak (simulated)"""
+    words = text.split()
+    nature_words = ["leaf", "branch", "river", "stone", "breeze", "bloom"]
+    translated = " ".join(random.choice(nature_words) for _ in words)
+    await ctx.send(f"🌿 **Nature says:** {translated}")
+
+
+@bot.command()
+async def coin(ctx):
+    """Flip a coin"""
+    res = random.choice(["Heads", "Tails"])
+    await ctx.send(f"🪙 It's **{res}**!")
+
+
+@bot.command()
+async def roll(ctx, dice: str = "1d6"):
+    """Roll dice in NdN format (e.g. 2d20)"""
+    try:
+        rolls, limit = map(int, dice.split('d'))
+    except Exception:
+        await ctx.send('Format has to be NdN! (Example: 1d6)')
+        return
+
+    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
+    await ctx.send(f"🎲 Result: {result}")
+
+
+@bot.command()
+async def hug(ctx, member: discord.Member):
+    """Give someone a hug!"""
+    embed = discord.Embed(
+        description=f"**{ctx.author.name}** gives **{member.name}** a big warm hug! 🤗",
+        color=discord.Color.blue())
+    embed.set_image(url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2Z4N3R6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/u9BxQbM5bxAHK/giphy.gif")
+    await ctx.send(embed=embed)
+
+
+@bot.command()
+async def kill(ctx, member: discord.Member):
+    """A funny command to 'kill' someone in a joke way"""
+    responses = [
+        f"{ctx.author.name} tried to kill {member.name} but slipped on a banana peel! 🍌",
+        f"{member.name} was hit by a flying piano! 🎹",
+        f"{ctx.author.name} poked {member.name} too hard. They are now a ghost. 👻",
+        f"{member.name} was defeated by a wild Magikarp! 🐟"
+    ]
+    await ctx.send(random.choice(responses))
+
+
+@bot.command()
+async def fact(ctx):
+    facts = [
+        "🌳 Forests produce 28% of the world's oxygen.",
+        "🐝 Honey never spoils and can last for thousands of years.",
+        "🦁 A group of flamingos is called a 'flamboyance'.",
+        "🌊 Octopuses have three hearts.",
+        "🦗 Grasshoppers have been on Earth for 300 million years.",
+        "🌺 Sunflowers can track the sun across the sky.",
+        "🍕 Pizza was once used as currency in ancient Rome (just kidding).",
+        "🌌 There are more stars in the universe than grains of sand on Earth."
+    ]
+    await ctx.send(f"📖 **Did you know?** {random.choice(facts)}")
+
+
+@bot.command()
+async def pickagain(ctx):
+    """Pick a random color for nature"""
+    colors = [
+        "Emerald Green 🌿", "Sky Blue ☁️", "Sunset Orange 🌅", 
+        "Autumn Red 🍂", "Lavender Purple 🌸", "Ocean Teal 🌊"
+    ]
+    await ctx.send(f"🎨 The forest chooses: **{random.choice(colors)}**")
+
+
+@bot.command()
+async def slap(ctx, member: discord.Member):
+    """Slap someone with a fish!"""
+    embed = discord.Embed(
+        description=f"**{ctx.author.name}** slaps **{member.name}** with a large, smelly trout! 🐟",
+        color=discord.Color.red())
+    embed.set_image(url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2Z4N3R6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LpB0bJ87SIXGuDZZc8/giphy.gif")
+    await ctx.send(embed=embed)
 
 
 @bot.command()
