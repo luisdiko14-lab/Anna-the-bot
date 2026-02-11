@@ -779,14 +779,14 @@ async def translate(ctx, *, text):
 
 
 @bot.command()
-async def coin(ctx):
+async def coiny(ctx):
     """Flip a coin"""
     res = random.choice(["Heads", "Tails"])
     await ctx.send(f"🪙 It's **{res}**!")
 
 
 @bot.command()
-async def roll(ctx, dice: str = "1d6"):
+async def rolldice(ctx, dice: str = "1d6"):
     """Roll dice in NdN format (e.g. 2d20)"""
     try:
         rolls, limit = map(int, dice.split('d'))
@@ -799,7 +799,7 @@ async def roll(ctx, dice: str = "1d6"):
 
 
 @bot.command()
-async def hug(ctx, member: discord.Member):
+async def hug2(ctx, member: discord.Member):
     """Give someone a hug!"""
     embed = discord.Embed(
         description=f"**{ctx.author.name}** gives **{member.name}** a big warm hug! 🤗",
@@ -821,7 +821,7 @@ async def kill(ctx, member: discord.Member):
 
 
 @bot.command()
-async def fact(ctx):
+async def facts(ctx):
     facts = [
         "🌳 Forests produce 28% of the world's oxygen.",
         "🐝 Honey never spoils and can last for thousands of years.",
@@ -836,7 +836,7 @@ async def fact(ctx):
 
 
 @bot.command()
-async def pickagain(ctx):
+async def pickagain2(ctx):
     """Pick a random color for nature"""
     colors = [
         "Emerald Green 🌿", "Sky Blue ☁️", "Sunset Orange 🌅", 
@@ -846,7 +846,7 @@ async def pickagain(ctx):
 
 
 @bot.command()
-async def slap(ctx, member: discord.Member):
+async def slap2(ctx, member: discord.Member):
     """Slap someone with a fish!"""
     embed = discord.Embed(
         description=f"**{ctx.author.name}** slaps **{member.name}** with a large, smelly trout! 🐟",
@@ -870,14 +870,14 @@ async def quote(ctx):
 
 
 @bot.command()
-async def rng(ctx, min_val: int, max_val: int):
+async def rng2(ctx, min_val: int, max_val: int):
     result = random.randint(min_val, max_val)
     await ctx.send(
         f"🎲 Random number between {min_val} and {max_val}: **{result}**")
 
 
 @bot.command()
-async def choose(ctx, *, options):
+async def choose2(ctx, *, options):
     choices = [c.strip() for c in options.split("|")]
     if len(choices) < 2:
         await ctx.send("❌ Provide at least 2 options separated by |")
