@@ -8,7 +8,3 @@ while True: ### I changed it.
     subprocess.run(["python", "bot.py"])
 
     time.sleep(50)
-
-
-# ==========================
-# STATUS 

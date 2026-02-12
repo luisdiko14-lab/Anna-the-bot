@@ -3,59 +3,45 @@ from discord.ext import commands, tasks
 from discord import app_commands
 import random
 import asyncio
+import psutil
 import os
 import sys
-from datetime import datetime, timedelta
+from datetime import timedelta
 from dotenv import load_dotenv
 
 # --- CONFIGURATION & SECURITY ---
 load_dotenv()
-
-TOKEN = os.getenv("DISCORD_TOKEN")
-AUTHORIZED_USERS = ["luisthegoat7301", "zelda_life"]  # Trusted account names (User.name)
+TOKEN = os.getenv('DISCORD_TOKEN')
+AUTHORIZED_USER = "luisthegoat7301"
 
 if not TOKEN:
-    print("ERROR: Token not found! Make sure you have a .env file with DISCORD_TOKEN inside.")
-    sys.exit(1)
+    print(
+        "ERROR: Token not found! Make sure you have a .env file with DISCORD_TOKEN inside."
+    )
+    exit()
 
-# Accept either "anna" or "!" as prefixes
-PREFIX = ["anna", "!"]
+PREFIX = 'anna' , "!"
 
-# --- INTENTS SETUP ---
+# --- SETUP ---
 intents = discord.Intents.all()
-
-# --- BOT SETUP ---
-bot = commands.Bot(
-    command_prefix=PREFIX,
-    intents=intents,
-    help_command=None  # Optional: disables default help command
-)
-
 bot = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
 
 # --- NATURE STATUS LOOP ---
 nature_scenes = [
-    "Pokemon! 🌲",
-    "MEW! 🌅",
-    "Flowing Rivers 🌊",
-    "Pikachu 🏔️",
-    "Starry Nights 🌌",
-    "Blooming Pokemons 🌸",
-    "Falling Rain 🌧️",
-    "Mew is cool! i like it",
-    "Just Got verified! ✅",
+    "Pokemon! 🌲", "MEW! 🌅", "Flowing Rivers 🌊",
+    "Pikachu 🏔️", "Starry Nights 🌌", "Blooming Pokemons 🌸",
+    "Falling Rain 🌧️", "Mew is cool! i like it", "Just Got verifed! ✅"
 ]
 
-@tasks.loop(seconds=2)
+
+@tasks.loop(seconds=5)
 async def change_status():
     activity_name = random.choice(nature_scenes)
-    activity = discord.Activity(type=discord.ActivityType.playing, name=activity_name)
-
+    activity = discord.Activity(type=discord.ActivityType.playing,
+                                
+                                name=activity_name)
     await bot.change_presence(status=discord.Status.dnd, activity=activity)
-
-    print("==========================")
-    print(f"Status has been changed to: {activity.name}")
-    print("==========================")
+    print(f" Status has been changed to: {activity_name}")
 
 
 @change_status.before_loop
@@ -74,80 +60,32 @@ async def on_ready():
     print(f"📡 Ping: {round(bot.latency * 1000)}ms")
     print("==========================")
 
-    if not change_status.is_running():
-        change_status.start()
+    change_status.start()
 
-    # Sync slash commands automatically on startup
-    try:
-        synced = await bot.tree.sync()
-        print(f"✅ Synced {len(synced)} slash commands globally")
-    except Exception as e:
-        print(f"❌ Failed to sync slash commands: {e}")
+
 
 
 # --- ERROR HANDLING ---
 @bot.event
 async def on_command_error(ctx, error):
     if isinstance(error, commands.CommandNotFound):
-        # ignore unknown commands
-        return
+        pass
     elif isinstance(error, commands.MissingPermissions):
-        await ctx.send("⛔ **Access Denied:** You do not have the required permissions.")
+        await ctx.send(
+            "⛔ **Access Denied:** You do not have the required permissions.")
     elif isinstance(error, commands.MissingRequiredArgument):
         await ctx.send("⚠️ **Missing Argument:** Check command usage.")
     else:
-        # Fallback: print full traceback/exception for debugging
-        print(f"Unhandled command error: {error}")
+        print(f"Error: {error}")
 
-
-# ---------------------------
-# Logging configuration
-# ---------------------------
-LOG_FILE = "logger.c"
 
 # --- COMMAND LOGGING ---
 @bot.before_invoke
 async def log_command_usage(ctx):
-    """Logs every command used by Discord users into LOG_FILE with timestamps"""
-
-    # Timestamp (local machine time)
-    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-
-    guild_name = ctx.guild.name if ctx.guild else "DMs"
-    guild_id = ctx.guild.id if ctx.guild else "DMs"
-
-    # channel name/id may not exist (DMs)
-    channel_name = getattr(ctx.channel, "name", getattr(ctx.channel, "recipient", "DM"))
-    channel_id = getattr(ctx.channel, "id", "DM")
-
-    command_name = ctx.command.name if ctx.command else (ctx.invoked_with or "Unknown")
-
-    is_admin = False
-    try:
-        is_admin = ctx.author.guild_permissions.administrator if ctx.guild else False
-    except Exception:
-        is_admin = False
-
-    log_message = (
-        f"[{timestamp}]\n"
-        f"User      : {ctx.author} (ID: {getattr(ctx.author, 'id', 'N/A')})\n"
-        f"Command   : {command_name}\n"
-        f"Channel   : {channel_name} ({channel_id})\n"
-        f"Server    : {guild_name} ({guild_id})\n"
-        f"Admin     : {is_admin}\n"
-        + ("-" * 50)
-        + "\n"
+    """Logs every command used by Discord users"""
+    print(
+        f"{ctx.author} used {ctx.command.name} in {ctx.channel.name} or {ctx.channel.id} in the server {ctx.guild.name} , server id: {ctx.guild.id} with the permission adminstrator: {ctx.author.guild_permissions.administrator}"
     )
-
-    # Print in console
-    print(log_message)
-
-    # Append to log file
-    try:
-        with open(LOG_FILE, "a", encoding="utf-8") as f:
-            f.write(log_message)
-    except Exception as e:
-        print(f"Failed to write log: {e}")
 
 
 # ==============================================================================
@@ -155,156 +93,118 @@ async def log_command_usage(ctx):
 # ==============================================================================
 
 
-def is_authorized_name(user: discord.User) -> bool:
-    """Check if the user's .name is in the AUTHORIZED_USERS list."""
-    try:
-        return user.name in AUTHORIZED_USERS
-    except Exception:
-        return False
-
-
-@bot.hybrid_command(name="sync")
-async def sync_cmd(ctx):
-    """Syncs slash commands to the current server (Owner only)"""
-    if not is_authorized_name(ctx.author):
-        return await ctx.send("⛔ Unauthorized.")
-    
-    await ctx.defer(ephemeral=True)
-    try:
-        synced = await bot.tree.sync()
-        await ctx.send(f"✅ Successfully synced {len(synced)} slash commands globally!", ephemeral=True)
-    except Exception as e:
-        await ctx.send(f"❌ Sync failed: {e}", ephemeral=True)
-
-
-@bot.hybrid_command(name="start")
-async def start_cmd(ctx):
+@bot.command()
+async def start(ctx):
     """Starts/Signals the bot is active"""
     await ctx.send("🌲 **AnnaBot is online and patrolling the forest!**")
-
     message = (
         "*turning on @Anna-the-Guardian*\n"
-        "Please wait... (connection speed: Medium Fast)\n"
-        "Upgrade to premium for Ultra Fast speed at luis.com/premium/bot-d/anna-the-guardian.\n"
-        "Connecting to Discord API services...\n"
-        f"{bot.user.name} is connecting to the gateway id : {bot.user.id}\n"
+        "please wait! (connection speed: Medium Fast) Upgrade to premium for Ultra Fast speed. 100 mbs per second/ 100000gbs\n"
+        "Connecting to Discord api services! ...\n"
+        f"{bot.user.name} is connecting to the gateway ip : {bot.user.id}\n"
         "Launching….\n"
-        "RAM: 86 GB\n"
-        "CPU: AMD Ryzen Threadripper / PRO\n"
+        "RAM: 86 GBS\n"
+        "CPU: AMD Ryzen Threadripper 7980X / PRO 7995WX 96 Cores\n"
         "SYSTEM: Windows 11 Server 2025\n"
-        "INSTALLING PACKAGES: discord.py, python-dotenv, etc.\n"
-        "SUCCESSFULLY INSTALLED!\n"
+        "INSTALLING PACKAGES :loading_w:  …\n"
+        "INSTALLING DISCORD.PY , PYTHON-DOTENV , SYNC, OS, INFO\n"
+        "SUCSESFULLY INSTALLED!\n"
         "RUNNING: cd A:/Bot/Python-Bot/Anna/Visual-Studio-Code/py\n"
         "RUNNING: Python bot.\n"
         "— 08/01/2026, 16:49\n"
-        "SUCESSES: launched\n"
-        f"🟢 <@{bot.user.id}> is online! 🟢"
-    )
+        "Error: Exit code with process 1\n"
+        "/fix\n"
+        "RUN_DEBUG= bot.py/anna\n"
+        "SUCSESFULLY LAUNCHED!\n"
+        "🟢 <@1360329809670045731> is online! 🟢")
     await ctx.send(message)
 
 
-@bot.hybrid_command(name="shutdown")
-async def shutdown_cmd(ctx):
+@bot.command()
+async def shutdown(ctx):
     """Exits the python code entirely"""
-    if not is_authorized_name(ctx.author):
-        return await ctx.send("⛔ Only authorized users can shut me down.")
+    if str(ctx.author) != AUTHORIZED_USER:
+        return await ctx.send("⛔ Only Luisthegoat7301 can shut me down.")
     await ctx.send("💤 Powering down... Goodbye.")
-    print("==========================")
+    print('==========================')
     print("bot is shutting down..")
-    print("==========================")
+    print('==========================')
     await bot.close()
-    sys.exit(0)
+    sys.exit()
 
 
-@bot.hybrid_command(name="restart")
-async def restart_cmd(ctx):
+@bot.command()
+async def restart(ctx):
     """Pretends to restart with status changes"""
-    if not is_authorized_name(ctx.author):
+    if str(ctx.author) != AUTHORIZED_USER:
         return await ctx.send("⛔ Unauthorized.")
-
-    if change_status.is_running():
-        change_status.stop()
-
+    change_status.stop()
     await bot.change_presence(status=discord.Status.invisible)
     msg = await ctx.send("🔄 **Restarting systems...**")
     await asyncio.sleep(5)
     await msg.edit(content="✅ **Systems rebooted.** Reconnecting to nature...")
-    await asyncio.sleep(8)
-    await msg.edit(content="✅ **Systems rebooted! connecting to pokemon.**")
-
-    if not change_status.is_running():
-        change_status.start()
+    change_status.start()
 
 
-@bot.hybrid_command(name="changestatus")
+@bot.command()
 async def changeStatus(ctx, status_name: str):
-    """Example: anna changeStatus dnd"""
+    """Example: !changeStatus idle"""
     status_map = {
         "online": discord.Status.online,
         "idle": discord.Status.idle,
         "dnd": discord.Status.dnd,
-        "invisible": discord.Status.invisible,
+        "invisible": discord.Status.invisible
     }
     choice = status_map.get(status_name.lower())
     if choice:
-        if change_status.is_running():
-            change_status.stop()
+        change_status.stop(
+        )  # Stop loop so it doesn't overwrite your manual choice
         await bot.change_presence(status=choice)
         await ctx.send(f"✅ Status updated to **{status_name}**.")
     else:
         await ctx.send("❌ Valid: online, idle, dnd, invisible")
 
 
-@bot.hybrid_command(name="changepresence")
+@bot.command()
 async def changePresence(ctx, p_type: str, *, text: str):
-    """Example: anna changePresence watching YouTube"""
+    """Example: !changePresence watching YouTube"""
     type_map = {
         "playing": discord.ActivityType.playing,
         "watching": discord.ActivityType.watching,
         "listening": discord.ActivityType.listening,
-        "streaming": discord.ActivityType.streaming,
+        "streaming": discord.ActivityType.streaming
     }
     act_type = type_map.get(p_type.lower())
-    if act_type is not None:
-        if change_status.is_running():
-            change_status.stop()
-        await bot.change_presence(activity=discord.Activity(type=act_type, name=text))
+    if act_type:
+        change_status.stop()
+        await bot.change_presence(
+            activity=discord.Activity(type=act_type, name=text))
         await ctx.send(f"✅ Now {p_type} **{text}**.")
     else:
         await ctx.send("❌ Valid: playing, watching, listening, streaming")
 
 
-@bot.hybrid_command(name="makerole")
+@bot.command()
 async def makerole(ctx, perm: str, *, name: str):
     """Owner command to create roles with perms"""
-    if not is_authorized_name(ctx.author):
-        return await ctx.send("⛔ Access restricted to authorized users only.")
+    if str(ctx.author) != AUTHORIZED_USER:
+        return await ctx.send("⛔ Luisthegoat7301 access only.")
 
     perms = discord.Permissions.none()
     p = perm.lower()
-    if p == "admin":
-        perms = discord.Permissions(administrator=True)
-    elif p == "ban":
-        perms = discord.Permissions(ban_members=True)
-    elif p == "kick":
-        perms = discord.Permissions(kick_members=True)
+    if p == "admin": perms = discord.Permissions(administrator=True)
+    elif p == "ban": perms = discord.Permissions(ban_members=True)
+    elif p == "kick": perms = discord.Permissions(kick_members=True)
 
     try:
-        role = await ctx.guild.create_role(
-            name=name, permissions=perms, color=discord.Color.random(), hoist=True
-        )
-        await ctx.send(f"✅ Created role **{role.name}** with **{p}** permissions!")
+        role = await ctx.guild.create_role(name=name,
+                                           permissions=perms,
+                                           color=discord.Color.random(),
+                                           hoist=True)
+        await ctx.send(
+            f"✅ Created role **{role.name}** with **{p}** permissions!")
     except Exception as e:
-        await ctx.send(f"❌ Error creating role: {e}")
-
-
-# Run the bot
-if __name__ == "__main__":
-    try:
-        bot.run(TOKEN)
-    except Exception as e:
-        print(f"Failed to start bot: {e}")
-        sys.exit(1)
+        await ctx.send(f"❌ Error: {e}")
 
 
 # ==============================================================================
@@ -312,14 +212,14 @@ if __name__ == "__main__":
 # ==============================================================================
 
 
-@bot.hybrid_command()
+@bot.command()
 async def help(ctx):
     embed = discord.Embed(title="🌿 NatureBot Help",
                           description="Watching nature and moderating.",
                           color=discord.Color.green())
     embed.add_field(
         name="Control",
-        value="`sync`, `start`, `restart`, `shutdown`, `changestatus`, `changepresence`",
+        value="`start`, `restart`, `shutdown`, `changeStatus`, `changePresence`",
         inline=False)
     embed.add_field(
         name="General",
@@ -334,207 +234,26 @@ async def help(ctx):
     embed.add_field(
         name="Cool/Custom",
         value=
-        "`emojify`, `spoiler`, `reverse`, `mock`, `vaporwave`, `binary`, `morse`, `advice`, `truth`, `dare`, `joke`, `iq`, `remindme`, `meme`, `choose`, `hug`, `kill`, `fact`, `translate`, `pickagain`"
+        "`mewmew`, `emojify`, `spoiler`, `reverse`, `mock`, `vaporwave`, `binary`, `morse`, `piglatin`, `advice`, `truth`, `dare`, `joke`, `iq`, `remindme`"
     )
     await ctx.send(embed=embed)
 
 
-@bot.hybrid_command()
+@bot.command()
 async def ping(ctx):
     await ctx.send(f'🏓 Pong! {round(bot.latency * 1000)}ms')
 
-import discord
-from discord.ext import commands
-from discord.ui import View, button
-from discord import ButtonStyle
 
-class ServerInfoView(View):
-    def __init__(self, guild):
-        super().__init__(timeout=120)
-        self.guild = guild
-
-    # SHOW ADMINS
-    @button(label="👮 Show Admins", style=ButtonStyle.primary)
-    async def show_admins(self, interaction: discord.Interaction, button: discord.ui.Button):
-        admins = [m.mention for m in self.guild.members if m.guild_permissions.administrator]
-
-        if not admins:
-            text = "No administrators found."
-        else:
-            text = "\n".join(admins[:30])  # Discord limit safety
-
-        await interaction.response.send_message(
-            embed=discord.Embed(
-                title="👮 Server Administrators",
-                description=text,
-                color=discord.Color.red()
-            ),
-            ephemeral=True
-        )
-
-    # SHOW BOOSTERS
-    @button(label="🚀 Show Boosters", style=ButtonStyle.success)
-    async def show_boosters(self, interaction: discord.Interaction, button: discord.ui.Button):
-        boosters = [m.mention for m in self.guild.members if m.premium_since]
-
-        if not boosters:
-            text = "No boosters found."
-        else:
-            text = "\n".join(boosters[:30])
-
-        await interaction.response.send_message(
-            embed=discord.Embed(
-                title="🚀 Server Boosters",
-                description=text,
-                color=discord.Color.purple()
-            ),
-            ephemeral=True
-        )
-
-    # SHOW ROLES
-    @button(label="🎭 Show All Roles", style=ButtonStyle.secondary)
-    async def show_roles(self, interaction: discord.Interaction, button: discord.ui.Button):
-        roles = [role.mention for role in self.guild.roles if role.name != "@everyone"]
-
-        if not roles:
-            text = "No roles found."
-        else:
-            text = ", ".join(roles)
-
-        await interaction.response.send_message(
-            embed=discord.Embed(
-                title="🎭 Server Roles",
-                description=text[:4000],
-                color=discord.Color.orange()
-            ),
-            ephemeral=True
-        )
-
-
-@bot.hybrid_command()
+@bot.command()
 async def serverinfo(ctx):
     guild = ctx.guild
+    embed = discord.Embed(title=f"{guild.name} Info",
+                          color=discord.Color.blue())
+    embed.add_field(name="Owner", value=guild.owner)
+    embed.add_field(name="Members", value=guild.member_count)
+    if guild.icon: embed.set_thumbnail(url=guild.icon.url)
+    await ctx.send(embed=embed)
 
-    humans = len([m for m in guild.members if not m.bot])
-    bots = len([m for m in guild.members if m.bot])
-
-    admins = len([m for m in guild.members if m.guild_permissions.administrator])
-    boosters = guild.premium_subscription_count
-
-    # Top 5 highest roles (excluding @everyone)
-    top_roles = sorted(
-        [r for r in guild.roles if r.name != "@everyone"],
-        key=lambda r: r.position,
-        reverse=True
-    )[:5]
-
-    top_roles_text = "\n".join([role.mention for role in top_roles]) if top_roles else "None"
-
-    # Permission breakdown
-    total_perms = 0
-    for member in guild.members:
-        total_perms += len([perm for perm, value in member.guild_permissions if value])
-
-    avg_perms = total_perms // guild.member_count if guild.member_count > 0 else 0
-
-    # Activity stats (basic)
-    online = len([m for m in guild.members if m.status == discord.Status.online])
-    idle = len([m for m in guild.members if m.status == discord.Status.idle])
-    dnd = len([m for m in guild.members if m.status == discord.Status.dnd])
-    offline = len([m for m in guild.members if m.status == discord.Status.offline])
-
-    # Graphical bar (text-based)
-    total_members = guild.member_count
-    online_percent = int((online / total_members) * 10) if total_members else 0
-    activity_bar = "🟩" * online_percent + "⬜" * (10 - online_percent)
-
-    embed = discord.Embed(
-        title=f"📊 {guild.name} - Advanced Server Info",
-        color=discord.Color.blue()
-    )
-
-    embed.add_field(
-        name="👑 Owner",
-        value=f"{guild.owner.mention}\nID: `{guild.owner.id}`",
-        inline=False
-    )
-
-    embed.add_field(
-        name="📅 Created",
-        value=f"<t:{int(guild.created_at.timestamp())}:F>",
-        inline=True
-    )
-
-    embed.add_field(
-        name="🌍 Region",
-        value="Auto (Discord)",
-        inline=True
-    )
-
-    embed.add_field(
-        name="👥 Members",
-        value=f"Total: `{total_members}`\nHumans: `{humans}`\nBots: `{bots}`",
-        inline=True
-    )
-
-    embed.add_field(
-        name="📈 Activity",
-        value=f"Online: `{online}`\nIdle: `{idle}`\nDND: `{dnd}`\nOffline: `{offline}`\n{activity_bar}",
-        inline=True
-    )
-
-    embed.add_field(
-        name="👮 Admins",
-        value=f"`{admins}` Admins",
-        inline=True
-    )
-
-    embed.add_field(
-        name="🚀 Boosts",
-        value=f"Level: `{guild.premium_tier}`\nBoosts: `{boosters}`",
-        inline=True
-    )
-
-    embed.add_field(
-        name="🏆 Top 5 Roles",
-        value=top_roles_text,
-        inline=False
-    )
-
-    embed.add_field(
-        name="🧠 Avg Permissions per User",
-        value=f"`{avg_perms}` Enabled Permissions",
-        inline=False
-    )
-
-    embed.add_field(
-        name="🎭 Total Roles",
-        value=f"`{len(guild.roles)}`",
-        inline=True
-    )
-
-    embed.add_field(
-        name="😄 Emojis",
-        value=f"`{len(guild.emojis)}`",
-        inline=True
-    )
-
-    embed.add_field(
-        name="📁 Channels",
-        value=f"Text: `{len(guild.text_channels)}`\nVoice: `{len(guild.voice_channels)}`",
-        inline=True
-    )
-
-    if guild.icon:
-        embed.set_thumbnail(url=guild.icon.url)
-
-    if guild.splash:
-        embed.set_image(url=guild.splash.url)
-
-    embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
-
-    view = ServerInfoView(guild)
-    await ctx.send(embed=embed, view=view)
 
 from discord import ui
 
@@ -557,7 +276,7 @@ class UserInfoView(ui.View):
         message = f"👤 User===={self.member}\n🎭 Roles ({len(roles)})===={roles_text}"
         await interaction.response.send_message(message, ephemeral=True)
 
-@bot.hybrid_command()
+@bot.command()
 async def userinfo(ctx, member: discord.Member = None):
     member = member or ctx.author
 
@@ -575,50 +294,29 @@ async def userinfo(ctx, member: discord.Member = None):
     await ctx.send(message, view=view)
 
 
-@bot.hybrid_command()
+@bot.command()
 async def avatar(ctx, member: discord.Member = None):
     member = member or ctx.author
-    embed = discord.Embed(title=f"{member.name}'s Avatar", color=discord.Color.random())
+    embed = discord.Embed(title=f"{member.name}'s Avatar")
     embed.set_image(
         url=member.avatar.url if member.avatar else member.default_avatar.url)
     await ctx.send(embed=embed)
 
 
-@bot.hybrid_command()
-async def meme(ctx):
-    """Get a random nature meme (simulated)"""
-    memes = [
-        "https://i.imgflip.com/2/Nature-Meme.jpg",
-        "https://i.kym-cdn.com/photos/images/newsfeed/001/431/201/40f.jpg"
-    ]
-    embed = discord.Embed(title="🍃 Nature Meme", color=discord.Color.green())
-    embed.set_image(url=random.choice(memes))
-    await ctx.send(embed=embed)
-
-
-@bot.hybrid_command()
-async def choose(ctx, options: str):
-    """Pick between multiple options (comma separated)"""
-    opt_list = [o.strip() for o in options.split(",")]
-    if not opt_list:
-        return await ctx.send("Give me some options to choose from!")
-    await ctx.send(f"🤔 I choose: **{random.choice(opt_list)}**")
-
-
-@bot.hybrid_command()
+@bot.command()
 async def uptime(ctx):
     await ctx.send("I have been watching nature since I woke up!")
 
 
-@bot.hybrid_command()
+@bot.command()
 async def invite(ctx):
     await ctx.send(
         "Invite me: https://discord.com/oauth2/authorize?client_id=1360329809670045731&scope=identify+bot%20applications.commands&permissions=1099511627775&redirect_uri=https%3A%2F%2Fsites.google.com%2Fview%2Finfo-about-anna%2Fhome&response_type=code"
     )
 
 
-@bot.hybrid_command()
-async def poll(ctx, *, question: str):
+@bot.command()
+async def poll(ctx, *, question):
     embed = discord.Embed(title="📊 Poll",
                           description=question,
                           color=discord.Color.gold())
@@ -627,8 +325,8 @@ async def poll(ctx, *, question: str):
     await msg.add_reaction("👎")
 
 
-@bot.hybrid_command(aliases=['8ball'])
-async def eightball(ctx, *, question: str):
+@bot.command(aliases=['8ball'])
+async def eightball(ctx, *, question):
     responses = [
         "It is certain.", "Without a doubt.", "Ask again later.",
         "My sources say no."
@@ -636,37 +334,17 @@ async def eightball(ctx, *, question: str):
     await ctx.send(f"🎱 **Q:** {question}\n**A:** {random.choice(responses)}")
 
 
-@bot.hybrid_command()
-async def roll(ctx, dice: str = "1d6"):
-    """Roll dice in NdN format (e.g. 2d20)"""
-    try:
-        rolls, limit = map(int, dice.split('d'))
-    except Exception:
-        await ctx.send('Format has to be NdN! (Example: 1d6)')
-        return
-
-    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
-    await ctx.send(f"🎲 Result: {result}")
+@bot.command()
+async def roll(ctx, sides: int = 6):
+    await ctx.send(f"🎲 Rolled a **{random.randint(1, sides)}**!")
 
 
-@bot.hybrid_command(aliases=['coinflip'])
-async def coin(ctx):
-    """Flip a coin"""
-    res = random.choice(["Heads", "Tails"])
-    await ctx.send(f"🪙 It's **{res}**!")
+@bot.command()
+async def coinflip(ctx):
+    await ctx.send(f"🪙 It's **{random.choice(['Heads', 'Tails'])}**!")
 
 
-@bot.hybrid_command()
-async def hug(ctx, member: discord.Member):
-    """Give someone a hug!"""
-    embed = discord.Embed(
-        description=f"**{ctx.author.name}** gives **{member.name}** a big warm hug! 🤗",
-        color=discord.Color.blue())
-    embed.set_image(url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2Z4N3R6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/u9BxQbM5bxAHK/giphy.gif")
-    await ctx.send(embed=embed)
-
-
-@bot.hybrid_command()
+@bot.command()
 async def slap(ctx, member: discord.Member):
     embed = discord.Embed(
         description=f"**{ctx.author.name}** slapped **{member.name}**!",
@@ -678,16 +356,16 @@ async def slap(ctx, member: discord.Member):
 
 
 
+ 
 
 
-
-@bot.hybrid_command()
+@bot.command()
 async def pat(ctx, member: discord.Member):
     await ctx.send(f"**{ctx.author.name}** pats **{member.name}** on the head."
                    )
 
 
-@bot.hybrid_command()
+@bot.command()
 async def kiss(ctx, member: discord.Member):
     await ctx.send(f"😘 **{ctx.author.name}** kisses **{member.name}**!")
 
@@ -835,7 +513,6 @@ async def clearwarns(ctx, member: discord.Member):
 
 @bot.command()
 async def joinvc(ctx):
-    ctx.send("Joining Voice")
     if ctx.author.voice is None:
         await ctx.send("You must be in a voice channel first!")
         return
@@ -1014,18 +691,6 @@ async def weather(ctx):
 
 
 @bot.command()
-async def killperson(ctx, member: discord.Member):
-    """A funny command to 'kill' someone in a joke way"""
-    responses = [
-        f"{ctx.author.name} tried to kill {member.name} but slipped on a banana peel! 🍌",
-        f"{member.name} was hit by a flying piano! 🎹",
-        f"{ctx.author.name} poked {member.name} too hard. They are now a ghost. 👻",
-        f"{member.name} was defeated by a wild Magikarp! 🐟"
-    ]
-    await ctx.send(random.choice(responses))
-
-
-@bot.command()
 async def fact(ctx):
     facts = [
         "🌳 Forests produce 28% of the world's oxygen.",
@@ -1034,106 +699,16 @@ async def fact(ctx):
         "🌊 Octopuses have three hearts.",
         "🦗 Grasshoppers have been on Earth for 300 million years.",
         "🌺 Sunflowers can track the sun across the sky.",
-        "🍕 Pizza was once used as currency in ancient Rome (just kidding).",
-        "🌌 There are more stars in the universe than grains of sand on Earth."
     ]
-    await ctx.send(f"📖 **Did you know?** {random.choice(facts)}")
+    await ctx.send(random.choice(facts))
 
 
 @bot.command()
 async def pickagain(ctx):
-    """Pick a random color for nature"""
     colors = [
-        "Emerald Green 🌿", "Sky Blue ☁️", "Sunset Orange 🌅", 
-        "Autumn Red 🍂", "Lavender Purple 🌸", "Ocean Teal 🌊"
+        "Red", "Blue", "Green", "Purple", "Yellow", "Orange", "Pink", "Black"
     ]
-    await ctx.send(f"🎨 The forest chooses: **{random.choice(colors)}**")
-
-
-@bot.command()
-async def translate(ctx, *, text):
-    """Translate text to nature-speak (simulated)"""
-    words = text.split()
-    nature_words = ["leaf", "branch", "river", "stone", "breeze", "bloom"]
-    translated = " ".join(random.choice(nature_words) for _ in words)
-    await ctx.send(f"🌿 **Nature says:** {translated}")
-
-
-@bot.command()
-async def coiny(ctx):
-    """Flip a coin"""
-    res = random.choice(["Heads", "Tails"])
-    await ctx.send(f"🪙 It's **{res}**!")
-
-
-@bot.command()
-async def rolldice(ctx, dice: str = "1d6"):
-    """Roll dice in NdN format (e.g. 2d20)"""
-    try:
-        rolls, limit = map(int, dice.split('d'))
-    except Exception:
-        await ctx.send('Format has to be NdN! (Example: 1d6)')
-        return
-
-    result = ', '.join(str(random.randint(1, limit)) for r in range(rolls))
-    await ctx.send(f"🎲 Result: {result}")
-
-
-@bot.command()
-async def hug2(ctx, member: discord.Member):
-    """Give someone a hug!"""
-    embed = discord.Embed(
-        description=f"**{ctx.author.name}** gives **{member.name}** a big warm hug! 🤗",
-        color=discord.Color.blue())
-    embed.set_image(url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2Z4N3R6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6ZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/u9BxQbM5bxAHK/giphy.gif")
-    await ctx.send(embed=embed)
-
-
-@bot.command()
-async def kill(ctx, member: discord.Member):
-    """A funny command to 'kill' someone in a joke way"""
-    responses = [
-        f"{ctx.author.name} tried to kill {member.name} but slipped on a banana peel! 🍌",
-        f"{member.name} was hit by a flying piano! 🎹",
-        f"{ctx.author.name} poked {member.name} too hard. They are now a ghost. 👻",
-        f"{member.name} was defeated by a wild Magikarp! 🐟"
-    ]
-    await ctx.send(random.choice(responses))
-
-
-@bot.command()
-async def facts(ctx):
-    facts = [
-        "🌳 Forests produce 28% of the world's oxygen.",
-        "🐝 Honey never spoils and can last for thousands of years.",
-        "🦁 A group of flamingos is called a 'flamboyance'.",
-        "🌊 Octopuses have three hearts.",
-        "🦗 Grasshoppers have been on Earth for 300 million years.",
-        "🌺 Sunflowers can track the sun across the sky.",
-        "🍕 Pizza was once used as currency in ancient Rome (just kidding).",
-        "🌌 There are more stars in the universe than grains of sand on Earth."
-    ]
-    await ctx.send(f"📖 **Did you know?** {random.choice(facts)}")
-
-
-@bot.command()
-async def pickagain2(ctx):
-    """Pick a random color for nature"""
-    colors = [
-        "Emerald Green 🌿", "Sky Blue ☁️", "Sunset Orange 🌅", 
-        "Autumn Red 🍂", "Lavender Purple 🌸", "Ocean Teal 🌊"
-    ]
-    await ctx.send(f"🎨 The forest chooses: **{random.choice(colors)}**")
-
-
-@bot.command()
-async def slap2(ctx, member: discord.Member):
-    """Slap someone with a fish!"""
-    embed = discord.Embed(
-        description=f"**{ctx.author.name}** slaps **{member.name}** with a large, smelly trout! 🐟",
-        color=discord.Color.red())
-    embed.set_image(url="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2Z4N3R6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eGZ6eZSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/LpB0bJ87SIXGuDZZc8/giphy.gif")
-    await ctx.send(embed=embed)
+    await ctx.send(f"🎨 Your random color is: **{random.choice(colors)}**")
 
 
 @bot.command()
@@ -1151,14 +726,14 @@ async def quote(ctx):
 
 
 @bot.command()
-async def rng2(ctx, min_val: int, max_val: int):
+async def rng(ctx, min_val: int, max_val: int):
     result = random.randint(min_val, max_val)
     await ctx.send(
         f"🎲 Random number between {min_val} and {max_val}: **{result}**")
 
 
 @bot.command()
-async def choose2(ctx, *, options):
+async def choose(ctx, *, options):
     choices = [c.strip() for c in options.split("|")]
     if len(choices) < 2:
         await ctx.send("❌ Provide at least 2 options separated by |")
