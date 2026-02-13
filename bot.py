@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 from discord import app_commands
+
 import random
 import asyncio
 import os
@@ -62,17 +63,30 @@ async def before_status():
         # ==================================================
         # --- EVENTS ---
         # ==================================================
-
 @bot.event
 async def on_ready():
-            print("===================================")
-            print(f"✅ Logged in as {bot.user.name}")
-            print(f"🆔 ID: {bot.user.id}")
-            print(f"📡 Ping: {round(bot.latency * 1000)}ms")
-            print("===================================")
+                    print("===================================")
+                    print(f"✅ Logged in as {bot.user.name}")
+                    print(f"🆔 ID: {bot.user.id}")
+                    print(f"📡 Ping: {round(bot.latency * 1000)}ms")
+                    print("===================================")
 
-            if not change_status.is_running():
-                change_status.start()
+                    # Start your status task if not already running
+                    if not change_status.is_running():
+                        change_status.start()
+
+                    # --- SYNC SLASH COMMANDS ---
+                    print("🌐 Syncing slash commands...")
+
+                    # Global sync (may take up to 1 hour)
+                    await bot.tree.sync()
+                    print("✅ Global slash commands synced!")
+
+                    # Instant per-guild sync
+                    for guild in bot.guilds:
+                        await bot.tree.sync(guild=guild)
+                        print(f"✅ Synced slash commands to {guild.name} ({guild.id})")
+
 
         # ==================================================
         # --- ERROR HANDLING ---
@@ -167,158 +181,230 @@ async def on_command(ctx):
         # ==================================================
         # --- BOT CONTROL COMMANDS ---
         # ==============================================================
+@bot.tree.command(name="start", description="Signals bot is active")
+async def start(interaction: discord.Interaction):
+                    await interaction.response.send_message("🌲 **AnnaBot is online and guarding the forest!**")
+                    message = (
+                        "*Turning on @Anna-the-Guardian*\n"
+                        "Connecting to Discord API services...\n"
+                        f"Gateway ID: {bot.user.id}\n"
+                        "System Boot Successful ✅\n"
+                        "RAM: 86GB\n"
+                        "CPU: AMD Ryzen Threadripper 96-Core\n"
+                        "SYSTEM: Windows 11 Server 2025\n"
+                        "All packages loaded.\n"
+                        "🟢 Bot is ONLINE."
+                    )
+                    await interaction.followup.send(message)
 
-@bot.command()
-async def start(ctx):
-            """Signals bot is active"""
-            await ctx.send("🌲 **AnnaBot is online and guarding the forest!**")
 
-            message = (
-                "*Turning on @Anna-the-Guardian*\n"
-                "Connecting to Discord API services...\n"
-                f"Gateway ID: {bot.user.id}\n"
-                "System Boot Successful ✅\n"
-                "RAM: 86GB\n"
-                "CPU: AMD Ryzen Threadripper 96-Core\n"
-                "SYSTEM: Windows 11 Server 2025\n"
-                "All packages loaded.\n"
-                "🟢 Bot is ONLINE."
+@bot.tree.command(name="shutdown", description="Shuts down the bot (dev only)")
+async def shutdown(interaction: discord.Interaction):
+                    if (str(interaction.user) not in AUTHORIZED_USERS) and (interaction.user.name not in AUTHORIZED_USERS):
+                        return await interaction.response.send_message("⛔ Only authorized developers can shut me down.", ephemeral=True)
+
+                    await interaction.response.send_message("💤 Powering down... Goodbye.")
+                    print("Bot shutting down...")
+                    try:
+                        await bot.close()
+                    except Exception:
+                        pass
+
+
+@bot.tree.command(name="restart", description="Restarts the bot systems (dev only)")
+async def restart(interaction: discord.Interaction):
+                    if (str(interaction.user) not in AUTHORIZED_USERS) and (interaction.user.name not in AUTHORIZED_USERS):
+                        return await interaction.response.send_message("⛔ Unauthorized.", ephemeral=True)
+
+                    try:
+                        change_status.stop()
+                    except Exception:
+                        pass
+
+                    try:
+                        await bot.change_presence(status=discord.Status.invisible)
+                    except Exception:
+                        pass
+
+                    await interaction.response.send_message("🔄 Restarting systems...")
+                    try:
+                        await asyncio.sleep(5)
+                    except Exception:
+                        pass
+
+                    await interaction.followup.send("✅ Systems rebooted successfully.")
+                    try:
+                        change_status.start()
+                    except Exception:
+                        pass
+
+
+bot.tree.command(
+    name="changeStatus",
+    description="Change the bot status: online, idle, dnd, or invisible"
+)
+async def changeStatus(interaction: discord.Interaction, status_name: str):
+    status_map = {
+        "online": discord.Status.online,
+        "idle": discord.Status.idle,
+        "dnd": discord.Status.dnd,
+        "invisible": discord.Status.invisible
+    }
+
+    choice = status_map.get(status_name.lower())
+    if choice:
+        # Stop any running status loop safely
+        if change_status.is_running():
+            change_status.stop()
+
+        try:
+            await bot.change_presence(status=choice)
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Failed to change status: {e}", ephemeral=True)
+            return
+
+        await interaction.response.send_message(f"✅ Status updated to **{status_name}**.", ephemeral=True)
+    else:
+        await interaction.response.send_message(
+            "❌ Invalid status! Choose from: online, idle, dnd, invisible",
+            ephemeral=True
+        )
+
+
+
+    @bot.tree.command(
+        name="changePresence",
+        description="Change presence: <type> <status> <text> (streaming needs a URL using `|`)"
+    )
+    async def changePresence(interaction: discord.Interaction, p_type: str, status: str, text: str):
+        """
+        Usage examples:
+          /changePresence playing online Chess with friends
+          /changePresence streaming online My Stream Title | https://twitch.tv/you
+        """
+
+        # --- Authorization ---
+        # Keep original behavior: allow either full "name#discrim" or username
+        user_checks = {str(interaction.user), interaction.user.name}
+        if not any(u in AUTHORIZED_USERS for u in user_checks):
+            return await interaction.response.send_message(
+                "❌ You are not authorized to use this command.",
+                ephemeral=True
             )
 
-            await ctx.send(message)
-
-        # --------------------------------------------------
-
-@bot.command()
-async def shutdown(ctx):
-            """Shuts down the bot"""
-            if str(ctx.author) not in AUTHORIZED_USERS:
-                return await ctx.send("⛔ Only authorized developers can shut me down.")
-
-            await ctx.send("💤 Powering down... Goodbye.")
-            print("Bot shutting down...")
-            await bot.close()
-            sys.exit()
-
-        # --------------------------------------------------
-
-@bot.command()
-async def restart(ctx):
-            """Restarts the bot systems"""
-            if str(ctx.author) not in AUTHORIZED_USERS:
-                return await ctx.send("⛔ Unauthorized.")
-
-            change_status.stop()
-            await bot.change_presence(status=discord.Status.invisible)
-
-            msg = await ctx.send("🔄 Restarting systems...")
-            await asyncio.sleep(5)
-
-            await msg.edit(content="✅ Systems rebooted successfully.")
-            change_status.start()
-
-        # --------------------------------------------------
-
-@bot.command()
-async def changeStatus(ctx, status_name: str):
-            """Example: !changeStatus idle"""
-            status_map = {
-                "online": discord.Status.online,
-                "idle": discord.Status.idle,
-                "dnd": discord.Status.dnd,
-                "invisible": discord.Status.invisible
-            }
-
-            choice = status_map.get(status_name.lower())
-
-            if choice:
-                change_status.stop()
-                await bot.change_presence(status=choice)
-                await ctx.send(f"✅ Status updated to **{status_name}**.")
-            else:
-                await ctx.send("❌ Valid options: online, idle, dnd, invisible")
-
-        # --------------------------------------------------
-@bot.command()
-async def changePresence(ctx, p_type: str, status: str, *, text: str):
-        # --- AUTH CHECK (like your other commands) ---
-        if ctx.author.name not in AUTHORIZED_USERS:
-            return await ctx.send("❌ You are not authorized to use this command.")
-
+        # --- Maps & aliases ---
         type_map = {
             "playing": discord.ActivityType.playing,
+            "play": discord.ActivityType.playing,
             "watching": discord.ActivityType.watching,
+            "watch": discord.ActivityType.watching,
             "listening": discord.ActivityType.listening,
-            "streaming": discord.ActivityType.streaming
+            "listen": discord.ActivityType.listening,
+            "streaming": discord.ActivityType.streaming,
+            "stream": discord.ActivityType.streaming
         }
 
         status_map = {
             "online": discord.Status.online,
             "idle": discord.Status.idle,
             "dnd": discord.Status.dnd,
-            "invisible": discord.Status.invisible
+            "invisible": discord.Status.invisible,
+            "offline": discord.Status.invisible  # alias
         }
 
         act_type = type_map.get(p_type.lower())
         new_status = status_map.get(status.lower())
 
         if not act_type:
-            return await ctx.send("❌ Valid activity types: playing, watching, listening, streaming")
-
+            return await interaction.response.send_message(
+                "❌ Valid activity types: playing, watching, listening, streaming",
+                ephemeral=True
+            )
         if not new_status:
-            return await ctx.send("❌ Valid statuses: online, idle, dnd, invisible")
+            return await interaction.response.send_message(
+                "❌ Valid statuses: online, idle, dnd, invisible",
+                ephemeral=True
+            )
 
-        # If bot is in VC → force online
-        if ctx.guild and ctx.guild.me.voice:
-            new_status = discord.Status.online
+        # --- If bot is in a voice channel → force online ---
+        try:
+            if interaction.guild:
+                me = interaction.guild.get_member(bot.user.id)
+                if me and getattr(me, "voice", None) and getattr(me.voice, "channel", None):
+                    new_status = discord.Status.online
+        except Exception:
+            # don't crash on odd guild/member states
+            pass
 
-        await bot.change_presence(
-            status=new_status,
-            activity=discord.Activity(type=act_type, name=text)
+        # --- Build activity (special-case streaming which needs a URL) ---
+        activity = None
+        try:
+            if act_type == discord.ActivityType.streaming:
+                # Expect "Title | url" or any text containing a URL
+                if "|" in text:
+                    title, url = map(str.strip, text.split("|", 1))
+                else:
+                    # attempt to pull URL from text
+                    url_search = re.search(r"https?://\S+", text)
+                    url = url_search.group(0) if url_search else None
+                    title = text.replace(url, "").strip() if url else text
+
+                if not url:
+                    return await interaction.response.send_message(
+                        "❌ Streaming presence requires a URL. Example:\n"
+                        "`/changePresence streaming online My Stream Title | https://twitch.tv/you`",
+                        ephemeral=True
+                    )
+
+                # discord.Streaming provides the proper Streaming activity object
+                activity = discord.Streaming(name=title if title else "Streaming", url=url)
+            else:
+                activity = discord.Activity(type=act_type, name=text)
+        except Exception as e:
+            return await interaction.response.send_message(
+                f"❌ Failed to prepare activity: {e}",
+                ephemeral=True
+            )
+
+        # --- Apply presence ---
+        try:
+            await bot.change_presence(status=new_status, activity=activity)
+        except Exception as e:
+            return await interaction.response.send_message(
+                f"❌ Failed to change presence: {e}",
+                ephemeral=True
+            )
+
+        await interaction.response.send_message(
+            f"✅ Presence updated: **{status}** | {p_type.title()} **{text}**",
+            ephemeral=True
         )
 
-        await ctx.send(f"✅ Presence updated: **{status}** | {p_type.title()} **{text}**")
 
 
-        # --------------------------------------------------
+@bot.tree.command(name="makerole", description="Create a role with permissions (dev only)")
+async def makerole(interaction: discord.Interaction, perm: str, name: str):
+                    if (str(interaction.user) not in AUTHORIZED_USERS) and (interaction.user.name not in AUTHORIZED_USERS):
+                        return await interaction.response.send_message("⛔ Developer access only.", ephemeral=True)
 
-@bot.command()
-async def makerole(ctx, perm: str, *, name: str):
-            """Create roles with permissions (Dev Only)"""
+                    perms = discord.Permissions.none()
+                    p = perm.lower()
 
-            if str(ctx.author) not in AUTHORIZED_USERS:
-                return await ctx.send("⛔ Developer access only.")
+                    if p == "admin":
+                        perms = discord.Permissions(administrator=True)
+                    elif p == "ban":
+                        perms = discord.Permissions(ban_members=True)
+                    elif p == "kick":
+                        perms = discord.Permissions(kick_members=True)
+                    elif p == "mod":
+                        perms = discord.Permissions(manage_messages=True, kick_members=True, ban_members=True)
 
-            perms = discord.Permissions.none()
-            p = perm.lower()
+                    try:
+                        role = await interaction.guild.create_role(name=name, permissions=perms, color=discord.Color.random(), hoist=True)
+                        await interaction.response.send_message(f"✅ Created role **{role.name}** with **{p}** permissions!")
+                    except Exception as e:
+                        await interaction.response.send_message(f"❌ Error creating role: {e}", ephemeral=True)
 
-            if p == "admin":
-                perms = discord.Permissions(administrator=True)
-            elif p == "ban":
-                perms = discord.Permissions(ban_members=True)
-            elif p == "kick":
-                perms = discord.Permissions(kick_members=True)
-            elif p == "mod":
-                perms = discord.Permissions(
-                    manage_messages=True,
-                    kick_members=True,
-                    ban_members=True
-                )
-
-            try:
-                role = await ctx.guild.create_role(
-                    name=name,
-                    permissions=perms,
-                    color=discord.Color.random(),
-                    hoist=True
-                )
-
-                await ctx.send(
-                    f"✅ Created role **{role.name}** with **{p}** permissions!"
-                )
-
-            except Exception as e:
-                await ctx.send(f"❌ Error creating role: {e}")
 
         # ==================================================
         # --- RUN BOT ---
@@ -1180,40 +1266,96 @@ async def user_info_slash(interaction: discord.Interaction, member: discord.Memb
     
     await interaction.response.send_message(embed=embed)
 
-
-# --- ADDITIONAL SLASH COMMANDS ---
+# --- ADDITIONAL SLASH COMMANDS (fixed) ---
 
 # 1. Moderation
 @bot.tree.command(name="ban", description="Ban a member from the server")
 @app_commands.describe(member="The member to ban", reason="Reason for the ban")
 @app_commands.checks.has_permissions(ban_members=True)
 async def ban_slash(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided"):
-    await member.ban(reason=reason)
-    await interaction.response.send_message(f"✅ Banned **{member}** for: {reason}")
+    if interaction.guild is None:
+        return await interaction.response.send_message("⛔ This command can only be used in a server.", ephemeral=True)
+
+    bot_member = interaction.guild.me or await interaction.guild.fetch_member(bot.user.id)
+    if not bot_member.guild_permissions.ban_members:
+        return await interaction.response.send_message("⛔ I don't have permission to ban members.", ephemeral=True)
+
+    # Prevent banning the guild owner or the bot itself
+    if member.id == interaction.guild.owner_id:
+        return await interaction.response.send_message("⛔ I cannot ban the server owner.", ephemeral=True)
+    if member.id == bot.user.id:
+        return await interaction.response.send_message("⛔ I cannot ban myself.", ephemeral=True)
+
+    try:
+        await member.ban(reason=reason)
+        await interaction.response.send_message(f"✅ Banned **{member}** for: {reason}")
+    except discord.Forbidden:
+        await interaction.response.send_message("⛔ I do not have permission to ban that user.", ephemeral=True)
+    except discord.HTTPException:
+        await interaction.response.send_message("❗ Failed to ban the user. Please try again later.", ephemeral=True)
 
 @bot.tree.command(name="kick", description="Kick a member from the server")
 @app_commands.describe(member="The member to kick", reason="Reason for the kick")
 @app_commands.checks.has_permissions(kick_members=True)
 async def kick_slash(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided"):
-    await member.kick(reason=reason)
-    await interaction.response.send_message(f"✅ Kicked **{member}** for: {reason}")
+    if interaction.guild is None:
+        return await interaction.response.send_message("⛔ This command can only be used in a server.", ephemeral=True)
 
-@bot.tree.command(name="clear", description="Clear a number of messages")
-@app_commands.describe(amount="Number of messages to clear")
+    bot_member = interaction.guild.me or await interaction.guild.fetch_member(bot.user.id)
+    if not bot_member.guild_permissions.kick_members:
+        return await interaction.response.send_message("⛔ I don't have permission to kick members.", ephemeral=True)
+
+    # Safety checks
+    if member.id == interaction.guild.owner_id:
+        return await interaction.response.send_message("⛔ I cannot kick the server owner.", ephemeral=True)
+    if member.id == bot.user.id:
+        return await interaction.response.send_message("⛔ I cannot kick myself.", ephemeral=True)
+
+    try:
+        await member.kick(reason=reason)
+        await interaction.response.send_message(f"✅ Kicked **{member}** for: {reason}")
+    except discord.Forbidden:
+        await interaction.response.send_message("⛔ I do not have permission to kick that user.", ephemeral=True)
+    except discord.HTTPException:
+        await interaction.response.send_message("❗ Failed to kick the user. Please try again later.", ephemeral=True)
+
+@bot.tree.command(name="clear", description="Clear a number of messages (1-100)")
+@app_commands.describe(amount="Number of messages to clear (1-100)")
 @app_commands.checks.has_permissions(manage_messages=True)
 async def clear_slash(interaction: discord.Interaction, amount: int):
+    if interaction.guild is None:
+        return await interaction.response.send_message("⛔ This command can only be used in a server.", ephemeral=True)
+
+    if amount < 1 or amount > 100:
+        return await interaction.response.send_message("⛔ Amount must be between 1 and 100.", ephemeral=True)
+
+    channel = interaction.channel
+    # Ensure channel supports purge
+    if not isinstance(channel, (discord.TextChannel, discord.Thread)):
+        return await interaction.response.send_message("⛔ I can only clear messages in text channels or threads.", ephemeral=True)
+
     await interaction.response.defer(ephemeral=True)
-    deleted = await interaction.channel.purge(limit=amount)
-    await interaction.followup.send(f"✅ Cleared **{len(deleted)}** messages.")
+    try:
+        # note: purge will skip messages older than 14 days automatically
+        deleted = await channel.purge(limit=amount)
+        await interaction.followup.send(f"✅ Cleared **{len(deleted)}** messages.", ephemeral=True)
+    except discord.Forbidden:
+        await interaction.followup.send("⛔ I don't have permission to manage messages in this channel.", ephemeral=True)
+    except discord.HTTPException:
+        await interaction.followup.send("❗ Failed to clear messages. Please try again later.", ephemeral=True)
 
 # 2. General
 @bot.tree.command(name="server_info", description="Get information about the server")
 async def server_info_slash(interaction: discord.Interaction):
     guild = interaction.guild
+    if guild is None:
+        return await interaction.response.send_message("⛔ This command can only be used in a server.", ephemeral=True)
+
+    owner = guild.owner or (await guild.fetch_member(guild.owner_id) if guild.owner_id else "Unknown")
     embed = discord.Embed(title=f"Server Info - {guild.name}", color=discord.Color.blue())
-    embed.add_field(name="Owner", value=guild.owner, inline=True)
-    embed.add_field(name="Members", value=guild.member_count, inline=True)
-    embed.add_field(name="Roles", value=len(guild.roles), inline=True)
+    embed.add_field(name="Owner", value=str(owner), inline=True)
+    embed.add_field(name="Members", value=str(guild.member_count), inline=True)
+    embed.add_field(name="Roles", value=str(len(guild.roles)), inline=True)
     embed.add_field(name="Created At", value=f"<t:{int(guild.created_at.timestamp())}:F>", inline=False)
     if guild.icon:
         embed.set_thumbnail(url=guild.icon.url)
@@ -1223,8 +1365,10 @@ async def server_info_slash(interaction: discord.Interaction):
 @bot.tree.command(name="roll_dice", description="Roll a dice")
 @app_commands.describe(sides="Number of sides (default 6)")
 async def roll_slash(interaction: discord.Interaction, sides: int = 6):
+    if sides < 2:
+        return await interaction.response.send_message("⛔ Sides must be at least 2.", ephemeral=True)
     result = random.randint(1, sides)
-    await interaction.response.send_message(f"🎲 Rolled a **{result}**!")
+    await interaction.response.send_message(f"🎲 Rolled a **{result}** (1-{sides})!")
 
 @bot.tree.command(name="random_joke", description="Get a funny joke")
 async def joke_slash(interaction: discord.Interaction):
@@ -1236,15 +1380,25 @@ async def joke_slash(interaction: discord.Interaction):
     await interaction.response.send_message(f"🤣 {random.choice(jokes)}")
 
 # 4. Restart
-@bot.tree.command(name="restart", description="Restarts the bot (Authorized users only)")
+@bot.tree.command(name="restart2", description="Restarts the bot (Authorized users only)")
 async def restart_slash(interaction: discord.Interaction):
-    if str(interaction.user) != AUTHORIZED_USER:
+    # Support either AUTHORIZED_USER (single str/id) or AUTHORIZED_USERS (iterable)
+    user_ok = False
+    if globals().get("AUTHORIZED_USER") is not None:
+        user_ok = str(interaction.user) == str(globals().get("AUTHORIZED_USER")) or str(interaction.user.id) == str(globals().get("AUTHORIZED_USER"))
+    else:
+        auth_list = globals().get("AUTHORIZED_USERS", [])
+        try:
+            user_ok = (str(interaction.user) in auth_list) or (str(interaction.user.id) in [str(x) for x in auth_list])
+        except Exception:
+            user_ok = False
+
+    if not user_ok:
         return await interaction.response.send_message("⛔ You are not authorized to restart me!", ephemeral=True)
+
+    await interaction.response.send_message("🔄 Restarting... See you in a bit!", ephemeral=True)
+    # Subprocess or execv in your main file will handle the actual restart; using sys.executable is more portable
+    os.execv(sys.executable, [sys.executable] + sys.argv)
     
-    await interaction.response.send_message("🔄 Restarting... See you in a bit!")
-    # Subprocess will handle the restart via ping.py
-    os.execv(sys.executable, ['python'] + sys.argv)
-
-
-# --- RUN ---
+# ----- RUN BOT -----
 bot.run(TOKEN)
