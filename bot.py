@@ -1180,5 +1180,71 @@ async def user_info_slash(interaction: discord.Interaction, member: discord.Memb
     
     await interaction.response.send_message(embed=embed)
 
+
+# --- ADDITIONAL SLASH COMMANDS ---
+
+# 1. Moderation
+@bot.tree.command(name="ban", description="Ban a member from the server")
+@app_commands.describe(member="The member to ban", reason="Reason for the ban")
+@app_commands.checks.has_permissions(ban_members=True)
+async def ban_slash(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided"):
+    await member.ban(reason=reason)
+    await interaction.response.send_message(f"✅ Banned **{member}** for: {reason}")
+
+@bot.tree.command(name="kick", description="Kick a member from the server")
+@app_commands.describe(member="The member to kick", reason="Reason for the kick")
+@app_commands.checks.has_permissions(kick_members=True)
+async def kick_slash(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided"):
+    await member.kick(reason=reason)
+    await interaction.response.send_message(f"✅ Kicked **{member}** for: {reason}")
+
+@bot.tree.command(name="clear", description="Clear a number of messages")
+@app_commands.describe(amount="Number of messages to clear")
+@app_commands.checks.has_permissions(manage_messages=True)
+async def clear_slash(interaction: discord.Interaction, amount: int):
+    await interaction.response.defer(ephemeral=True)
+    deleted = await interaction.channel.purge(limit=amount)
+    await interaction.followup.send(f"✅ Cleared **{len(deleted)}** messages.")
+
+# 2. General
+@bot.tree.command(name="server_info", description="Get information about the server")
+async def server_info_slash(interaction: discord.Interaction):
+    guild = interaction.guild
+    embed = discord.Embed(title=f"Server Info - {guild.name}", color=discord.Color.blue())
+    embed.add_field(name="Owner", value=guild.owner, inline=True)
+    embed.add_field(name="Members", value=guild.member_count, inline=True)
+    embed.add_field(name="Roles", value=len(guild.roles), inline=True)
+    embed.add_field(name="Created At", value=f"<t:{int(guild.created_at.timestamp())}:F>", inline=False)
+    if guild.icon:
+        embed.set_thumbnail(url=guild.icon.url)
+    await interaction.response.send_message(embed=embed)
+
+# 3. Fun
+@bot.tree.command(name="roll_dice", description="Roll a dice")
+@app_commands.describe(sides="Number of sides (default 6)")
+async def roll_slash(interaction: discord.Interaction, sides: int = 6):
+    result = random.randint(1, sides)
+    await interaction.response.send_message(f"🎲 Rolled a **{result}**!")
+
+@bot.tree.command(name="random_joke", description="Get a funny joke")
+async def joke_slash(interaction: discord.Interaction):
+    jokes = [
+        "Why did the bot cross the road? To get to the nature side!",
+        "What do you call a fake noodle? An Impasta!",
+        "Why don't scientists trust atoms? Because they make up everything!"
+    ]
+    await interaction.response.send_message(f"🤣 {random.choice(jokes)}")
+
+# 4. Restart
+@bot.tree.command(name="restart", description="Restarts the bot (Authorized users only)")
+async def restart_slash(interaction: discord.Interaction):
+    if str(interaction.user) != AUTHORIZED_USER:
+        return await interaction.response.send_message("⛔ You are not authorized to restart me!", ephemeral=True)
+    
+    await interaction.response.send_message("🔄 Restarting... See you in a bit!")
+    # Subprocess will handle the restart via ping.py
+    os.execv(sys.executable, ['python'] + sys.argv)
+
+
 # --- RUN ---
 bot.run(TOKEN)
