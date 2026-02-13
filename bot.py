@@ -3,208 +3,326 @@ from discord.ext import commands, tasks
 from discord import app_commands
 import random
 import asyncio
-import psutil
 import os
 import sys
 from datetime import timedelta
 from dotenv import load_dotenv
 
-# --- CONFIGURATION & SECURITY ---
+        # ==================================================
+        # --- CONFIGURATION & SECURITY ---
+        # ==================================================
+
 load_dotenv()
-TOKEN = os.getenv('DISCORD_TOKEN')
-AUTHORIZED_USER = "luisthegoat7301"
+TOKEN = os.getenv("DISCORD_TOKEN")
+AUTHORIZED_USERS = ["luisthegoat7301", "zelda_life", "blackopsmode"]
 
 if not TOKEN:
-    print(
-        "ERROR: Token not found! Make sure you have a .env file with DISCORD_TOKEN inside."
-    )
-    exit()
+            print("❌ ERROR: Token not found! Put DISCORD_TOKEN in .env file.")
+            exit()
 
-PREFIX = 'anna' , "!"
+PREFIX = ("anna", "!")
 
-# --- SETUP ---
+        # ==================================================
+        # --- SETUP ---
+        # ==================================================
+
 intents = discord.Intents.all()
 bot = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
 
-# --- NATURE STATUS LOOP ---
+        # ==================================================
+        # --- NATURE STATUS LOOP ---
+        # ==================================================
+
 nature_scenes = [
-    "Pokemon! 🌲", "MEW! 🌅", "Flowing Rivers 🌊",
-    "Pikachu 🏔️", "Starry Nights 🌌", "Blooming Pokemons 🌸",
-    "Falling Rain 🌧️", "Mew is cool! i like it", "Just Got verifed! ✅"
-]
+            "Pokemon! 🌲",
+            "MEW! 🌅",
+            "Flowing Rivers 🌊",
+            "Pikachu 🏔️",
+            "Starry Nights 🌌",
+            "Blooming Pokemons 🌸",
+            "Falling Rain 🌧️",
+            "Mew is cool! i like it",
+            "Just Got verified! ✅"
+        ]
 
-
-@tasks.loop(seconds=5)
+@tasks.loop(seconds=67)
 async def change_status():
-    activity_name = random.choice(nature_scenes)
-    activity = discord.Activity(type=discord.ActivityType.playing,
-                                
-                                name=activity_name)
-    await bot.change_presence(status=discord.Status.dnd, activity=activity)
-    print(f" Status has been changed to: {activity_name}")
-
+            activity_name = random.choice(nature_scenes)
+            activity = discord.Activity(
+                type=discord.ActivityType.playing,
+                name=activity_name
+            )
+            await bot.change_presence(status=discord.Status.dnd, activity=activity)
+            print(f"🔄 Status changed to: {activity_name}")
 
 @change_status.before_loop
 async def before_status():
-    await bot.wait_until_ready()
+            await bot.wait_until_ready()
 
+        # ==================================================
+        # --- EVENTS ---
+        # ==================================================
 
-# --- EVENTS ---
 @bot.event
 async def on_ready():
-    print("==========================")
-    print(f"✅ Logged in as {bot.user.name} - ID: {bot.user.id}")
-    print("==========================")
-    print("✅ Connected to Discord!")
-    print("==========================")
-    print(f"📡 Ping: {round(bot.latency * 1000)}ms")
-    print("==========================")
+            print("===================================")
+            print(f"✅ Logged in as {bot.user.name}")
+            print(f"🆔 ID: {bot.user.id}")
+            print(f"📡 Ping: {round(bot.latency * 1000)}ms")
+            print("===================================")
 
-    change_status.start()
+            if not change_status.is_running():
+                change_status.start()
 
+        # ==================================================
+        # --- ERROR HANDLING ---
+        # ==================================================
 
-
-
-# --- ERROR HANDLING ---
 @bot.event
 async def on_command_error(ctx, error):
-    if isinstance(error, commands.CommandNotFound):
-        pass
-    elif isinstance(error, commands.MissingPermissions):
-        await ctx.send(
-            "⛔ **Access Denied:** You do not have the required permissions.")
-    elif isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("⚠️ **Missing Argument:** Check command usage.")
+            if isinstance(error, commands.CommandNotFound):
+                return
+            elif isinstance(error, commands.MissingPermissions):
+                await ctx.send("⛔ **Access Denied:** Missing permissions.")
+            elif isinstance(error, commands.MissingRequiredArgument):
+                await ctx.send("⚠️ **Missing Argument:** Check command usage.")
+            else:
+                print(f"❌ Unexpected Error: {error}")
+
+        # ==================================================
+        # --- COMMAND LOGGING ---
+        # ==================================================
+@bot.event
+async def on_command(ctx):
+    from datetime import datetime
+    import os
+
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    guild = ctx.guild
+    author = ctx.author
+    channel = ctx.channel
+
+    guild_name = guild.name if guild else "Direct Message"
+    guild_id = guild.id if guild else "N/A"
+
+    channel_name = getattr(channel, "name", "DM")
+    channel_id = getattr(channel, "id", "N/A")
+
+    command_name = ctx.command.name if ctx.command else "Unknown"
+    command_content = ctx.message.content if ctx.message else "N/A"
+
+    # Roles (ONLY if in guild)
+    if guild:
+        roles = [role.name for role in author.roles if role.name != "@everyone"]
+        roles_text = ", ".join(roles) if roles else "No Roles"
+        is_admin = author.guild_permissions.administrator
     else:
-        print(f"Error: {error}")
+        roles_text = "No Roles (DM)"
+        is_admin = False
 
+    avatar_url = author.display_avatar.url
 
-# --- COMMAND LOGGING ---
-@bot.before_invoke
-async def log_command_usage(ctx):
-    """Logs every command used by Discord users"""
-    print(
-        f"{ctx.author} used {ctx.command.name} in {ctx.channel.name} or {ctx.channel.id} in the server {ctx.guild.name} , server id: {ctx.guild.id} with the permission adminstrator: {ctx.author.guild_permissions.administrator}"
+    log_message = (
+        "\n"
+        "================ COMMAND LOG =================\n"
+        f"Time       : {timestamp}\n"
+        f"User       : {author} ({author.id})\n"
+        f"Admin      : {is_admin}\n"
+        f"Roles      : {roles_text}\n"
+        f"Avatar CDN : {avatar_url}\n"
+        "\n"
+        f"Command    : {command_name}\n"
+        f"Message    : {command_content}\n"
+        f"Channel    : {channel_name} ({channel_id})\n"
+        f"Server     : {guild_name} ({guild_id})\n"
+        "==============================================\n"
     )
 
+    # ---- PRINT ----
+    print(log_message)
 
-# ==============================================================================
-# NEW SECTION: BOT CONTROL COMMANDS
-# ==============================================================================
+    # ---- WRITE FILE SAFELY ----
+    try:
+        with open("logger.c", "a", encoding="utf-8") as f:
+            f.write(log_message)
+            f.flush()
+            os.fsync(f.fileno())
+    except Exception as e:
+        print(f"[LOGGER ERROR] {e}")
 
+    # ---- DM USER ----
+    try:
+        await author.send(
+            f"📜 Logged `{command_name}` at {timestamp}\n"
+            f"Server: {guild_name}\n"
+            f"Channel: {channel_name}"
+        )
+    except Exception:
+        pass
+
+
+
+
+        # ==================================================
+        # --- BOT CONTROL COMMANDS ---
+        # ==============================================================
 
 @bot.command()
 async def start(ctx):
-    """Starts/Signals the bot is active"""
-    await ctx.send("🌲 **AnnaBot is online and patrolling the forest!**")
-    message = (
-        "*turning on @Anna-the-Guardian*\n"
-        "please wait! (connection speed: Medium Fast) Upgrade to premium for Ultra Fast speed. 100 mbs per second/ 100000gbs\n"
-        "Connecting to Discord api services! ...\n"
-        f"{bot.user.name} is connecting to the gateway ip : {bot.user.id}\n"
-        "Launching….\n"
-        "RAM: 86 GBS\n"
-        "CPU: AMD Ryzen Threadripper 7980X / PRO 7995WX 96 Cores\n"
-        "SYSTEM: Windows 11 Server 2025\n"
-        "INSTALLING PACKAGES :loading_w:  …\n"
-        "INSTALLING DISCORD.PY , PYTHON-DOTENV , SYNC, OS, INFO\n"
-        "SUCSESFULLY INSTALLED!\n"
-        "RUNNING: cd A:/Bot/Python-Bot/Anna/Visual-Studio-Code/py\n"
-        "RUNNING: Python bot.\n"
-        "— 08/01/2026, 16:49\n"
-        "Error: Exit code with process 1\n"
-        "/fix\n"
-        "RUN_DEBUG= bot.py/anna\n"
-        "SUCSESFULLY LAUNCHED!\n"
-        "🟢 <@1360329809670045731> is online! 🟢")
-    await ctx.send(message)
+            """Signals bot is active"""
+            await ctx.send("🌲 **AnnaBot is online and guarding the forest!**")
 
+            message = (
+                "*Turning on @Anna-the-Guardian*\n"
+                "Connecting to Discord API services...\n"
+                f"Gateway ID: {bot.user.id}\n"
+                "System Boot Successful ✅\n"
+                "RAM: 86GB\n"
+                "CPU: AMD Ryzen Threadripper 96-Core\n"
+                "SYSTEM: Windows 11 Server 2025\n"
+                "All packages loaded.\n"
+                "🟢 Bot is ONLINE."
+            )
+
+            await ctx.send(message)
+
+        # --------------------------------------------------
 
 @bot.command()
 async def shutdown(ctx):
-    """Exits the python code entirely"""
-    if str(ctx.author) != AUTHORIZED_USER:
-        return await ctx.send("⛔ Only Luisthegoat7301 can shut me down.")
-    await ctx.send("💤 Powering down... Goodbye.")
-    print('==========================')
-    print("bot is shutting down..")
-    print('==========================')
-    await bot.close()
-    sys.exit()
+            """Shuts down the bot"""
+            if str(ctx.author) not in AUTHORIZED_USERS:
+                return await ctx.send("⛔ Only authorized developers can shut me down.")
 
+            await ctx.send("💤 Powering down... Goodbye.")
+            print("Bot shutting down...")
+            await bot.close()
+            sys.exit()
+
+        # --------------------------------------------------
 
 @bot.command()
 async def restart(ctx):
-    """Pretends to restart with status changes"""
-    if str(ctx.author) != AUTHORIZED_USER:
-        return await ctx.send("⛔ Unauthorized.")
-    change_status.stop()
-    await bot.change_presence(status=discord.Status.invisible)
-    msg = await ctx.send("🔄 **Restarting systems...**")
-    await asyncio.sleep(5)
-    await msg.edit(content="✅ **Systems rebooted.** Reconnecting to nature...")
-    change_status.start()
+            """Restarts the bot systems"""
+            if str(ctx.author) not in AUTHORIZED_USERS:
+                return await ctx.send("⛔ Unauthorized.")
 
+            change_status.stop()
+            await bot.change_presence(status=discord.Status.invisible)
+
+            msg = await ctx.send("🔄 Restarting systems...")
+            await asyncio.sleep(5)
+
+            await msg.edit(content="✅ Systems rebooted successfully.")
+            change_status.start()
+
+        # --------------------------------------------------
 
 @bot.command()
 async def changeStatus(ctx, status_name: str):
-    """Example: !changeStatus idle"""
-    status_map = {
-        "online": discord.Status.online,
-        "idle": discord.Status.idle,
-        "dnd": discord.Status.dnd,
-        "invisible": discord.Status.invisible
-    }
-    choice = status_map.get(status_name.lower())
-    if choice:
-        change_status.stop(
-        )  # Stop loop so it doesn't overwrite your manual choice
-        await bot.change_presence(status=choice)
-        await ctx.send(f"✅ Status updated to **{status_name}**.")
-    else:
-        await ctx.send("❌ Valid: online, idle, dnd, invisible")
+            """Example: !changeStatus idle"""
+            status_map = {
+                "online": discord.Status.online,
+                "idle": discord.Status.idle,
+                "dnd": discord.Status.dnd,
+                "invisible": discord.Status.invisible
+            }
 
+            choice = status_map.get(status_name.lower())
 
+            if choice:
+                change_status.stop()
+                await bot.change_presence(status=choice)
+                await ctx.send(f"✅ Status updated to **{status_name}**.")
+            else:
+                await ctx.send("❌ Valid options: online, idle, dnd, invisible")
+
+        # --------------------------------------------------
 @bot.command()
-async def changePresence(ctx, p_type: str, *, text: str):
-    """Example: !changePresence watching YouTube"""
-    type_map = {
-        "playing": discord.ActivityType.playing,
-        "watching": discord.ActivityType.watching,
-        "listening": discord.ActivityType.listening,
-        "streaming": discord.ActivityType.streaming
-    }
-    act_type = type_map.get(p_type.lower())
-    if act_type:
-        change_status.stop()
-        await bot.change_presence(
-            activity=discord.Activity(type=act_type, name=text))
-        await ctx.send(f"✅ Now {p_type} **{text}**.")
-    else:
-        await ctx.send("❌ Valid: playing, watching, listening, streaming")
+async def changePresence(ctx, p_type: str, status: str, *, text: str):
+        # --- AUTH CHECK (like your other commands) ---
+        if ctx.author.name not in AUTHORIZED_USERS:
+            return await ctx.send("❌ You are not authorized to use this command.")
 
+        type_map = {
+            "playing": discord.ActivityType.playing,
+            "watching": discord.ActivityType.watching,
+            "listening": discord.ActivityType.listening,
+            "streaming": discord.ActivityType.streaming
+        }
+
+        status_map = {
+            "online": discord.Status.online,
+            "idle": discord.Status.idle,
+            "dnd": discord.Status.dnd,
+            "invisible": discord.Status.invisible
+        }
+
+        act_type = type_map.get(p_type.lower())
+        new_status = status_map.get(status.lower())
+
+        if not act_type:
+            return await ctx.send("❌ Valid activity types: playing, watching, listening, streaming")
+
+        if not new_status:
+            return await ctx.send("❌ Valid statuses: online, idle, dnd, invisible")
+
+        # If bot is in VC → force online
+        if ctx.guild and ctx.guild.me.voice:
+            new_status = discord.Status.online
+
+        await bot.change_presence(
+            status=new_status,
+            activity=discord.Activity(type=act_type, name=text)
+        )
+
+        await ctx.send(f"✅ Presence updated: **{status}** | {p_type.title()} **{text}**")
+
+
+        # --------------------------------------------------
 
 @bot.command()
 async def makerole(ctx, perm: str, *, name: str):
-    """Owner command to create roles with perms"""
-    if str(ctx.author) != AUTHORIZED_USER:
-        return await ctx.send("⛔ Luisthegoat7301 access only.")
+            """Create roles with permissions (Dev Only)"""
 
-    perms = discord.Permissions.none()
-    p = perm.lower()
-    if p == "admin": perms = discord.Permissions(administrator=True)
-    elif p == "ban": perms = discord.Permissions(ban_members=True)
-    elif p == "kick": perms = discord.Permissions(kick_members=True)
+            if str(ctx.author) not in AUTHORIZED_USERS:
+                return await ctx.send("⛔ Developer access only.")
 
-    try:
-        role = await ctx.guild.create_role(name=name,
-                                           permissions=perms,
-                                           color=discord.Color.random(),
-                                           hoist=True)
-        await ctx.send(
-            f"✅ Created role **{role.name}** with **{p}** permissions!")
-    except Exception as e:
-        await ctx.send(f"❌ Error: {e}")
+            perms = discord.Permissions.none()
+            p = perm.lower()
+
+            if p == "admin":
+                perms = discord.Permissions(administrator=True)
+            elif p == "ban":
+                perms = discord.Permissions(ban_members=True)
+            elif p == "kick":
+                perms = discord.Permissions(kick_members=True)
+            elif p == "mod":
+                perms = discord.Permissions(
+                    manage_messages=True,
+                    kick_members=True,
+                    ban_members=True
+                )
+
+            try:
+                role = await ctx.guild.create_role(
+                    name=name,
+                    permissions=perms,
+                    color=discord.Color.random(),
+                    hoist=True
+                )
+
+                await ctx.send(
+                    f"✅ Created role **{role.name}** with **{p}** permissions!"
+                )
+
+            except Exception as e:
+                await ctx.send(f"❌ Error creating role: {e}")
+
+        # ==================================================
+        # --- RUN BOT ---
+        # 
 
 
 # ==============================================================================
@@ -243,66 +361,197 @@ async def help(ctx):
 async def ping(ctx):
     await ctx.send(f'🏓 Pong! {round(bot.latency * 1000)}ms')
 
-
 @bot.command()
-async def serverinfo(ctx):
-    guild = ctx.guild
-    embed = discord.Embed(title=f"{guild.name} Info",
-                          color=discord.Color.blue())
-    embed.add_field(name="Owner", value=guild.owner)
-    embed.add_field(name="Members", value=guild.member_count)
-    if guild.icon: embed.set_thumbnail(url=guild.icon.url)
-    await ctx.send(embed=embed)
+async def react(ctx, message_id: int, emoji: str):
+    try:
+        # Fetch the message from the current channel
+        message = await ctx.channel.fetch_message(message_id)
 
+        # Add the reaction
+        await message.add_reaction(emoji)
 
+        # Delete the user's command message
+        await ctx.message.delete()
+
+    except discord.NotFound:
+        await ctx.send("❌ Message not found.", delete_after=5)
+    except discord.HTTPException:
+        await ctx.send("❌ Invalid emoji or I can't use that emoji.", delete_after=5)
+    except Exception as e:
+        await ctx.send(f"⚠️ Error: {e}", delete_after=5)
+
+    
+import discord
+from discord.ext import commands
 from discord import ui
 
 
+
+        # ---------- Buttons UI ----------
+class ServerInfoView(ui.View):
+            def __init__(self, guild: discord.Guild, author: discord.Member):
+                super().__init__(timeout=120)
+                self.guild = guild
+                self.author = author
+
+            async def interaction_check(self, interaction: discord.Interaction) -> bool:
+                if interaction.user.id != self.author.id:
+                    await interaction.response.send_message("❌ Only the command user can use these buttons.", ephemeral=True)
+                    return False
+                return True
+
+            @ui.button(label="📋Show Admins📋", style=discord.ButtonStyle.green)
+            async def show_admins(self, interaction: discord.Interaction, button: ui.Button):
+                admins = [m.mention for m in self.guild.members if m.guild_permissions.administrator]
+                if not admins:
+                    await interaction.response.send_message("No admins found.", ephemeral=True)
+                    return
+                await interaction.response.send_message("\n".join(admins[:25]), ephemeral=True)
+
+            @ui.button(label="🎭Show Roles🎭", style=discord.ButtonStyle.blurple)
+            async def show_roles(self, interaction: discord.Interaction, button: ui.Button):
+                roles = [r.mention for r in self.guild.roles if r.name != "@everyone"]
+                if not roles:
+                    await interaction.response.send_message("No roles found.", ephemeral=True)
+                    return
+                await interaction.response.send_message("\n".join(roles[:25]), ephemeral=True)
+
+            @ui.button(label="📸Server Icon📸", style=discord.ButtonStyle.green)
+            async def show_icon(self, interaction: discord.Interaction, button: ui.Button):
+                if self.guild.icon:
+                    await interaction.response.send_message(f"[Click here to view the icon]({self.guild.icon.url})", ephemeral=True)
+                else:
+                    await interaction.response.send_message("No server icon.", ephemeral=True)
+
+            @ui.button(label="🖼️Server Banner🖼️", style=discord.ButtonStyle.green)
+            async def show_banner(self, interaction: discord.Interaction, button: ui.Button):
+                if self.guild.banner:
+                    await interaction.response.send_message(f"[Click here to view the banner]({self.guild.banner.url})", ephemeral=True)
+                else:
+                    await interaction.response.send_message("No banner found.", ephemeral=True)
+
+        # ---------- Server Info Command ----------
+@bot.command(name="serverinfo")
+@commands.guild_only()
+async def serverinfo(ctx):
+            guild = ctx.guild
+            owner = guild.owner or await guild.fetch_owner()
+            total = guild.member_count
+            humans = len([m for m in guild.members if not m.bot])
+            bots = len([m for m in guild.members if m.bot])
+            boosts = getattr(guild, "premium_subscription_count", 0)
+            boost_level = getattr(guild, "premium_tier", 0)
+            created_at = f"<t:{int(guild.created_at.timestamp())}:F>"
+
+            embed = discord.Embed(
+                title=f"📊 {guild.name} — Server Info",
+                description=f"**Server ID:** `{guild.id}`",
+                color=discord.Color.blue()
+            )
+            embed.add_field(name="👑 Owner", value=owner.mention, inline=True)
+            embed.add_field(name="📅 Created", value=created_at, inline=True)
+            embed.add_field(name="👥 Members", value=f"Total: {total}\nHumans: {humans}\nBots: {bots}", inline=True)
+            embed.add_field(name="🚀 Boost Level", value=f"Level {boost_level}\n{boosts} Boosts", inline=True)
+            embed.add_field(name="🎭 Roles", value=f"{len(guild.roles)-1}", inline=True)
+            embed.add_field(name="💬 Channels", value=f"{len(guild.channels)}", inline=True)
+
+            if guild.icon:
+                embed.set_thumbnail(url=guild.icon.url)
+            if guild.banner:
+                embed.set_image(url=guild.banner.url)
+
+            embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
+
+            view = ServerInfoView(guild, ctx.author)
+            await ctx.send(embed=embed, view=view)
+
+
+
+
+
+import discord
+from discord.ext import commands
+from discord import ui
+
+
+# ==============================
+# USER INFO VIEW (BUTTONS)
+# ==============================
+
 class UserInfoView(ui.View):
-    def __init__(self, member: discord.Member):
-        super().__init__(timeout=None)
+    def __init__(self, member: discord.Member, author: discord.Member):
+        super().__init__(timeout=60)
         self.member = member
+        self.author = author
 
-    @ui.button(label="Is User Owner?", style=discord.ButtonStyle.primary)
-    async def owner_button(self, interaction: discord.Interaction, button:ui.Button):
-        is_owner = "Yes 👑" if self.member.id == interaction.guild.owner_id else "No ❌"
-        message = f"👤 User===={self.member}\n👑 Is Owner===={is_owner}"
-        await interaction.response.send_message(message, ephemeral=True)
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        # Only the person who typed the command can click the buttons
+        if interaction.user.id != self.author.id:
+            await interaction.response.send_message("❌ This menu isn't for you.", ephemeral=True)
+            return False
+        return True
 
-    @ui.button(label="Show All Roles", style=discord.ButtonStyle.secondary)
-    async def roles_button(self, interaction: discord.Interaction, button: ui.Button):
+    @ui.button(label="Show Roles", emoji="📜", style=discord.ButtonStyle.green)
+    async def show_roles(self, interaction: discord.Interaction, button: ui.Button):
         roles = [role.mention for role in self.member.roles if role.name != "@everyone"]
-        roles_text = ", ".join(roles) if roles else "None"
-        message = f"👤 User===={self.member}\n🎭 Roles ({len(roles)})===={roles_text}"
-        await interaction.response.send_message(message, ephemeral=True)
+        text = ", ".join(roles) if roles else "No roles."
+        await interaction.response.send_message(f"📜 **Roles for {self.member.name}:**\n{text}", ephemeral=True)
+
+    @ui.button(label="Show Permissions", emoji="🔐", style=discord.ButtonStyle.success)
+    async def show_perms(self, interaction: discord.Interaction, button: ui.Button):
+        perms = [perm.replace("_", " ").title() for perm, value in self.member.guild_permissions if value]
+        text = ", ".join(perms) if perms else "No special permissions."
+        await interaction.response.send_message(f"🔐 **Permissions for {self.member.name}:**\n{text}", ephemeral=True)
+
+    @ui.button(label="Show Admins", emoji="🛡️", style=discord.ButtonStyle.secondary)
+    async def show_admins(self, interaction: discord.Interaction, button: ui.Button):
+        # Finds all non-bot members with Administrator permission
+        admins = [m.mention for m in interaction.guild.members if m.guild_permissions.administrator and not m.bot]
+        text = ", ".join(admins) if admins else "No admins found."
+        await interaction.response.send_message(f"🛡️ **Server Admins:**\n{text}", ephemeral=True)
+
+# ==============================
+# USER INFO COMMAND
+# ==============================
 
 @bot.command()
 async def userinfo(ctx, member: discord.Member = None):
     member = member or ctx.author
 
-    # Permissions
+    # Format timestamps
+    joined = f"<t:{int(member.joined_at.timestamp())}:F>" if member.joined_at else "Unknown"
+    created = f"<t:{int(member.created_at.timestamp())}:F>"
+
+    # Create Permission Summary
     perms = [perm.replace("_", " ").title() for perm, value in member.guild_permissions if value]
-    perms_text = ", ".join(perms[:10]) + ("..." if len(perms) > 10 else "")
+    perms_summary = ", ".join(perms[:8]) + ("..." if len(perms) > 8 else "")
 
-    message = f"""👤 User===={member}
-🆔 ID===={member.id}
-📅 Account Created====<t:{int(member.created_at.timestamp())}:F>
-🚪 Joined Server====<t:{int(member.joined_at.timestamp())}:F>
-🔐 Key Permissions===={perms_text or "None"}"""
+    # Badge logic
+    badges = []
+    if member.bot: badges.append("🤖 Bot")
+    if member.guild_permissions.administrator: badges.append("🛡️ Admin")
+    if member.id == ctx.guild.owner_id: badges.append("👑 Owner")
+    badge_text = " | ".join(badges) if badges else "Member"
 
-    view = UserInfoView(member)
-    await ctx.send(message, view=view)
+    # Build the Embed
+    embed = discord.Embed(
+        title=f"User Info - {member.name}",
+        color=member.color if member.color != discord.Color.default() else discord.Color.blurple()
+    )
+    embed.set_thumbnail(url=member.display_avatar.url)
+    embed.add_field(name="🆔 User ID", value=f"`{member.id}`", inline=False)
+    embed.add_field(name="🏷️ Status", value=badge_text, inline=True)
+    embed.add_field(name="🎭 Top Role", value=member.top_role.mention, inline=True)
+    embed.add_field(name="📅 Account Created", value=created, inline=False)
+    embed.add_field(name="🚪 Joined Server", value=joined, inline=False)
+    embed.add_field(name="🔐 Key Permissions", value=perms_summary or "None", inline=False)
+    embed.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.display_avatar.url)
 
+    # Send message with View
+    view = UserInfoView(member, ctx.author)
+    await ctx.send(embed=embed, view=view)
 
-@bot.command()
-async def avatar(ctx, member: discord.Member = None):
-    member = member or ctx.author
-    embed = discord.Embed(title=f"{member.name}'s Avatar")
-    embed.set_image(
-        url=member.avatar.url if member.avatar else member.default_avatar.url)
-    await ctx.send(embed=embed)
-
-
+# bot.run("YOUR_TOKEN_HERE")
 @bot.command()
 async def uptime(ctx):
     await ctx.send("I have been watching nature since I woke up!")
@@ -342,6 +591,8 @@ async def roll(ctx, sides: int = 6):
 @bot.command()
 async def coinflip(ctx):
     await ctx.send(f"🪙 It's **{random.choice(['Heads', 'Tails'])}**!")
+
+
 
 
 @bot.command()
@@ -426,12 +677,7 @@ async def purge(ctx, amount: int = 5):
     await ctx.send(f"🗑️ Deleted {amount} messages.", delete_after=3)
 
 
-@bot.command()
-@commands.has_permissions(administrator=True)
-async def nuke(ctx):
-    new = await ctx.channel.clone()
-    await ctx.channel.delete()
-    await new.send("💥 **Channel Nuked.**")
+
 
 
 @bot.command()
@@ -587,6 +833,11 @@ async def mock(ctx, *, text):
 @bot.command()
 async def vaporwave(ctx, *, text):
     await ctx.send(" ".join(text))
+
+
+@bot.command()
+async def hello(ctx):
+        await ctx.send(f"Hello {ctx.author.name}!, how are you? ")
 
 
 @bot.command()
@@ -902,6 +1153,32 @@ async def give_role(ctx, target: str, role: discord.Role):
                 f"❌ Could not find a member named `{target}`. Use a mention, ID, or type `all`."
             )
 
+
+@bot.tree.command(name="ping", description="Check the bot's latency")
+async def ping_slash(interaction: discord.Interaction):
+    await interaction.response.send_message(f"🏓 Pong! Latency: {round(bot.latency * 1000)}ms")
+
+@bot.tree.command(name="echo", description="Make the bot repeat your message")
+@app_commands.describe(message="The message to repeat")
+async def echo_slash(interaction: discord.Interaction, message: str):
+    await interaction.response.send_message(message)
+
+@bot.tree.command(name="user_info", description="Get information about a user")
+@app_commands.describe(member="The member to get info about")
+async def user_info_slash(interaction: discord.Interaction, member: discord.Member = None):
+    member = member or interaction.user
+    perms = [perm.replace("_", " ").title() for perm, value in member.guild_permissions if value]
+    perms_text = ", ".join(perms[:10]) + ("..." if len(perms) > 10 else "")
+    
+    embed = discord.Embed(title=f"User Info - {member}", color=member.color)
+    embed.add_field(name="ID", value=member.id, inline=True)
+    embed.add_field(name="Joined", value=f"<t:{int(member.joined_at.timestamp())}:F>", inline=True)
+    embed.add_field(name="Created", value=f"<t:{int(member.created_at.timestamp())}:F>", inline=True)
+    embed.add_field(name="Permissions", value=perms_text or "None", inline=False)
+    if member.avatar:
+        embed.set_thumbnail(url=member.avatar.url)
+    
+    await interaction.response.send_message(embed=embed)
 
 # --- RUN ---
 bot.run(TOKEN)
