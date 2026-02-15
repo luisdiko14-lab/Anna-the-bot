@@ -7,7 +7,7 @@ DISCORD_TOKEN = "MTM2MDMyOTgwOTY3MDA0NTczMQ.GLJsTj.DWHaO6L4NFviUTIMPgVHY9jxIH-hv
 
 
 [workflows]
-runButton = "Run Project"
+runButton = "Project"
 
 [[workflows.workflow]]
 name = "Run Project"
@@ -21,7 +21,29 @@ task = "packager.installForAll"
 task = "shell.exec"
 args = "python ping.py"
 
+[[workflows.workflow]]
+name = "Project"
+mode = "parallel"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Discord Bot (index.js)"
+
+[[workflows.workflow]]
+name = "Discord Bot (index.js)"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "node index.js"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
 [nix]
+packages = ["unixtools.ping", "killall"]
+channel = "stable-25_05"
 
 [[ports]]
 localPort = 80

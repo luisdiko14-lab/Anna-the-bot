@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands, tasks
 from discord import app_commands
-
+from typing import Optional
 import random
 import asyncio
 import os
@@ -87,8 +87,24 @@ async def on_ready():
                         await bot.tree.sync(guild=guild)
                         print(f"✅ Synced slash commands to {guild.name} ({guild.id})")
 
+@bot.event
+async def on_message(message):
+    # 1. Ignore bots (including yourself)
+    if message.author.bot:
+        return
 
-        # ==================================================
+    # 2. Check if the message starts with "anna" or "!"
+    # Using .lower() ensures "Anna" or "ANNA" also work
+    if message.content.lower().startswith(('anna', '!')):
+        async with message.channel.typing():
+            await asyncio.sleep(5)
+            # You can add a response here if you want!
+
+    # 3. Important: This allows your other @bot.commands to still run
+    await bot.process_commands(message)
+
+      
+# ==================================================
         # --- ERROR HANDLING ---
         # ==================================================
 
@@ -197,18 +213,30 @@ async def start(interaction: discord.Interaction):
                     )
                     await interaction.followup.send(message)
 
-
 @bot.tree.command(name="shutdown", description="Shuts down the bot (dev only)")
 async def shutdown(interaction: discord.Interaction):
-                    if (str(interaction.user) not in AUTHORIZED_USERS) and (interaction.user.name not in AUTHORIZED_USERS):
-                        return await interaction.response.send_message("⛔ Only authorized developers can shut me down.", ephemeral=True)
 
-                    await interaction.response.send_message("💤 Powering down... Goodbye.")
-                    print("Bot shutting down...")
-                    try:
-                        await bot.close()
-                    except Exception:
-                        pass
+        # ✅ Authorized usernames
+        AUTHORIZED_USERS = ["luisthegoat7301", "zelda_life"]  # Put exact usernames here (case-sensitive)
+
+        if interaction.user.name not in AUTHORIZED_USERS:
+            return await interaction.response.send_message(
+                "⛔ Only authorized developers can shut me down.",
+                ephemeral=True
+            )
+
+        await interaction.response.send_message("💤 Powering down... Goodbye.")
+
+        print(f"Shutdown initiated by {interaction.user}")
+
+        # Gracefully close Discord connection
+        await bot.close()
+
+        # Force stop Python process
+        import sys
+        sys.exit()
+
+                      
 
 
 @bot.tree.command(name="restart", description="Restarts the bot systems (dev only)")
@@ -239,146 +267,192 @@ async def restart(interaction: discord.Interaction):
                         pass
 
 
-bot.tree.command(
-    name="changeStatus",
-    description="Change the bot status: online, idle, dnd, or invisible"
-)
-async def changeStatus(interaction: discord.Interaction, status_name: str):
-    status_map = {
-        "online": discord.Status.online,
-        "idle": discord.Status.idle,
-        "dnd": discord.Status.dnd,
-        "invisible": discord.Status.invisible
-    }
 
-    choice = status_map.get(status_name.lower())
-    if choice:
-        # Stop any running status loop safely
-        if change_status.is_running():
-            change_status.stop()
+             
+# UI CLASSES (Must be defined globally)
+# ------------------------------------------------------------------
 
-        try:
-            await bot.change_presence(status=choice)
-        except Exception as e:
-            await interaction.response.send_message(f"❌ Failed to change status: {e}", ephemeral=True)
-            return
+class TypeModal(discord.ui.Modal, title="Set Activity Type"):
+    def __init__(self, parent_view):
+        super().__init__()
+        self.parent_view = parent_view
 
-        await interaction.response.send_message(f"✅ Status updated to **{status_name}**.", ephemeral=True)
-    else:
-        await interaction.response.send_message(
-            "❌ Invalid status! Choose from: online, idle, dnd, invisible",
-            ephemeral=True
-        )
-
-
-
-    @bot.tree.command(
-        name="changePresence",
-        description="Change presence: <type> <status> <text> (streaming needs a URL using `|`)"
+    activity = discord.ui.TextInput(
+        label="Activity Type",
+        placeholder="playing / watching / listening / streaming",
+        required=True,
+        max_length=64,
     )
-    async def changePresence(interaction: discord.Interaction, p_type: str, status: str, text: str):
-        """
-        Usage examples:
-          /changePresence playing online Chess with friends
-          /changePresence streaming online My Stream Title | https://twitch.tv/you
-        """
 
-        # --- Authorization ---
-        # Keep original behavior: allow either full "name#discrim" or username
-        user_checks = {str(interaction.user), interaction.user.name}
-        if not any(u in AUTHORIZED_USERS for u in user_checks):
-            return await interaction.response.send_message(
-                "❌ You are not authorized to use this command.",
-                ephemeral=True
-            )
-
-        # --- Maps & aliases ---
+    async def on_submit(self, interaction: discord.Interaction):
+        # Map string to Discord ActivityType
         type_map = {
-            "playing": discord.ActivityType.playing,
-            "play": discord.ActivityType.playing,
-            "watching": discord.ActivityType.watching,
-            "watch": discord.ActivityType.watching,
-            "listening": discord.ActivityType.listening,
-            "listen": discord.ActivityType.listening,
-            "streaming": discord.ActivityType.streaming,
-            "stream": discord.ActivityType.streaming
+            "playing": discord.ActivityType.playing, "play": discord.ActivityType.playing,
+            "watching": discord.ActivityType.watching, "watch": discord.ActivityType.watching,
+            "listening": discord.ActivityType.listening, "listen": discord.ActivityType.listening,
+            "streaming": discord.ActivityType.streaming, "stream": discord.ActivityType.streaming
         }
 
-        status_map = {
-            "online": discord.Status.online,
-            "idle": discord.Status.idle,
-            "dnd": discord.Status.dnd,
-            "invisible": discord.Status.invisible,
-            "offline": discord.Status.invisible  # alias
-        }
+        chosen = type_map.get(self.activity.value.lower())
+        if not chosen:
+            return await interaction.response.send_message("❌ Invalid type. Use: playing, watching, listening, or streaming.", ephemeral=True)
 
-        act_type = type_map.get(p_type.lower())
-        new_status = status_map.get(status.lower())
+        self.parent_view.activity_type = chosen
+        self.parent_view.activity_type_raw = self.activity.value
+        await interaction.response.edit_message(content=self.parent_view.build_preview(), view=self.parent_view)
 
-        if not act_type:
-            return await interaction.response.send_message(
-                "❌ Valid activity types: playing, watching, listening, streaming",
-                ephemeral=True
-            )
-        if not new_status:
-            return await interaction.response.send_message(
-                "❌ Valid statuses: online, idle, dnd, invisible",
-                ephemeral=True
-            )
+class MessageModal(discord.ui.Modal, title="Set Presence Message"):
+    def __init__(self, parent_view):
+        super().__init__()
+        self.parent_view = parent_view
 
-        # --- If bot is in a voice channel → force online ---
+    message = discord.ui.TextInput(
+        label="Message (Stream: Title | URL)",
+        placeholder="Chess  OR  My Stream | https://twitch.tv/...",
+        required=True,
+        style=discord.TextStyle.long,
+        max_length=200,
+    )
+
+    async def on_submit(self, interaction: discord.Interaction):
+        self.parent_view.presence_text = self.message.value
+        await interaction.response.edit_message(content=self.parent_view.build_preview(), view=self.parent_view)
+
+class PresenceView(discord.ui.View):
+    def __init__(self, ctx):
+        super().__init__(timeout=120)
+        self.ctx = ctx
+        self.invoker = ctx.author
+        # State
+        self.activity_type = None
+        self.activity_type_raw = None
+        self.presence_text = None
+        self.status = discord.Status.online
+        self.status_raw = "online"
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user != self.invoker:
+            await interaction.response.send_message("❌ This is not your menu.", ephemeral=True)
+            return False
+        return True
+
+    def build_preview(self, confirmed=False):
+        t = self.activity_type_raw or "—"
+        m = self.presence_text or "—"
+        s = self.status_raw
+        if confirmed:
+            return f"✅ **Applied:**\nType: **{t}**\nMsg: {m}\nStatus: **{s}**"
+        return f"**Preview**\nType: `{t}`\nMessage: `{m}`\nStatus: `{s}`\n\n(Only {self.invoker.display_name} can interact)"
+
+    @discord.ui.button(label="Set Type", style=discord.ButtonStyle.secondary)
+    async def set_type(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(TypeModal(parent_view=self))
+
+    @discord.ui.button(label="Set Message", style=discord.ButtonStyle.secondary)
+    async def set_message(self, interaction: discord.Interaction, button: discord.ui.Button):
+        await interaction.response.send_modal(MessageModal(parent_view=self))
+
+    @discord.ui.button(label="Confirm", style=discord.ButtonStyle.success)
+    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
+        if not self.activity_type:
+            return await interaction.response.send_message("❌ Set Activity Type first.", ephemeral=True)
+        if not self.presence_text:
+            return await interaction.response.send_message("❌ Set Message first.", ephemeral=True)
+
         try:
-            if interaction.guild:
-                me = interaction.guild.get_member(bot.user.id)
-                if me and getattr(me, "voice", None) and getattr(me.voice, "channel", None):
-                    new_status = discord.Status.online
-        except Exception:
-            # don't crash on odd guild/member states
-            pass
-
-        # --- Build activity (special-case streaming which needs a URL) ---
-        activity = None
-        try:
-            if act_type == discord.ActivityType.streaming:
-                # Expect "Title | url" or any text containing a URL
-                if "|" in text:
-                    title, url = map(str.strip, text.split("|", 1))
+            act = None
+            if self.activity_type == discord.ActivityType.streaming:
+                if "|" in self.presence_text:
+                    title, url = map(str.strip, self.presence_text.split("|", 1))
+                    act = discord.Streaming(name=title, url=url)
                 else:
-                    # attempt to pull URL from text
-                    url_search = re.search(r"https?://\S+", text)
-                    url = url_search.group(0) if url_search else None
-                    title = text.replace(url, "").strip() if url else text
-
-                if not url:
-                    return await interaction.response.send_message(
-                        "❌ Streaming presence requires a URL. Example:\n"
-                        "`/changePresence streaming online My Stream Title | https://twitch.tv/you`",
-                        ephemeral=True
-                    )
-
-                # discord.Streaming provides the proper Streaming activity object
-                activity = discord.Streaming(name=title if title else "Streaming", url=url)
+                    return await interaction.response.send_message("❌ Streaming needs `Title | URL`", ephemeral=True)
             else:
-                activity = discord.Activity(type=act_type, name=text)
-        except Exception as e:
-            return await interaction.response.send_message(
-                f"❌ Failed to prepare activity: {e}",
-                ephemeral=True
-            )
+                act = discord.Activity(type=self.activity_type, name=self.presence_text)
 
-        # --- Apply presence ---
+            await self.ctx.bot.change_presence(status=self.status, activity=act)
+
+            for child in self.children:
+                child.disabled = True
+            await interaction.response.edit_message(content=self.build_preview(confirmed=True), view=self)
+            self.stop()
+        except Exception as e:
+            await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
+
+class StatusView(discord.ui.View):
+    def __init__(self, ctx):
+        super().__init__(timeout=120)
+        self.ctx = ctx
+        self.invoker = ctx.author
+        self.chosen = discord.Status.online
+        self.chosen_raw = "online"
+
+    async def interaction_check(self, interaction: discord.Interaction) -> bool:
+        if interaction.user != self.invoker:
+            await interaction.response.send_message("❌ Not your menu.", ephemeral=True)
+            return False
+        return True
+
+    def build_preview(self, confirmed=False):
+        if confirmed:
+            return f"✅ Status updated to **{self.chosen_raw}**"
+        return f"**Preview Status**: `{self.chosen_raw}`"
+
+    async def update(self, interaction):
+        await interaction.response.edit_message(content=self.build_preview(), view=self)
+
+    @discord.ui.button(label="Online", style=discord.ButtonStyle.primary)
+    async def online(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.chosen, self.chosen_raw = discord.Status.online, "online"
+        await self.update(interaction)
+
+    @discord.ui.button(label="Idle", style=discord.ButtonStyle.secondary)
+    async def idle(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.chosen, self.chosen_raw = discord.Status.idle, "idle"
+        await self.update(interaction)
+
+    @discord.ui.button(label="DND", style=discord.ButtonStyle.danger)
+    async def dnd(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.chosen, self.chosen_raw = discord.Status.dnd, "dnd"
+        await self.update(interaction)
+
+    @discord.ui.button(label="Invisible", style=discord.ButtonStyle.secondary)
+    async def invisible(self, interaction: discord.Interaction, button: discord.ui.Button):
+        self.chosen, self.chosen_raw = discord.Status.invisible, "invisible"
+        await self.update(interaction)
+
+    @discord.ui.button(label="Confirm", style=discord.ButtonStyle.success)
+    async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
         try:
-            await bot.change_presence(status=new_status, activity=activity)
+            await self.ctx.bot.change_presence(status=self.chosen)
+            for child in self.children:
+                child.disabled = True
+            await interaction.response.edit_message(content=self.build_preview(confirmed=True), view=self)
+            self.stop()
         except Exception as e:
-            return await interaction.response.send_message(
-                f"❌ Failed to change presence: {e}",
-                ephemeral=True
-            )
+            await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
 
-        await interaction.response.send_message(
-            f"✅ Presence updated: **{status}** | {p_type.title()} **{text}**",
-            ephemeral=True
-        )
+# ------------------------------------------------------------------
+# COMMANDS
+# ------------------------------------------------------------------
+@bot.command(name="changePresence")
+async def changePresence(ctx):
+    # Checks the username (e.g., 'johndoe') against your list
+    if ctx.author.name not in AUTHORIZED_USERS:
+        return await ctx.send("❌ Unauthorized.", delete_after=5)
+
+    view = PresenceView(ctx)
+    await ctx.send(view.build_preview(), view=view)
+
+@bot.command(name="changeStatus")
+async def changeStatus(ctx):
+    # Checks the username (e.g., 'johndoe') against your list
+    if ctx.author.name not in AUTHORIZED_USERS:
+        return await ctx.send("❌ Unauthorized.", delete_after=5)
+
+    view = StatusView(ctx)
+    await ctx.send(view.build_preview(), view=view)
+
 
 
 
@@ -416,6 +490,8 @@ async def makerole(interaction: discord.Interaction, perm: str, name: str):
 # ==============================================================================
 
 
+
+
 @bot.command()
 async def help(ctx):
     embed = discord.Embed(title="🌿 NatureBot Help",
@@ -428,7 +504,7 @@ async def help(ctx):
     embed.add_field(
         name="General",
         value=
-        "`ping`, `serverinfo`, `userinfo`, `avatar`, `uptime`, `invite`, `poll`, `8ball`, `roll`, `coinflip`, `slap`, `hug`, `pat`"
+        "`ping`, `serverinfo`, `userinfo`, `avatar`, `uptime`, `invite`, `poll`, `8ball`, `roll`, `coinflip`, `slap`, `hug`, `pat`,  'rps' "
     )
     embed.add_field(
         name="Moderation",
@@ -643,11 +719,7 @@ async def uptime(ctx):
     await ctx.send("I have been watching nature since I woke up!")
 
 
-@bot.command()
-async def invite(ctx):
-    await ctx.send(
-        "Invite me: https://discord.com/oauth2/authorize?client_id=1360329809670045731&scope=identify+bot%20applications.commands&permissions=1099511627775&redirect_uri=https%3A%2F%2Fsites.google.com%2Fview%2Finfo-about-anna%2Fhome&response_type=code"
-    )
+
 
 
 @bot.command()
@@ -658,6 +730,13 @@ async def poll(ctx, *, question):
     msg = await ctx.send(embed=embed)
     await msg.add_reaction("👍")
     await msg.add_reaction("👎")
+
+INVITE_LINK = "https://discord.com/oauth2/authorize?client_id=1360329809670045731&permissions=8&response_type=code&redirect_uri=https%3A%2F%2Fsites.google.com%2Fview%2Finfo-about-anna%2Fhome&integration_type=0&scope=identify+email+connections+bot"
+
+@bot.command()
+async def invite(ctx):
+    """Sends the bot's invite link"""
+    await ctx.send(f"🌟 Invite me to your server using this link:\n{INVITE_LINK}")
 
 
 @bot.command(aliases=['8ball'])
@@ -693,7 +772,52 @@ async def slap(ctx, member: discord.Member):
 
 
 
- 
+
+@bot.tree.command(name="giveviewacessandmsg", description="Give a user access to a channel and send a message")
+@app_commands.describe(user="Select user", channel="Select channel")
+async def giveviewacessandmsg(
+    interaction: discord.Interaction,
+    user: discord.Member,
+    channel: discord.TextChannel
+):
+
+    await interaction.response.defer(ephemeral=True)
+
+    # Check if bot has permission
+    if not interaction.guild.me.guild_permissions.manage_channels:
+        return await interaction.followup.send(
+            "❌ I need Manage Channels permission.",
+            ephemeral=True
+        )
+
+    try:
+        await channel.set_permissions(
+            user,
+            view_channel=True,
+            send_messages=True
+        )
+
+        await channel.send(f"👋 {user.mention}, you now have access to this channel!")
+
+        await interaction.followup.send(
+            "✅ Done successfully.",
+            ephemeral=True
+        )
+
+    except discord.Forbidden:
+        await interaction.followup.send(
+            "❌ Permission error. My role must be above the user and channel.",
+            ephemeral=True
+        )
+
+    except Exception as e:
+        await interaction.followup.send(
+            f"❌ Unexpected error: {e}",
+            ephemeral=True
+        )
+
+
+
 
 
 @bot.command()
@@ -701,10 +825,60 @@ async def pat(ctx, member: discord.Member):
     await ctx.send(f"**{ctx.author.name}** pats **{member.name}** on the head."
                    )
 
+@bot.tree.command(name="showchannels", description="Show channels from a server")
+@app_commands.describe(
+    server="Server name (must share with bot)",
+    amount="How many channels to show (0-250)"
+)
+async def showchannels(
+    interaction: discord.Interaction,
+    server: str,
+    amount: app_commands.Range[int, 0, 250]
+):
 
-@bot.command()
-async def kiss(ctx, member: discord.Member):
-    await ctx.send(f"😘 **{ctx.author.name}** kisses **{member.name}**!")
+    await interaction.response.defer(ephemeral=True)
+
+    # Find the guild
+    guild = discord.utils.get(bot.guilds, name=server)
+
+    if not guild:
+        return await interaction.followup.send(
+            "❌ Server not found or I am not in that server.",
+            ephemeral=True
+        )
+
+    # Get channels (sorted by position)
+    channels = sorted(guild.channels, key=lambda c: c.position)
+
+    # Apply limit
+    if amount == 0:
+        amount = len(channels)
+
+    channels = channels[:amount]
+
+    if not channels:
+        return await interaction.followup.send(
+            "⚠️ No channels found.",
+            ephemeral=True
+        )
+
+    # Format output
+    output = "\n".join(
+        f"{i+1}. #{channel.name} ({channel.__class__.__name__})"
+        for i, channel in enumerate(channels)
+    )
+
+    # Discord message limit protection
+    if len(output) > 1900:
+        output = output[:1900] + "\n... truncated"
+
+    await interaction.followup.send(
+        f"📂 **Channels in {guild.name}**\n\n{output}",
+        ephemeral=True
+    )
+
+
+
 
 
 # ==============================================================================
@@ -754,6 +928,60 @@ async def timeout(ctx, member: discord.Member, minutes: int):
 async def untimeout(ctx, member: discord.Member):
     await member.timeout(None)
     await ctx.send(f"🔊 Removed timeout for {member}")
+
+
+@bot.command(name="specs")
+async def specs(ctx):
+    embed = discord.Embed(
+        title="🚀 Mega Ultra Server Specs",
+        description="DESKTOP-LUIS-VITRUAL-MACCHINE",
+        color=discord.Color.purple()
+    )
+
+    embed.add_field(
+        name="🧠 RAM",
+        value="999 TB DDR5 Ultra-Speed Memory",
+        inline=False
+    )
+
+    embed.add_field(
+        name="💾 Storage",
+        value="350 PB NVMe Gen5 SSD Storage",
+        inline=False
+    )
+
+    embed.add_field(
+        name="⚙️ CPU",
+        value="11500 Cores • 7750 Threads • 1000.0GHz Boost * AMD Ryzen 9 9950X3D/9950X",
+        inline=False
+    )
+
+    embed.add_field(
+        name="📂 File Capacity",
+        value="100,000 Files Supported",
+        inline=True
+    )
+
+    embed.add_field(
+        name="📜 Code Capacity",
+        value="1000,000,000 Lines of Code",
+        inline=True
+    )
+
+    embed.add_field(
+        name="🌐 Network",
+        value="975 Gbps Dedicated Uplink",
+        inline=False
+    )
+
+    embed.set_footer(text="Powered by Omega Ultra Plan 20  1,100,000$ cost.🔥")
+
+    await ctx.send(embed=embed)
+
+    
+@bot.command()
+async def giveacess(ctx, *, user_input: str):
+        await ctx.send(f"It does successfully got access for {user_input}")
 
 
 @bot.command()
@@ -1046,6 +1274,28 @@ async def pickagain(ctx):
         "Red", "Blue", "Green", "Purple", "Yellow", "Orange", "Pink", "Black"
     ]
     await ctx.send(f"🎨 Your random color is: **{random.choice(colors)}**")
+
+@bot.command()
+async def a(ctx):
+    # Get the member by name#discriminator
+    member = discord.utils.get(ctx.guild.members, name="elian01676")
+    if not member:
+        await ctx.send("User not found.")
+        return
+
+    # Get the channel by ID
+    channel = ctx.guild.get_channel(1400193275498987560)
+    if not channel:
+        await ctx.send("Channel not found.")
+        return
+
+    # Set permissions for the user
+    overwrite = channel.overwrites_for(member)
+    overwrite.view_channel = True
+    overwrite.send_messages = True
+    await channel.set_permissions(member, overwrite=overwrite)
+
+    await ctx.send(f"✅ {member.mention} now has access to send messages and view the channel.")
 
 
 @bot.command()

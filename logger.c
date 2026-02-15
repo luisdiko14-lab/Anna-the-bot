@@ -855,3 +855,1589 @@ Message    : !changePresence playing idle 8-bitbowser and kingjayjungle are the 
 Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
 Server     : Anna-the-Guardian Support Server (1359260475799375944)
 ==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 12:52:57
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : userinfo
+Message    : annauserinfo
+Channel    : 『🎙️』│ᴅᴜᴏ (1437529149085581482)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:05:31
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : !changePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:11:21
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : !changePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:21:48
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : !changePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:22:00
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : annachangePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:22:27
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : annachangePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:22:29
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : annachangePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:22:30
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : annachangePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:22:36
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : annachangePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:22:40
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : !changePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:23:12
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : annachangePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:23:14
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : annachangePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:24:55
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : annachangePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:25:28
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changeStatus
+Message    : !changeStatus
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:25:40
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changeStatus
+Message    : !changeStatus
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:27:25
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : !changePresence hi
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:29:01
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : !changePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 13:31:00
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : changePresence
+Message    : !changePresence
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 14:12:15
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : aserverSDSD09
+Message    : !aserverSDSD09
+Channel    : 『⚔』│ᴍᴏᴅᴇʀᴀᴛᴏʀ-ᴏɴʟʏ (1360624459236638914)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 14:12:39
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : aserverSDSD09
+Message    : !aserverSDSD09
+Channel    : 『🧪』│ᴛᴇsᴛ-𝟷𝟶𝟷 (1371137261294452958)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 14:13:09
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : aserverSDSD09
+Message    : !aserverSDSD09
+Channel    : 『🧪』│ᴛᴇsᴛ-𝟷𝟶𝟷 (1371137261294452958)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 14:34:21
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : say
+Message    : annasay <@1388261108460290201> That is true, but with this coding that <@1370394029665030295>  has done to me i can 24/7 check for violations.
+Channel    : 『⚠️』│sᴇʀᴠᴇʀ-ʀᴀᴅᴀʀ (1440719097884184686)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 14:37:05
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : dm
+Message    : annadm <@1360329809670045731> {check.violations.from.user.} , {user.epic666} ,   || Run logger.for.epic666.slogger.checker.txt
+Channel    : 『⚠️』│sᴇʀᴠᴇʀ-ʀᴀᴅᴀʀ (1440719097884184686)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 14:41:34
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : giveacess
+Message    : annagiveacess DM, read Channels, all, administrator
+Channel    : 『⚠️』│sᴇʀᴠᴇʀ-ʀᴀᴅᴀʀ (1440719097884184686)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 14:43:24
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command    : giveacess
+Message    : annagiveacess Gemini 4 Pro (v2,8 by luis) and talking with module = thinking pro v2
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 15:45:48
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : serverinfo
+Message    : !serverinfo
+Channel    : 『❤️』│ᴠᴀʟᴇɴᴛɪɴᴇ-ᴄʜᴀᴛ (1471204363975266547)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 15:46:29
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : changePresence
+Message    : !changePresence <@967200130757439580>
+Channel    : 『❤️』│ᴠᴀʟᴇɴᴛɪɴᴇ-ᴄʜᴀᴛ (1471204363975266547)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 15:48:13
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : changeStatus
+Message    : !changeStatus
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-13 15:51:22
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : changeStatus
+Message    : !changeStatus
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:19:06
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : joinvc
+Message    : annajoinvc
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:19:37
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : joinvc
+Message    : annajoinvc
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:19:37
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : joinvc
+Message    : annajoinvc
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:20:09
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : say
+Message    : annasay hello luis
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:20:44
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : react
+Message    : !react 1472145380404625512 <:Mew:1374946370250870814>
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:21:04
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : react
+Message    : !react 1472145380404625512 <:Happy_face:1376165723285491863>
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:21:44
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : react
+Message    : !react 1
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:21:50
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : react
+Message    : !react 1 <a:loading_w:1389534119125455078>
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:22:05
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : react
+Message    : !react 1472145380404625512 <a:loading_w:1389534119125455078>
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:25:53
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : react
+Message    : !react 1472146421959360605 ❤️
+Channel    : 『📣』│ᴀɴɴᴏᴜɴᴄᴇᴍᴇɴᴛs (1399755724216864789)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:28:36
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : react
+Message    : !react 1472147418609881119 ❤️
+Channel    : 『❤️』│ᴠᴀʟᴇɴᴛɪɴᴇ-ᴄʜᴀᴛ (1471204363975266547)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 08:28:58
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Giveaways Ping, Announcements Ping, Ask, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, VIP, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : say
+Message    : annasay Happy valentines everyone!
+Channel    : 『❤️』│ᴠᴀʟᴇɴᴛɪɴᴇ-ᴄʜᴀᴛ (1471204363975266547)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 12:41:20
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : YouTubers, Quarantine
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : a
+Message    : annaa
+Channel    : 『📜』│ʀᴜʟᴇs (1393261314612400369)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 12:41:49
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : YouTubers, Quarantine
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : purge
+Message    : annapurge 1
+Channel    : 『📜』│ʀᴜʟᴇs (1393261314612400369)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 12:45:00
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : YouTubers, Quarantine
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : purge
+Message    : annapurge 2
+Channel    : 『📜』│ʀᴜʟᴇs (1393261314612400369)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 12:48:53
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : YouTubers, Quarantine
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : a
+Message    : !a
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 12:51:41
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : YouTubers, Quarantine
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : purge
+Message    : annapurge 3
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 12:54:42
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : YouTubers, Quarantine
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : purge
+Message    : annapurge 2
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 12:54:51
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : YouTubers, Quarantine
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : purge
+Message    : annapurge 1
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 12:54:59
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : YouTubers, Quarantine
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : purge
+Message    : annapurge 1
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 12:59:03
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : YouTubers, Quarantine
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : react
+Message    : !react 1472215492226973901 💀
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 13:10:59
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : YouTubers, Quarantine
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : purge
+Message    : annapurge 1
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 14:32:16
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : help
+Message    : annahelp
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 14:33:12
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : help
+Message    : annahelp
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 14:33:21
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : say
+Message    : annasay hello
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 14:33:42
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : say
+Message    : annasay hi
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 14:48:51
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : help
+Message    : annahelp
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 14:57:16
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : False
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : help
+Message    : annahelp
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 15:25:43
+User       : zelda_life (967200130757439580)
+Admin      : True
+Roles      : Revive Chat, Ask, They/them, She/her, Members 👊, Supporters ❤️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers, Developer (Owner) 👾
+Avatar CDN : https://cdn.discordapp.com/avatars/967200130757439580/358add4c876dcc39e2fc45588c16c27b.png?size=1024
+
+Command    : ping
+Message    : !ping
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1360840138078552094)
+Server     : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:27:43
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : help
+Message    : annahelp
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:40:33
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : joinvc
+Message    : annajoinvc
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:41:10
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : joinvc
+Message    : annajoinvc
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:41:34
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay good.
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:41:54
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay yepi!
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:42:31
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : joinvc
+Message    : annajoinvc
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:43:15
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : joinvc
+Message    : annajoinvc
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:43:47
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay yes!
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:44:03
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay i want to chill.
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:44:59
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay MEW
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:45:08
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay Hello!
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:45:11
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : hello
+Message    : annahello
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 16:45:22
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay good.
+Channel    : 『🎵』│𝕸𝖚𝖘𝖎𝖈 𝕹𝖎𝖌𝖍𝖙 ♡ (1400321958385815643)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:40:04
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : changePfp
+Message    : !changePfp
+Channel    : 『⚙️』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs-𝟸 (1399889029683482714)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:42:41
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay hello guys!
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:43:46
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : annareact 1472302234627739828 ❤️
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:44:23
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : annareact 1472302234627739828 <a:RedPinkFlame:1467917605661577257>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:44:50
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : hello
+Message    : annahello
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:45:06
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay yeah same.
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:45:20
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay 😄
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:46:00
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay hello
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:46:33
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay how is everyone doing?
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:46:52
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay Yay!
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:47:29
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : !react 1472303100772749524  <a:DanceRainbow:1467921585511071898>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:48:28
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay super cool <@1413303707390705788>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:49:00
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : !react 1472303406285852705 <:Heart_Holographic:1432567395821813770>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:50:13
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : hello
+Message    : annahello
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:50:31
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay yes <@967200130757439580> !
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 18:50:46
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : !react 1472303962756743209 ❤️
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:09:57
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay Using module Anna The Guardian 2 Pro Max Ultra + Thinking * **By luis**
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:10:26
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : !react 1472308905731428546 <a:ShinyMewPokemon:1467219108671258624>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:13:57
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : !react 1472309853908242533 💀
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:17:10
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : changePresence
+Message    : !changePresence
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:20:39
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : !react 1472311476315361443 <a:fire_black:1388347062667710605>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:43:43
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : !react 1472309177153224766 ❤️
+Channel    : 『🎨』│ᴀʀᴛ (1400194038656663623)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:44:09
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay I dont have a birthday <@&1393288669992976474>  😭
+Channel    : 『🎂』│ʙɪʀᴛʜᴅᴀʏs (1467565286017335550)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:45:08
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay hello <@&1400313070378684536>  Chat
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:45:14
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay <@&1400313070378684536>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:45:18
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay hello
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:45:33
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay hi <@1388261108460290201>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:45:48
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay hi <@967200130757439580>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:47:40
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay hi!
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:48:15
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay hi chat
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:48:33
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : !say nothing.
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:51:11
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : specs
+Message    : !specs
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:53:07
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : specs
+Message    : !specs
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 19:56:12
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : specs
+Message    : !specs
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:00:28
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : specs
+Message    : !specs
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:02:38
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : specs
+Message    : !specs
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:04:24
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay hello
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:04:51
+User       : superbala04 (1017416401381773392)
+Admin      : False
+Roles      : Level 5, Level 100, Joke Announcements Ping, Announcements Ping, He/him, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, Lucky Members, K E Y, Incredibox Fans, Revive Chat, Respect, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators
+Avatar CDN : https://cdn.discordapp.com/avatars/1017416401381773392/f58fad6861f4264383935b059d42132c.png?size=1024
+
+Command    : say
+Message    : annasay Wsp
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:05:05
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : hello
+Message    : annahello
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:05:23
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay ye same.
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:05:39
+User       : superbala04 (1017416401381773392)
+Admin      : False
+Roles      : Level 5, Level 100, Joke Announcements Ping, Announcements Ping, He/him, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, Lucky Members, K E Y, Incredibox Fans, Revive Chat, Respect, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators
+Avatar CDN : https://cdn.discordapp.com/avatars/1017416401381773392/f58fad6861f4264383935b059d42132c.png?size=1024
+
+Command    : say
+Message    : annasay Luis is the goat
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:06:02
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : !react 1472322927352352860 <:Heart_Holographic:1432567395821813770>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:14:03
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay ‎
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:15:22
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : say
+Message    : annasay Thinking..
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:16:21
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : !react 1472325544619147457 <:Heart_Holographic:1432567395821813770>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:18:51
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : serverinfo
+Message    : annaserverinfo
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:21:20
+User       : zelda_life (967200130757439580)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Mod Teaser Ping, Incredibox News Ping, Joke Announcements Ping, Announcements Ping, Ask, They/them, She/her, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, Incredibox Fans, Revive Chat, Composers, YouTubers, Coders, Artists, Respect, DJ, Server Boosters :), Super Boosters {Level-2}, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin, ☾ ⫸👑⫷ ☽, ♕ Server Owner 👑 ☆
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/967200130757439580/avatars/a_1d6f06b5f37ec9773b5a91cb288f6fa5.gif?size=1024
+
+Command    : serverinfo
+Message    : annaserverinfo
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-14 20:22:24
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : userinfo
+Message    : annauserinfo <@967200130757439580>
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-15 09:49:35
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : react
+Message    : !react 1472529951898210380 <:Heart_Holographic:1432567395821813770>
+Channel    : 『🎨』│ᴀʀᴛ (1400194038656663623)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-15 09:56:08
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : specs
+Message    : annaspecs
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-15 09:57:27
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : specs
+Message    : annaspecs
+Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
