@@ -4,7 +4,6 @@ import asyncio
 import random
 from dataclasses import dataclass
 from typing import List, Optional
-
 import discord
 from discord import app_commands
 from discord.ext import commands
@@ -35,15 +34,13 @@ YTDL_OPTS = {
     "default_search": "auto",
     "source_address": "0.0.0.0",
     "extract_flat": False,
-    "forceduration": True,
     "simulate": False,
     "noplaylist": True
 }
 ytdl = yt_dlp.YoutubeDL(YTDL_OPTS)
 
-FFMPEG_OPTIONS = (
-    "-nostdin -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 -vn"
-)
+# Options string for FFmpeg (passed as 'options' param)
+FFMPEG_OPTIONS = "-nostdin -reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5 -vn"
 
 @dataclass
 class Song:
@@ -91,9 +88,7 @@ async def extract_info(query: str):
     except Exception as e:
         raise e
 
-    # If it's a playlist or a search result we may get 'entries'
-    if "entries" in data:
-        # take first entry
+    if isinstance(data, dict) and "entries" in data:
         entry = data["entries"][0]
         return entry
     return data
@@ -123,6 +118,15 @@ def make_embed_queue(gs: GuildState):
     embed = discord.Embed(title="🎵 Queue", description=desc, color=0xFF0000)
     return embed
 
+def find_sendable_text_channel(guild: discord.Guild) -> Optional[discord.TextChannel]:
+    # prefer system channel, then first channel we can send in
+    if guild.system_channel and guild.system_channel.permissions_for(guild.me).send_messages:
+        return guild.system_channel
+    for channel in guild.text_channels:
+        if channel.permissions_for(guild.me).send_messages:
+            return channel
+    return None
+
 def create_controls_view(guild_id: int):
     class ControlsView(discord.ui.View):
         def __init__(self):
@@ -151,7 +155,7 @@ def create_controls_view(guild_id: int):
             vc = interaction.guild.voice_client
             if not vc or not vc.is_connected():
                 await interaction.response.send_message("Nothing is playing.", ephemeral=True); return
-            vc.stop()  # triggers after callback -> plays next
+            vc.stop()
             await interaction.response.send_message("⏭️ Skipped", ephemeral=True)
 
         @discord.ui.button(label="Stop", style=discord.ButtonStyle.danger, custom_id=f"stop-{guild_id}")
@@ -178,40 +182,38 @@ def create_controls_view(guild_id: int):
 
     return ControlsView()
 
-# ---------- playback flow ----------
+# ---------- playback ----------
 async def play_next_in_guild(guild: discord.Guild):
     gs = guild_state(guild.id)
     vc = guild.voice_client
     if not vc or not vc.is_connected():
         return
 
-    # Loop track
+    # decide which song to play
     if gs.loop_track and gs.current:
-        # replay the current
         song = gs.current
     else:
         if not gs.queue:
-            # nothing left
-            if not gs.twentyfourseven:
-                # disconnect
-                await vc.disconnect()
             gs.current = None
+            if not gs.twentyfourseven:
+                try:
+                    await vc.disconnect()
+                except Exception:
+                    pass
             return
-        # take next
         song = gs.queue.pop(0)
+        # if queue-looping, push back the current later in caller after setting current
         gs.current = song
 
-    # create source and play
     try:
-        ffmpeg_opts = FFMPEG_OPTIONS.split()
         source = discord.PCMVolumeTransformer(
             discord.FFmpegPCMAudio(song.stream_url, executable="ffmpeg", options=FFMPEG_OPTIONS),
             volume=gs.volume
         )
+
         def after_playing(err):
             if err:
                 print("Player after error:", err)
-            # schedule coroutine to continue playback
             coro = play_next_in_guild(guild)
             fut = asyncio.run_coroutine_threadsafe(coro, bot.loop)
             try:
@@ -221,28 +223,33 @@ async def play_next_in_guild(guild: discord.Guild):
 
         vc.play(source, after=after_playing)
 
-        # send/update now playing embed + controls
+        # send or edit now-playing message
         try:
             embed = make_embed_nowplaying(song)
             view = create_controls_view(guild.id)
+            send_channel = find_sendable_text_channel(guild)
             if gs.current_msg and not gs.current_msg.deleted:
-                await gs.current_msg.edit(embed=embed, view=view)
+                try:
+                    await gs.current_msg.edit(embed=embed, view=view)
+                except Exception:
+                    # fallback to sending new message
+                    gs.current_msg = await (send_channel.send(embed=embed, view=view) if send_channel else None)
             else:
-                gs.current_msg = await guild.text_channels[0].send(embed=embed, view=view)
+                if send_channel:
+                    gs.current_msg = await send_channel.send(embed=embed, view=view)
         except Exception:
-            # fall back to sending to the default text channel
             pass
 
     except Exception as e:
         print("Error playing track:", e)
-        # try next
+        # try next track
         await play_next_in_guild(guild)
 
-# ---------- slash commands ----------
+# ---------- bot events ----------
 @bot.event
 async def on_ready():
     print(f"Logged in as {bot.user} ({bot.user.id})")
-    # start heartbeat webserver
+    # start webserver
     bot.loop.create_task(start_webserver())
     try:
         await bot.tree.sync()
@@ -250,19 +257,50 @@ async def on_ready():
     except Exception as e:
         print("Failed to sync commands:", e)
 
-# Play command (slash)
+# ---------- slash commands ----------
 @bot.tree.command(name="play", description="Plays a song")
 @app_commands.describe(query="Song name or URL")
 async def slash_play(interaction: discord.Interaction, query: str):
     await interaction.response.defer()
     if not interaction.user.voice or not interaction.user.voice.channel:
-        await interaction.followup.send("Join a voice channel first!", ephemeral=True); return
+        await interaction.followup.send("Join a voice channel first!", ephemeral=True)
+        return
 
-    # ensure voice connection
     channel = interaction.user.voice.channel
-    vc = interaction.guild.voice_client
-    if not vc or not vc.is_connected():
-        vc = await channel.connect()
+    guild = interaction.guild
+
+    # Connection logic: use existing vc, move if in different channel, otherwise connect
+    vc = guild.voice_client  # may be None
+    try:
+        if vc and vc.is_connected():
+            # if connected to a different channel, move
+            if vc.channel.id != channel.id:
+                try:
+                    await vc.move_to(channel)
+                except Exception as e:
+                    # fallback: disconnect and connect fresh
+                    try:
+                        await vc.disconnect()
+                        vc = await channel.connect()
+                    except Exception as e2:
+                        await interaction.followup.send("Failed to move or reconnect to voice channel.", ephemeral=True)
+                        return
+        else:
+            # not connected at all -> connect
+            vc = await channel.connect()
+    except discord.errors.ClientException:
+        # Connect raised because bot is already connected somewhere; re-fetch and move if needed
+        vc = guild.voice_client
+        if vc and vc.channel.id != channel.id:
+            try:
+                await vc.move_to(channel)
+            except Exception:
+                # last-resort: reply and return
+                await interaction.followup.send("I couldn't join the voice channel. I'm already connected elsewhere.", ephemeral=True)
+                return
+    except Exception as e:
+        await interaction.followup.send("Failed to connect to voice channel.", ephemeral=True)
+        return
 
     # extract track info
     try:
@@ -271,26 +309,30 @@ async def slash_play(interaction: discord.Interaction, query: str):
         await interaction.followup.send("Failed to fetch track. Try a different link or search.", ephemeral=True)
         return
 
-    # yt-dlp may give a direct url in 'url' or 'formats'
-    stream_url = info.get("url") or info.get("formats", [{}])[-1].get("url")
+    # pick stream url
+    stream_url = info.get("url") or (info.get("formats", [{}])[-1].get("url") if info.get("formats") else None)
     title = info.get("title", "Unknown title")
     webpage = info.get("webpage_url", info.get("webpage_url") or query)
     duration = info.get("duration")
 
-    song = Song(title=title, webpage_url=webpage, stream_url=stream_url, duration=duration, requester=interaction.user)
+    if not stream_url:
+        await interaction.followup.send("Couldn't retrieve stream URL for this track.", ephemeral=True)
+        return
 
-    gs = guild_state(interaction.guild.id)
-    if vc.is_playing() or vc.is_paused() or gs.current:
+    song = Song(title=title, webpage_url=webpage, stream_url=stream_url, duration=duration, requester=interaction.user)
+    gs = guild_state(guild.id)
+
+    if (vc.is_playing() or vc.is_paused()) or gs.current:
         gs.queue.append(song)
         embed = discord.Embed(description=f"Added [{title}]({webpage}) to the queue", color=0xFF0000)
         embed.set_footer(text=f"Requested by {interaction.user}", icon_url=interaction.user.display_avatar.url)
         await interaction.followup.send(embed=embed)
     else:
         gs.current = song
-        # start playing immediately
         await interaction.followup.send("Now playing...", ephemeral=True)
-        await play_next_in_guild(interaction.guild)
+        await play_next_in_guild(guild)
 
+# ---------- other commands (unchanged except small safety checks) ----------
 @bot.tree.command(name="pause", description="Pause the current song")
 async def slash_pause(interaction: discord.Interaction):
     vc = interaction.guild.voice_client
@@ -396,7 +438,6 @@ async def slash_volume(interaction: discord.Interaction, level: int):
     if level < 0 or level > 100:
         await interaction.response.send_message("Volume must be 0-100", ephemeral=True); return
     gs.volume = level / 100.0
-    # update current playing source volume (if any)
     vc = interaction.guild.voice_client
     if vc and vc.source and isinstance(vc.source, discord.PCMVolumeTransformer):
         vc.source.volume = gs.volume
@@ -429,7 +470,6 @@ async def slash_ping(interaction: discord.Interaction):
 
 @bot.tree.command(name="stats", description="Shows bot statistics")
 async def slash_stats(interaction: discord.Interaction):
-    # basic stats
     total_guilds = len(bot.guilds)
     total_users_cached = len(bot.users)
     active_players = sum(1 for gs in GUILDS.values() if gs.current)
