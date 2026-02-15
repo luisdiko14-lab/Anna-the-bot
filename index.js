@@ -31,7 +31,7 @@ const client = new Client({
    Example SDK usage: getGenerativeModel + generateContent.
 =========================== */
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
+const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
 
 /* State */
 const activatedGuilds = new Set();   // guild IDs where Anna auto-response is enabled
