@@ -31,7 +31,7 @@ const client = new Client({
    Example SDK usage: getGenerativeModel + generateContent.
 =========================== */
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+const flashModel = genAI.getGenerativeModel({ model: "gemini-1.5-flash-latest" });
 
 /* State */
 const activatedGuilds = new Set();   // guild IDs where Anna auto-response is enabled
@@ -69,7 +69,7 @@ const registerCommands = async () => {
 /* ===========================
    READY
    =========================== */
-client.once('ready', () => {
+client.once('clientReady', () => {
   console.log(`Logged in as ${client.user.tag}`);
   registerCommands();
 });
@@ -82,12 +82,12 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.isChatInputCommand()) {
       if (interaction.commandName === 'activate') {
         if (!interaction.guild) {
-          return interaction.reply({ content: "This command must be used in a server (guild).", ephemeral: true });
+          return interaction.reply({ content: "This command must be used in a server (guild).", flags: [4096] });
         }
         activatedGuilds.add(interaction.guild.id);
         return interaction.reply({
           content: "✅ Activation enabled. I will respond when a message contains **Anna** in this server.",
-          ephemeral: true
+          flags: [4096]
         });
       }
 
@@ -108,7 +108,7 @@ client.on('interactionCreate', async (interaction) => {
         return interaction.reply({
           content: "Choose a Gemini model:",
           components: [row],
-          ephemeral: true
+          flags: [4096]
         });
       }
     }
@@ -116,7 +116,7 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.isButton()) {
       if (interaction.customId === 'gemini_flash') {
         if (!interaction.channel || !interaction.guild) {
-          return interaction.reply({ content: "Can't create a thread here.", ephemeral: true });
+          return interaction.reply({ content: "Can't create a thread here.", flags: [4096] });
         }
 
         const thread = await interaction.channel.threads.create({
@@ -129,14 +129,14 @@ client.on('interactionCreate', async (interaction) => {
 
         return interaction.reply({
           content: `🧵 Thread created: <#${thread.id}> — I'll respond in this thread.`,
-          ephemeral: true
+          flags: [4096]
         });
       }
     }
   } catch (err) {
     console.error("Error handling interaction:", err);
     if (!interaction.replied && !interaction.deferred) {
-      try { await interaction.reply({ content: "❌ An error occurred.", ephemeral: true }); } catch {}
+      try { await interaction.reply({ content: "❌ An error occurred.", flags: [4096] }); } catch {}
     }
   }
 });
