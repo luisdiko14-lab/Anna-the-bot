@@ -8,15 +8,23 @@
   "dependencies": {
     "@discordjs/builders": "^1.13.1",
     "@discordjs/rest": "^2.6.0",
+    "@discordjs/voice": "^0.18.0",
     "@google/genai": "^1.41.0",
     "@google/generative-ai": "^0.24.1",
     "discord-api-types": "^0.38.39",
     "discord.js": "^14.25.1",
-    "dotenv": "^17.3.1",
+    "dotenv": "^16.6.1",
+    "erela.js": "^2.4.0",
+    "erela.js-filters": "^1.2.7",
+    "erela.js-spotify": "^1.2.0",
+    "express": "^5.2.1",
     "install": "^0.13.0",
     "npm": "^11.10.0"
   },
   "engines": {
     "node": ">=18"
+  },
+  "devDependencies": {
+    "@types/node": "^22.19.11"
   }
 }

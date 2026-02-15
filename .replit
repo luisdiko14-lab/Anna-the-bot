@@ -6,7 +6,7 @@ modules = ["nodejs-20", "python-3.11"]
 DISCORD_TOKEN = "MTM2MDMyOTgwOTY3MDA0NTczMQ.GLJsTj.DWHaO6L4NFviUTIMPgVHY9jxIH-hvHq8NF4yww"
 
 [workflows]
-runButton = "Project"
+runButton = "Run Project"
 
 [[workflows.workflow]]
 name = "Run Project"
@@ -51,6 +51,18 @@ task = "packager.installForAll"
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node index.js"
+
+[[workflows.workflow]]
+name = "."
+mode = "sequential"
+author = 44439860
+
+[[workflows.workflow.tasks]]
+task = "packager.installForAll"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python music.py"
 
 [nix]
 packages = ["unixtools.ping", "killall"]

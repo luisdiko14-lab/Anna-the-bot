@@ -1,4 +1,4 @@
-// index.js (ES module)
+// index.js (ES module) -- fallback-capable Gemini model initialization
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -27,8 +27,9 @@ if (!DISCORD_TOKEN) {
   console.error("Missing DISCORD_TOKEN in .env");
   process.exit(1);
 }
+
 if (!GEMINI_API_KEY) {
-  console.warn("Warning: GEMINI_API_KEY not set. AI features will error until you set GEMINI_API_KEY.");
+  console.warn("Warning: GEMINI_API_KEY not set. AI features will be unavailable until you set it.");
 }
 
 /* ===========================
@@ -44,16 +45,97 @@ const client = new Client({
 });
 
 /* ===========================
-   Google Gemini / Generative AI
+   Google Gemini (genAI) & model state
 =========================== */
 const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
-const flashModel = genAI ? genAI.getGenerativeModel({ model: "gemini-1.5-flash-002" }) : null;
+let flashModel = null; // will hold a working model object (from genAI.getGenerativeModel)
+let selectedModelId = null; // string name of selected model in use
+
+// Candidate model IDs to try, in preference order.
+// Update this list if you want to force a particular model.
+// Current reasonable choices: gemini-2.5-flash, gemini-2.5-flash-lite, gemini-2.5-pro, fallback text-bison
+const MODEL_CANDIDATES = [
+  'gemini-2.5-flash',
+  'gemini-2.5-flash-lite',
+  'gemini-2.5-pro',
+  'gemini-2.0-flash',
+  'text-bison-001' // older / fallback model
+];
 
 /* ===========================
-   State
+   Utilities
 =========================== */
-const activatedGuilds = new Set();   // guild IDs where Anna auto-response is enabled
-const activeThreads = new Map();     // threadId -> modelType ('flash', ...)
+function extractTextFromAIResult(result) {
+  try {
+    if (!result) return null;
+    if (result.response && typeof result.response.text === 'function') {
+      return result.response.text();
+    }
+    if (result.response && typeof result.response.text === 'string') {
+      return result.response.text;
+    }
+    if (typeof result.outputText === 'string') return result.outputText;
+    if (typeof result === 'string') return result;
+    if (Array.isArray(result.candidates) && result.candidates[0]) {
+      if (typeof result.candidates[0].text === 'string') return result.candidates[0].text;
+      if (typeof result.candidates[0].output === 'string') return result.candidates[0].output;
+    }
+    return null;
+  } catch (e) {
+    return null;
+  }
+}
+function truncateForDiscord(s, max = 1900) {
+  if (!s) return s;
+  return s.length > max ? (s.slice(0, max) + "\n\n...(truncated)") : s;
+}
+
+/* ===========================
+   Initialize / Pick a working model
+   - Tries each candidate model until generateContent succeeds
+   - Logs selected model to console
+=========================== */
+async function initFlashModel() {
+  if (!genAI) {
+    console.warn("genAI client not initialized (no GEMINI_API_KEY).");
+    flashModel = null;
+    selectedModelId = null;
+    return;
+  }
+
+  for (const candidate of MODEL_CANDIDATES) {
+    try {
+      console.log(`Trying Gemini model candidate: ${candidate}`);
+      // get the model wrapper object
+      const m = genAI.getGenerativeModel({ model: candidate });
+
+      // Try a light-weight health-check generation to ensure the model supports generateContent.
+      // Keep this prompt tiny to avoid heavy usage.
+      const testPrompt = "Hello";
+      const testRes = await m.generateContent(testPrompt);
+
+      const txt = extractTextFromAIResult(testRes);
+      if (txt && txt.length > 0) {
+        flashModel = m;
+        selectedModelId = candidate;
+        console.log(`Selected Gemini model: ${candidate}`);
+        return;
+      } else {
+        console.warn(`Candidate ${candidate} returned but no usable text extracted; trying next.`);
+      }
+    } catch (err) {
+      // If 404, the model alias probably isn't available under this API/version; try next.
+      const status = err?.status || err?.statusCode || (err?.response && err.response.status);
+      console.warn(`Candidate ${candidate} failed: ${status || err.message || String(err)}`);
+      // continue to next candidate
+    }
+  }
+
+  // If we reach here, none of the candidates worked.
+  flashModel = null;
+  selectedModelId = null;
+  console.error("No viable Gemini model found. Check GEMINI_API_KEY, available models in your region, or update MODEL_CANDIDATES.");
+}
 
 /* ===========================
    Slash commands
@@ -81,7 +163,6 @@ const registerCommands = async (applicationId) => {
   try {
     const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
     console.log("Registering application commands...");
-    // Registers global application commands - can take up to an hour to propagate.
     await rest.put(Routes.applicationCommands(applicationId), { body: commands });
     console.log("Commands registered.");
   } catch (err) {
@@ -90,83 +171,38 @@ const registerCommands = async (applicationId) => {
 };
 
 /* ===========================
-   Utilities
+   State containers (Anna + threads)
 =========================== */
-function extractTextFromAIResult(result) {
-  // Try several plausible fields (SDKs vary). Keep this robust.
-  try {
-    if (!result) return null;
-
-    // If API returns object with response.text() function (some wrappers do this)
-    if (result.response && typeof result.response.text === 'function') {
-      return result.response.text();
-    }
-
-    // If response.text is a string
-    if (result.response && typeof result.response.text === 'string') {
-      return result.response.text;
-    }
-
-    // Some SDKs return an outputText or output string
-    if (typeof result.outputText === 'string') {
-      return result.outputText;
-    }
-
-    if (typeof result === 'string') {
-      return result;
-    }
-
-    // Fallback: try to inspect nested candidates
-    if (Array.isArray(result.candidates) && result.candidates[0]) {
-      if (typeof result.candidates[0].text === 'string') return result.candidates[0].text;
-      if (typeof result.candidates[0].output === 'string') return result.candidates[0].output;
-    }
-
-    // If nothing found
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
-function truncateForDiscord(s, max = 1900) {
-  if (!s) return s;
-  return s.length > max ? (s.slice(0, max) + "\n\n...(truncated)") : s;
-}
+const activatedGuilds = new Set();   // guild IDs where Anna auto-response is enabled
+const activeThreads = new Map();     // threadId -> modelType ('flash', ...)
 
 /* ===========================
    Ready
 =========================== */
 client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
-
-  // Register commands using CLIENT_ID (from .env) if provided; otherwise use bot user id.
   const applicationId = CLIENT_ID || client.user.id;
   await registerCommands(applicationId);
+
+  // Initialize a working Gemini model (attempt candidates)
+  await initFlashModel();
 });
 
 /* ===========================
-   Interaction Handler
+   Interaction Handler (slash & buttons)
 =========================== */
 client.on('interactionCreate', async (interaction) => {
   try {
-    // Slash commands
     if (interaction.isChatInputCommand && interaction.isChatInputCommand()) {
       const name = interaction.commandName;
 
       if (name === 'activate') {
-        if (!interaction.guild) {
-          return interaction.reply({ content: "This command must be used in a server (guild).", ephemeral: true });
-        }
+        if (!interaction.guild) return interaction.reply({ content: "This command must be used in a server (guild).", ephemeral: true });
         activatedGuilds.add(interaction.guild.id);
-        return interaction.reply({
-          content: "✅ Activation enabled — I will respond when someone mentions **Anna** in this server.",
-          ephemeral: true
-        });
+        return interaction.reply({ content: "✅ Activation enabled — I will respond when someone mentions **Anna** in this server.", ephemeral: true });
       }
 
       if (name === 'startconversation') {
-        // Build buttons (we won't change them on click — per your request)
         const row = new ActionRowBuilder().addComponents(
           new ButtonBuilder()
             .setCustomId('gemini_flash')
@@ -180,7 +216,6 @@ client.on('interactionCreate', async (interaction) => {
             .setDisabled(true)
         );
 
-        // Public reply with buttons (ephemeral true to avoid channel clutter if desired)
         return interaction.reply({
           content: "✨ Choose a model to start a conversation. (Click a button to create a thread for the AI.)",
           components: [row],
@@ -190,29 +225,26 @@ client.on('interactionCreate', async (interaction) => {
 
       if (name === 'prompt') {
         const userPrompt = interaction.options.getString('message', true).trim();
-        if (!userPrompt) {
-          return interaction.reply({ content: "Please provide a prompt.", ephemeral: true });
-        }
+        if (!userPrompt) return interaction.reply({ content: "Please provide a prompt.", ephemeral: true });
 
-        // Defer (we may take time calling the AI)
         await interaction.deferReply({ ephemeral: false });
 
         if (!flashModel) {
-          await interaction.editReply("❌ Gemini (flash) model not initialized. Set GEMINI_API_KEY in your .env.");
-          return;
+          // Try re-initializing once before failing
+          await initFlashModel();
+          if (!flashModel) {
+            await interaction.editReply("❌ No Gemini model is initialized. Check GEMINI_API_KEY and model availability.");
+            return;
+          }
         }
 
         try {
-          // Send typing to indicate progress (deferred reply shows loading; still useful)
-          // Call the model
           const result = await flashModel.generateContent(userPrompt);
-
           let responseText = extractTextFromAIResult(result) || "⛔ I couldn't extract a reply from the model.";
           responseText = truncateForDiscord(responseText);
 
-          // Nice embed for a cooler look
           const outEmbed = new EmbedBuilder()
-            .setTitle("Gemini • Flash")
+            .setTitle(`Gemini • ${selectedModelId || 'flash'}`)
             .setDescription(responseText)
             .setFooter({ text: `Requested by ${interaction.user.tag}` })
             .setTimestamp();
@@ -220,9 +252,24 @@ client.on('interactionCreate', async (interaction) => {
           await interaction.editReply({ embeds: [outEmbed] });
         } catch (err) {
           console.error("Error calling Gemini (prompt):", err);
-          try {
-            await interaction.editReply("❌ Failed to get a response from Gemini. Try again later.");
-          } catch {}
+          // If 404, try rotating models and retry once
+          const status = err?.status || err?.statusCode || (err?.response && err.response.status);
+          if (status === 404) {
+            console.warn("Received 404 from model. Re-initializing model candidates and retrying...");
+            await initFlashModel();
+            if (flashModel) {
+              try {
+                const retryRes = await flashModel.generateContent(userPrompt);
+                let retryText = extractTextFromAIResult(retryRes) || "⛔ No reply on retry.";
+                retryText = truncateForDiscord(retryText);
+                await interaction.editReply({ content: retryText });
+                return;
+              } catch (e2) {
+                console.error("Retry also failed:", e2);
+              }
+            }
+          }
+          try { await interaction.editReply("❌ Failed to get a response from Gemini. Try again later."); } catch {}
         }
       }
 
@@ -233,41 +280,30 @@ client.on('interactionCreate', async (interaction) => {
     if (interaction.isButton && interaction.isButton()) {
       const id = interaction.customId;
 
-      // Only handle gemini flash button here — it will create a thread and NOT attempt to call the model directly.
       if (id === 'gemini_flash') {
-        // Ensure we have a proper channel and guild
         const channel = interaction.channel;
-        if (!channel || !interaction.guild) {
-          return interaction.reply({ content: "Can't create a thread here.", ephemeral: true });
-        }
+        if (!channel || !interaction.guild) return interaction.reply({ content: "Can't create a thread here.", ephemeral: true });
 
-        // Create a public thread in the channel (if possible)
         try {
-          // Create thread from the channel (threads.create works on TextBased channels)
           const thread = await channel.threads.create({
             name: `gemini-flash-${interaction.user.username}`.slice(0, 100),
             type: ChannelType.PublicThread,
             autoArchiveDuration: 60
           });
 
-          // Store active thread
           activeThreads.set(thread.id, "flash");
 
-          // Send an initial friendly message in the thread
           const starterEmbed = new EmbedBuilder()
             .setTitle("Gemini • Flash Thread")
-            .setDescription("💬 Welcome! This thread is now linked to the Gemini-Flash model. Type your prompts here and the bot will reply.")
-            .addFields(
-              { name: "Hint", value: "Try: `Explain recursion in simple terms` or `Write a short poem about space`" }
-            )
+            .setDescription("💬 Welcome! This thread is linked to the Gemini model. Type your prompts here and the bot will reply.")
+            .addFields({ name: "Tip", value: "Ask short, clear prompts for best results." })
             .setFooter({ text: `Thread created by ${interaction.user.tag}` })
             .setTimestamp();
 
-          await thread.send({ content: `Hello <@${interaction.user.id}> — I’ll respond to prompts you post here.`, embeds: [starterEmbed] });
+          await thread.send({ content: `Hello <@${interaction.user.id}> — I'll respond to prompts you post here using ${selectedModelId || 'the configured model'}.`, embeds: [starterEmbed] });
 
-          // Reply ephemerally to the button click so the original message + buttons remain unchanged (per your request)
           await interaction.reply({
-            content: `🧵 Thread created: <#${thread.id}> — I'll respond in this thread. (Only you can see this confirmation.)`,
+            content: `🧵 Thread created: <#${thread.id}> — I'll respond in this thread.`,
             ephemeral: true
           });
         } catch (err) {
@@ -278,7 +314,6 @@ client.on('interactionCreate', async (interaction) => {
         return;
       }
 
-      // If other buttons (like gemini_pro) are clicked, just reply ephemeral that it's unavailable
       if (interaction.customId === 'gemini_pro') {
         return interaction.reply({ content: "Gemini Pro isn't available yet — stay tuned!", ephemeral: true });
       }
@@ -294,7 +329,7 @@ client.on('interactionCreate', async (interaction) => {
 });
 
 /* ===========================
-   Message Create (thread + Anna auto-reply)
+   Message create (Anna auto-reply + thread AI)
 =========================== */
 client.on('messageCreate', async (message) => {
   try {
@@ -306,7 +341,6 @@ client.on('messageCreate', async (message) => {
     if (guildActivated && /anna/i.test(message.content)) {
       try {
         await message.channel.sendTyping();
-        // brief 'thinking' delay to feel more natural
         await new Promise(r => setTimeout(r, 1200));
         await message.reply({ content: `👋 You mentioned Anna!\n> ${message.content}`, allowedMentions: { repliedUser: true } });
       } catch (err) {
@@ -320,26 +354,45 @@ client.on('messageCreate', async (message) => {
       const model = activeThreads.get(channelId);
       const userPrompt = message.content?.trim();
       if (!userPrompt) return;
-
-      // Only process text prompts (ignore system messages / commands that start with slash)
       if (userPrompt.startsWith('/')) return;
 
       if (model === 'flash') {
         if (!flashModel) {
-          try { await message.reply("❌ Gemini (flash) not initialized on the bot. Ask the admin to set GEMINI_API_KEY."); } catch {}
-          return;
+          // Try to re-init once
+          await initFlashModel();
+          if (!flashModel) {
+            try { await message.reply("❌ Gemini not initialized. Ask the admin to set GEMINI_API_KEY and verify models."); } catch {}
+            return;
+          }
         }
 
         try {
           await message.channel.sendTyping();
           const result = await flashModel.generateContent(userPrompt);
-
           let responseText = extractTextFromAIResult(result) || "⛔ I couldn't extract a reply from the model.";
           responseText = truncateForDiscord(responseText);
-
           await message.reply(responseText);
         } catch (err) {
           console.error("Error calling Gemini (thread):", err);
+          const status = err?.status || err?.statusCode || (err?.response && err.response.status);
+          if (status === 404) {
+            // rotate models and try again once
+            console.warn("404 from model during thread reply; re-initializing candidate list...");
+            await initFlashModel();
+            if (flashModel) {
+              try {
+                const retry = await flashModel.generateContent(userPrompt);
+                const retryText = truncateForDiscord(extractTextFromAIResult(retry) || "⛔ No reply on retry.");
+                await message.reply(retryText);
+                return;
+              } catch (e2) {
+                console.error("Retry after re-init also failed:", e2);
+              }
+            }
+            try { await message.reply("❌ Gemini model returned 404 and couldn't be re-initialized. Admin: check API key and available model IDs."); } catch {}
+            return;
+          }
+
           try { await message.reply("❌ Failed to get a response from Gemini. Try again later."); } catch {}
         }
       }

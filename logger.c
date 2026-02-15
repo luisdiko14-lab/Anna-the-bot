@@ -2441,3 +2441,16 @@ Message    : annaspecs
 Channel    : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1399783361093963856)
 Server     : Incredibox ♫ (1393260947921047723)
 ==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-15 10:55:53
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Announcements Ping, Ask, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, K E Y, YouTubers, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : joinvc
+Message    : annajoinvc
+Channel    : 『🎤』│ʟᴏᴜɴɢᴇ (1393286486455095326)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================
