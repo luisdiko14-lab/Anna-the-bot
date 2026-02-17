@@ -146,10 +146,9 @@ let selectedModelId = null;
 
 const MODEL_CANDIDATES = [
   'gemini-1.5-flash',
-  'gemini-1.5-flash-lite',
+  'gemini-1.5-flash-8b',
   'gemini-1.5-pro',
-  'gemini-2.0-flash',
-  'text-bison-001',
+  'gemini-1.0-pro',
 ];
 
 function extractTextFromAIResult(result) {
@@ -248,7 +247,7 @@ const activeThreads = new Map();
 const threadLastUserMessage = new Map();
 const annaCooldown = new Map();
 
-client.once('ready', async () => {
+client.once('clientReady', async () => {
   console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
   const applicationId = CLIENT_ID || client.user.id;
   await registerCommands(applicationId);
