@@ -18,8 +18,11 @@
     "erela.js-filters": "^1.2.7",
     "erela.js-spotify": "^1.2.0",
     "express": "^5.2.1",
+    "express-session": "^1.19.0",
     "install": "^0.13.0",
-    "npm": "^11.10.0"
+    "npm": "^11.10.0",
+    "passport": "^0.7.0",
+    "passport-discord": "^0.1.4"
   },
   "engines": {
     "node": ">=18"
