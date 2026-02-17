@@ -229,23 +229,13 @@ async def play_next_in_guild(guild: discord.Guild):
             send_channel = find_sendable_text_channel(guild)
             if gs.current_msg:
                 try:
-                    # if message was deleted this will raise NotFound -> caught below
                     await gs.current_msg.edit(embed=embed, view=view)
-                except (discord.NotFound, discord.HTTPException):
-                    # message was deleted — clear saved pointer and send fresh if possible
+                except (discord.NotFound, discord.HTTPException, discord.Forbidden):
                     gs.current_msg = None
                     if send_channel:
                         try:
                             gs.current_msg = await send_channel.send(embed=embed, view=view)
-                        except Exception:
-                            gs.current_msg = None
-                except discord.Forbidden:
-                    # cannot edit — clear and optionally send in another channel
-                    gs.current_msg = None
-                    if send_channel:
-                        try:
-                            gs.current_msg = await send_channel.send(embed=embed, view=view)
-                        except Exception:
+                        except:
                             gs.current_msg = None
                 except Exception as e:
                     # other error when editing — log and continue
@@ -290,65 +280,44 @@ async def slash_play(interaction: discord.Interaction, query: str):
     guild = interaction.guild
 
     # Connection logic with retries and move handling
-    vc = guild.voice_client  # may be None
+    vc = guild.voice_client
     connected = False
-    # try up to 3 times to connect or move
+    
+    # Pre-emptive check: if vc exists but is not connected, clean up
+    if vc and not vc.is_connected():
+        try:
+            await vc.disconnect()
+        except:
+            pass
+        vc = None
+
     for attempt in range(3):
         try:
-            if vc:
-                if vc.is_connected():
-                    if vc.channel.id != channel.id:
-                        try:
-                            await vc.move_to(channel)
-                        except Exception:
-                            # fallback: disconnect and reconnect
-                            try:
-                                await vc.disconnect()
-                            except Exception:
-                                pass
-                            vc = await asyncio.wait_for(channel.connect(), timeout=20)
-                    # now connected to target channel
-                else:
-                    # vc exists but not connected? (zombie)
+            if vc and vc.is_connected():
+                if vc.channel.id != channel.id:
                     try:
-                        await vc.disconnect()
+                        await vc.move_to(channel)
                     except Exception:
-                        pass
-                    vc = await asyncio.wait_for(channel.connect(), timeout=20)
+                        try:
+                            await vc.disconnect()
+                        except:
+                            pass
+                        vc = await asyncio.wait_for(channel.connect(), timeout=20)
             else:
-                # not connected at all -> connect with timeout
                 vc = await asyncio.wait_for(channel.connect(), timeout=20)
             connected = True
             break
-        except asyncio.TimeoutError:
-            print(f"Voice connect attempt {attempt+1} timed out.")
+        except (asyncio.TimeoutError, discord.ClientException) as e:
+            print(f"Voice connect attempt {attempt+1} failed: {e}")
             await asyncio.sleep(1 + attempt)
-            # refresh vc reference
             vc = guild.voice_client
+            if vc and not vc.is_connected():
+                try: await vc.disconnect()
+                except: pass
+                vc = None
             continue
-        except discord.ClientException as e:
-            # Already connected somewhere else or similar — re-fetch and try to move
-            print("ClientException while connecting/moving:", e)
-            vc = guild.voice_client
-            if vc and vc.is_connected() and vc.channel.id != channel.id:
-                try:
-                    await vc.move_to(channel)
-                    connected = True
-                    break
-                except Exception as e2:
-                    print("Failed to move after ClientException:", e2)
-                    await asyncio.sleep(1)
-                    continue
-            else:
-                # If it thinks it's connected but isn't, or some other state conflict
-                try:
-                    await vc.disconnect()
-                except:
-                    pass
-                await asyncio.sleep(1)
-                continue
         except Exception as e:
-            print("Unexpected error during voice connect:", type(e), e)
+            print(f"Unexpected voice connect error: {e}")
             await asyncio.sleep(1)
             vc = guild.voice_client
             continue

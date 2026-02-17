@@ -7,7 +7,9 @@ import asyncio
 import os
 import sys
 import platform
-from datetime import timedelta
+import psutil
+import time
+from datetime import timedelta, datetime
 from dotenv import load_dotenv
 
         # ==================================================
@@ -1514,8 +1516,11 @@ async def ping_slash(interaction: discord.Interaction):
     boot_time = psutil.boot_time()
     uptime_seconds = int(time.time() - boot_time)
 
-    days, rem = divmod(uptime_seconds, 86400)
-    hours, rem = divmod(rem, 3600)
+    now = datetime.now()
+    delta = timedelta(seconds=uptime_seconds)
+    # Using a simple calculation if psutil boot_time is too far back or just format the delta
+    days = delta.days
+    hours, rem = divmod(delta.seconds, 3600)
     minutes, seconds = divmod(rem, 60)
 
     uptime_str = f"{days}d {hours}h {minutes}m {seconds}s"
