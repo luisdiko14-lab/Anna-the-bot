@@ -4,6 +4,7 @@ modules = ["nodejs-20", "python-3.11"]
 
 [userenv.shared]
 DISCORD_TOKEN = "MTM2MDMyOTgwOTY3MDA0NTczMQ.GLJsTj.DWHaO6L4NFviUTIMPgVHY9jxIH-hvHq8NF4yww"
+GEMINI_API_KEY = "AIzaSyDO3CcialM2_5gDzVeOey3V6RQZsBp14EA"
 
 [workflows]
 runButton = "Run Project"
@@ -65,7 +66,7 @@ task = "shell.exec"
 args = "python music.py"
 
 [nix]
-packages = ["unixtools.ping", "killall"]
+packages = ["killall", "unixtools.ping"]
 channel = "stable-25_05"
 
 [[ports]]

@@ -1,4 +1,4 @@
-# bot.py
+# bot.py (patched to avoid Unknown Message + improved voice connect retries)
 import os
 import asyncio
 import random
@@ -202,7 +202,6 @@ async def play_next_in_guild(guild: discord.Guild):
                     pass
             return
         song = gs.queue.pop(0)
-        # if queue-looping, push back the current later in caller after setting current
         gs.current = song
 
     try:
@@ -228,21 +227,42 @@ async def play_next_in_guild(guild: discord.Guild):
             embed = make_embed_nowplaying(song)
             view = create_controls_view(guild.id)
             send_channel = find_sendable_text_channel(guild)
-            if gs.current_msg and not gs.current_msg.deleted:
+            if gs.current_msg:
                 try:
+                    # if message was deleted this will raise NotFound -> caught below
                     await gs.current_msg.edit(embed=embed, view=view)
-                except Exception:
-                    # fallback to sending new message
-                    gs.current_msg = await (send_channel.send(embed=embed, view=view) if send_channel else None)
+                except (discord.NotFound, discord.HTTPException):
+                    # message was deleted — clear saved pointer and send fresh if possible
+                    gs.current_msg = None
+                    if send_channel:
+                        try:
+                            gs.current_msg = await send_channel.send(embed=embed, view=view)
+                        except Exception:
+                            gs.current_msg = None
+                except discord.Forbidden:
+                    # cannot edit — clear and optionally send in another channel
+                    gs.current_msg = None
+                    if send_channel:
+                        try:
+                            gs.current_msg = await send_channel.send(embed=embed, view=view)
+                        except Exception:
+                            gs.current_msg = None
+                except Exception as e:
+                    # other error when editing — log and continue
+                    print("Unexpected error editing current_msg:", e)
             else:
                 if send_channel:
-                    gs.current_msg = await send_channel.send(embed=embed, view=view)
-        except Exception:
-            pass
-
+                    try:
+                        gs.current_msg = await send_channel.send(embed=embed, view=view)
+                    except Exception as e:
+                        print("Failed to send now-playing message:", e)
+                        gs.current_msg = None
+        except Exception as e:
+            print("Error preparing now-playing message:", e)
+            # do not raise — we must not let message issues crash playback
     except Exception as e:
         print("Error playing track:", e)
-        # try next track
+        # try to continue to next item (defensive)
         await play_next_in_guild(guild)
 
 # ---------- bot events ----------
@@ -269,37 +289,72 @@ async def slash_play(interaction: discord.Interaction, query: str):
     channel = interaction.user.voice.channel
     guild = interaction.guild
 
-    # Connection logic: use existing vc, move if in different channel, otherwise connect
+    # Connection logic with retries and move handling
     vc = guild.voice_client  # may be None
-    try:
-        if vc and vc.is_connected():
-            # if connected to a different channel, move
-            if vc.channel.id != channel.id:
-                try:
-                    await vc.move_to(channel)
-                except Exception as e:
-                    # fallback: disconnect and connect fresh
+    connected = False
+    # try up to 3 times to connect or move
+    for attempt in range(3):
+        try:
+            if vc:
+                if vc.is_connected():
+                    if vc.channel.id != channel.id:
+                        try:
+                            await vc.move_to(channel)
+                        except Exception:
+                            # fallback: disconnect and reconnect
+                            try:
+                                await vc.disconnect()
+                            except Exception:
+                                pass
+                            vc = await asyncio.wait_for(channel.connect(), timeout=20)
+                    # now connected to target channel
+                else:
+                    # vc exists but not connected? (zombie)
                     try:
                         await vc.disconnect()
-                        vc = await channel.connect()
-                    except Exception as e2:
-                        await interaction.followup.send("Failed to move or reconnect to voice channel.", ephemeral=True)
-                        return
-        else:
-            # not connected at all -> connect
-            vc = await channel.connect()
-    except discord.errors.ClientException:
-        # Connect raised because bot is already connected somewhere; re-fetch and move if needed
-        vc = guild.voice_client
-        if vc and vc.channel.id != channel.id:
-            try:
-                await vc.move_to(channel)
-            except Exception:
-                # last-resort: reply and return
-                await interaction.followup.send("I couldn't join the voice channel. I'm already connected elsewhere.", ephemeral=True)
-                return
-    except Exception as e:
-        await interaction.followup.send("Failed to connect to voice channel.", ephemeral=True)
+                    except Exception:
+                        pass
+                    vc = await asyncio.wait_for(channel.connect(), timeout=20)
+            else:
+                # not connected at all -> connect with timeout
+                vc = await asyncio.wait_for(channel.connect(), timeout=20)
+            connected = True
+            break
+        except asyncio.TimeoutError:
+            print(f"Voice connect attempt {attempt+1} timed out.")
+            await asyncio.sleep(1 + attempt)
+            # refresh vc reference
+            vc = guild.voice_client
+            continue
+        except discord.ClientException as e:
+            # Already connected somewhere else or similar — re-fetch and try to move
+            print("ClientException while connecting/moving:", e)
+            vc = guild.voice_client
+            if vc and vc.is_connected() and vc.channel.id != channel.id:
+                try:
+                    await vc.move_to(channel)
+                    connected = True
+                    break
+                except Exception as e2:
+                    print("Failed to move after ClientException:", e2)
+                    await asyncio.sleep(1)
+                    continue
+            else:
+                # If it thinks it's connected but isn't, or some other state conflict
+                try:
+                    await vc.disconnect()
+                except:
+                    pass
+                await asyncio.sleep(1)
+                continue
+        except Exception as e:
+            print("Unexpected error during voice connect:", type(e), e)
+            await asyncio.sleep(1)
+            vc = guild.voice_client
+            continue
+
+    if not connected:
+        await interaction.followup.send("Failed to join your voice channel (timeout or permissions). Try again.", ephemeral=True)
         return
 
     # extract track info
@@ -322,15 +377,25 @@ async def slash_play(interaction: discord.Interaction, query: str):
     song = Song(title=title, webpage_url=webpage, stream_url=stream_url, duration=duration, requester=interaction.user)
     gs = guild_state(guild.id)
 
-    if (vc.is_playing() or vc.is_paused()) or gs.current:
-        gs.queue.append(song)
-        embed = discord.Embed(description=f"Added [{title}]({webpage}) to the queue", color=0xFF0000)
-        embed.set_footer(text=f"Requested by {interaction.user}", icon_url=interaction.user.display_avatar.url)
-        await interaction.followup.send(embed=embed)
-    else:
-        gs.current = song
-        await interaction.followup.send("Now playing...", ephemeral=True)
-        await play_next_in_guild(guild)
+    try:
+        if (vc.is_playing() or vc.is_paused()) or gs.current:
+            gs.queue.append(song)
+            embed = discord.Embed(description=f"Added [{title}]({webpage}) to the queue", color=0xFF0000)
+            embed.set_footer(text=f"Requested by {interaction.user}", icon_url=interaction.user.display_avatar.url)
+            await interaction.followup.send(embed=embed)
+        else:
+            gs.current = song
+            await interaction.followup.send("Now playing...", ephemeral=True)
+            # call play_next_in_guild but guard against its exceptions
+            try:
+                await play_next_in_guild(guild)
+            except Exception as e:
+                # log but don't raise to user as CommandInvokeError
+                print("Error in play_next_in_guild (caught in slash_play):", e)
+                await interaction.followup.send("Playback failed to start. See logs.", ephemeral=True)
+    except Exception as e:
+        print("Unexpected error finalizing play command:", e)
+        await interaction.followup.send("An unexpected error occurred while queuing the track.", ephemeral=True)
 
 # ---------- other commands (unchanged except small safety checks) ----------
 @bot.tree.command(name="pause", description="Pause the current song")

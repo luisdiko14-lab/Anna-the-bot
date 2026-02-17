@@ -6,6 +6,7 @@ import random
 import asyncio
 import os
 import sys
+import platform
 from datetime import timedelta
 from dotenv import load_dotenv
 
@@ -46,7 +47,7 @@ nature_scenes = [
             "Just Got verified! ✅"
         ]
 
-@tasks.loop(seconds=67)
+@tasks.loop(seconds=2)
 async def change_status():
             activity_name = random.choice(nature_scenes)
             activity = discord.Activity(
@@ -99,7 +100,7 @@ async def on_message(message):
         async with message.channel.typing():
             await asyncio.sleep(5)
             # You can add a response here if you want!
-
+  
     # 3. Important: This allows your other @bot.commands to still run
     await bot.process_commands(message)
 
@@ -504,7 +505,7 @@ async def help(ctx):
     embed.add_field(
         name="General",
         value=
-        "`ping`, `serverinfo`, `userinfo`, `avatar`, `uptime`, `invite`, `poll`, `8ball`, `roll`, `coinflip`, `slap`, `hug`, `pat`,  'rps' "
+        "`ping`, `serverinfo`, `userinfo`, `avatar`, `uptime`, `invite`, `poll`, `8ball`, `roll`, `coinflip`, `slap`, `hug`, `pat`,  `rps` "
     )
     embed.add_field(
         name="Moderation",
@@ -522,6 +523,7 @@ async def help(ctx):
 @bot.command()
 async def ping(ctx):
     await ctx.send(f'🏓 Pong! {round(bot.latency * 1000)}ms')
+    
 
 @bot.command()
 async def react(ctx, message_id: int, emoji: str):
@@ -974,7 +976,7 @@ async def specs(ctx):
         inline=False
     )
 
-    embed.set_footer(text="Powered by Omega Ultra Plan 20  1,100,000$ cost.🔥")
+    embed.set_footer(text="Powered by Omega Ultra Plan 999  643,10,100,100,000$ cost.🔥")
 
     await ctx.send(embed=embed)
 
@@ -1490,9 +1492,79 @@ async def give_role(ctx, target: str, role: discord.Role):
             )
 
 
-@bot.tree.command(name="ping", description="Check the bot's latency")
+@bot.tree.command(name="ping", description="Check latency and system specs")
 async def ping_slash(interaction: discord.Interaction):
-    await interaction.response.send_message(f"🏓 Pong! Latency: {round(bot.latency * 1000)}ms")
+
+    # --- CPU ---
+    cpu_name = platform.processor() or "Unknown CPU"
+    physical = psutil.cpu_count(logical=False) or 0
+    logical = psutil.cpu_count(logical=True) or 0
+
+    # --- RAM (GB) ---
+    total_ram = psutil.virtual_memory().total / (1024 ** 3)
+    ram_gb = f"{total_ram:.2f} GB"
+
+    # --- GPU (Windows VM expected) ---
+    gpu_name = "Windows VM Graphics Driver 2"
+
+    # --- Device Name ---
+    device_name = "Desktop-LUIS-Anna-VITRUAL-MACCHINE"
+
+    # --- Real Uptime ---
+    boot_time = psutil.boot_time()
+    uptime_seconds = int(time.time() - boot_time)
+
+    days, rem = divmod(uptime_seconds, 86400)
+    hours, rem = divmod(rem, 3600)
+    minutes, seconds = divmod(rem, 60)
+
+    uptime_str = f"{days}d {hours}h {minutes}m {seconds}s"
+
+    # --- Latency ---
+    latency = round(bot.latency * 1000)
+
+    embed = discord.Embed(
+        title="🖥️ System Specs",
+        color=0x2f3136
+    )
+
+    embed.add_field(
+        name="Device",
+        value=f"`{device_name}`",
+        inline=False
+    )
+
+    embed.add_field(
+        name="CPU",
+        value=f"{cpu_name}\n{physical}C / {logical}T",
+        inline=False
+    )
+
+    embed.add_field(
+        name="RAM",
+        value=ram_gb,
+        inline=True
+    )
+
+    embed.add_field(
+        name="Graphics",
+        value=gpu_name,
+        inline=True
+    )
+
+    embed.add_field(
+        name="Real Uptime",
+        value=uptime_str,
+        inline=False
+    )
+
+    embed.add_field(
+        name="Latency",
+        value=f"🏓 {latency}ms",
+        inline=True
+    )
+
+    await interaction.response.send_message(embed=embed)
 
 @bot.tree.command(name="echo", description="Make the bot repeat your message")
 @app_commands.describe(message="The message to repeat")
@@ -1620,7 +1692,7 @@ async def roll_slash(interaction: discord.Interaction, sides: int = 6):
     result = random.randint(1, sides)
     await interaction.response.send_message(f"🎲 Rolled a **{result}** (1-{sides})!")
 
-@bot.tree.command(name="random_joke", description="Get a funny joke")
+@bot.tree.command(name="random_joke", description="Get a funny joke by me.")
 async def joke_slash(interaction: discord.Interaction):
     jokes = [
         "Why did the bot cross the road? To get to the nature side!",
