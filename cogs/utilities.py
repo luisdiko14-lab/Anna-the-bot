@@ -2,6 +2,7 @@ import discord
 from discord.ext import commands
 import time
 import platform
+from datetime import timedelta
 
 class Utilities(commands.Cog):
     def __init__(self, bot):

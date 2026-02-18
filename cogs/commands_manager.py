@@ -24,7 +24,11 @@ class CommandsManager(commands.Cog):
 
     @commands.command(name="commandbuilder")
     async def commandbuilder(self, ctx):
-        await ctx.send("🛠️ Open the Command Builder here: https://" + os.environ.get('REPLIT_DEV_DOMAIN') + "/web/index.html")
+        domain = os.environ.get('REPLIT_DEV_DOMAIN')
+        if domain:
+            await ctx.send(f"🛠️ Open the Command Builder here: https://{domain}/web/index.html")
+        else:
+            await ctx.send("🛠️ Command Builder available at /web/index.html on your local server.")
 
 async def setup(bot):
     await bot.add_cog(CommandsManager(bot))

@@ -30,6 +30,10 @@ author = "agent"
 task = "workflow.run"
 args = "Web Server & Bot"
 
+[[workflows.workflow.tasks]]
+task = "workflow.run"
+args = "Run Bot"
+
 [[workflows.workflow]]
 name = "Web Server & Bot"
 author = "agent"
@@ -41,6 +45,17 @@ outputType = "webview"
 task = "shell.exec"
 args = "node index.js"
 waitForPort = 5000
+
+[[workflows.workflow]]
+name = "Run Bot"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python client/dashboard_bot.py"
+
+[workflows.workflow.metadata]
+outputType = "console"
 
 [nix]
 packages = ["killall", "unixtools.ping"]
