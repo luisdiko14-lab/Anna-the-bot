@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Command Builder</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div id="app">
+        <h1>Command Builder</h1>
+        <div class="builder">
+            <input type="text" id="cmdName" placeholder="Command Name">
+            <textarea id="cmdResponse" placeholder="Response Template (e.g. Hello {user}!)"></textarea>
+            <button onclick="saveCommand()">Save Command</button>
+        </div>
+        <div id="preview"></div>
+    </div>
+    <script src="client/main.js"></script>
+</body>
+</html>
