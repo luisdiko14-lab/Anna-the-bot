@@ -1,0 +1,69 @@
+Goal:
+Refactor and improve the existing discord.py bot project. Make the bot modular, modern, and user-friendly. Add a local, self-contained "Command Builder" web UI (served by the bot or as static files) that allows building and testing text commands (no remote services). Operate only on repository files available; do NOT ask the user to enable Auto-mount, sign in, or request any special permissions.
+
+High-Level Requirements:
+1. Use discord.py (latest stable major version available in the environment) and Python 3.11+ features where sensible. Support both prefix commands and slash (app) commands where possible using discord.py's `commands` and `app_commands`.
+2. Create/modify these files (or equivalent) in repo root:
+   - `bot.py` — main bot bootstrap (loads cogs, reads `.env`)
+   - `.env.example` — token & config template (do NOT write the actual token)
+   - `requirements.txt` — required python packages
+   - `cogs/__init__.py`
+   - `cogs/moderation.py` — kick/ban/mute/timeout/warn/history + safe checks
+   - `cogs/fun.py` — jokes, roll, choose, simple game commands
+   - `cogs/utilities.py` — ping, uptime, info, backup/restore commands
+   - `cogs/commands_manager.py` — runtime command registry (load/save custom text commands)
+   - `cogs/music.py` (optional) — minimal music controls using `youtube_dl`/`yt_dlp` & `wavelink` or a simple placeholder that warns if voice libs missing
+   - `web/` — static files for the Command Builder UI (index.html, styles.css, client/main.js, modules/templater.js)
+   - `data/commands.json` — persisted custom commands (seeded)
+   - `README.md` — update with usage and testing instructions
+   - `agent_patch_<timestamp>.diff` if environment prevents direct writes (see Implementation constraints below)
+3. Bot must read sensitive config (BOT_TOKEN, PREFIX) from environment variables (use `python-dotenv` to load `.env` locally).
+4. Commands persistence: use a single JSON file (`data/commands.json`) with safe read/write locking. Provide a backup file on writes (timestamped).
+5. Provide an in-bot `!commandbuilder` (or `/commandbuilder`) that posts an invite/URL or serves the static `web/index.html` via a simple HTTP server (built-in Python `aiohttp` or `http.server` with safe routing) so the user can open the visual Command Builder locally in Replit preview.
+6. The Command Builder UI:
+   - Visual builder to create commands with: name, description, trigger (prefix or exact), arguments (text/number/choice), and response template (templating variables like `{user}`, `{arg1}`).
+   - Templating must be implemented by `web/modules/templater.js` for preview and by `cogs/commands_manager.py` server-side using a safe templating function (no `eval`, no `exec`). Support `{var}`, simple `if` and `each` constructs (limited, non-Turing-complete). Provide helpers: `uppercase`, `lowercase`, `join(list, sep)`.
+   - Live preview with sample arguments and `{user}`.
+   - Export/import JSON (file download/upload) that matches the `data/commands.json` schema.
+   - Autosave to `localStorage` in web UI for unsaved edits.
+   - Keyboard shortcuts (Ctrl/Cmd+S save, Ctrl/Cmd+E toggle preview).
+   - The web UI must be self-contained and must not require any external CDN or network access; ship CSS/JS in `web/`.
+7. Security & Safety:
+   - No `eval`, `exec`, `new Function`, or executing user-provided code. The templater must be implemented via a safe parser and renderer.
+   - If serving files via HTTP, restrict to localhost/0.0.0.0 and only expose the web UI folder; do not open arbitrary filesystem paths.
+   - Never write or print the bot token. Use `.env.example` for instructions.
+8. UX & Developer features:
+   - Provide 3 seeded example commands in `data/commands.json`: `greet`, `roll`, `choose`.
+   - `cogs/commands_manager.py` should expose commands `/listcommands`, `/createcommand` (interactive modal or follow-up), `/importcommands`, `/exportcommands`, and an admin-only `/reloadcommands` that re-reads `data/commands.json`.
+   - Use intuitive permissions: only users with `manage_guild` or a role named `Bot Admin` can create/modify commands.
+   - Add a `!dumpstate` (admin-only) that shows a sanitized preview of the in-memory commands (no tokens).
+   - Add basic unit tests or test script `tests/test_commands_manager.py` (simple file-based tests) and a `pytest` entry in `requirements.txt` if feasible.
+9. Error handling:
+   - Gracefully handle malformed JSON during import with user-facing error messages.
+   - If required voice/music libs are missing, `cogs/music.py` should log a warning and provide a helpful message to users instead of crashing.
+
+Implementation Constraints:
+- Use native Python standard library and discord.py. You may add small dependencies (`python-dotenv`, `aiohttp`, `yt_dlp`, `wavelink`) only if required — document them in `requirements.txt`.
+- Follow modular code style: each cog is a class in its own file and registered in `bot.py`. Keep functions small and well-commented.
+- If the environment prevents writing files directly, create a single patch file `agent_patch_<timestamp>.diff` containing all file changes and add a top comment describing how to apply it. Do NOT prompt the user for permission — just create the patch.
+- Back up any replaced files as `.bak.<timestamp>`.
+
+Deliverables:
+- All files listed above (or `agent_patch_<timestamp>.diff` if direct writes not possible).
+- README updates describing how to run locally (install requirements, set `.env` from `.env.example`, run `python bot.py`), how to open the Command Builder in Replit preview, and how to import/export commands.
+- A single git commit created with this exact message and description:
+  - Commit message: `refactor: modular discord.py bot + Command Builder UI`
+  - Commit description: `Refactored into cogs, added commands_manager with JSON persistence, added local Command Builder web UI (safe templater & preview), backups and tests. No external permissions requested.`
+- A short JSON `TASK_RESULT.json` written to repo root summarizing changed files and commit details.
+
+Edge cases & helpful extras:
+- If `data/commands.json` already exists, merge new sample commands without overwriting existing ones; ensure id uniqueness (use timestamp prefix or uuid4).
+- If `discord.py` version mismatch is detected, add a helpful note to README indicating a suggested version in `requirements.txt`.
+- Provide a lightweight onboarding `!setup` command that creates `data/commands.json` and default config if missing (admin-only).
+- Keep all code commented for maintainability.
+
+Finish by:
+- Creating the commit and writing `TASK_RESULT.json` containing: `{"changed_files":[...],"commit_message":"...","commit_description":"..."}`.
+- Add a final note inside `TASK_RESULT.json` top-level field `note`: `"DO NOT ASK FOR AUTO-MOUNT OR ADDITIONAL PERMISSIONS"`.
+
+Do not ask the user any clarification questions — implement sensible defaults and proceed.

@@ -5,97 +5,136 @@
 <title>Pinging Anna…</title>
 
 <style>
-    * {
-        box-sizing: border-box;
-        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-    }
-
+    * { box-sizing: border-box; font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif; }
     body {
-        margin: 0;
-        height: 100vh;
+        margin: 0; height: 100vh;
         background: radial-gradient(circle at top, #0a0f1f, #02040a);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        color: #fff;
-        overflow: hidden;
+        display: flex; justify-content: center; align-items: center; color: #fff; overflow: hidden;
     }
-
     .container {
-        width: 420px;
-        padding: 30px;
-        border-radius: 18px;
-        background: rgba(10, 15, 40, 0.75);
-        box-shadow: 0 0 40px rgba(0, 170, 255, 0.35);
-        text-align: center;
-        animation: float 6s ease-in-out infinite;
+        width: 420px; padding: 30px; border-radius: 18px;
+        background: rgba(10,15,40,0.75); box-shadow: 0 0 40px rgba(0,170,255,0.35);
+        text-align: center; animation: float 6s ease-in-out infinite; position: relative;
+    }
+    @keyframes float { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+
+    h1 { margin: 0 0 10px; font-size: 26px; letter-spacing: 1px; display:flex; justify-content:center; gap:8px; align-items:center;}
+    .status { font-size: 14px; opacity: 0.9; margin-bottom: 18px; min-height: 20px; }
+    .bars { display: flex; flex-direction: column; gap: 14px; margin-bottom: 10px; }
+    .bar { background: rgba(255,255,255,0.08); border-radius: 8px; overflow: hidden; height: 16px; position: relative; }
+    .bar span { display: block; height: 100%; width: 0%; background: linear-gradient(90deg,#00b7ff,#6affff); box-shadow: 0 0 10px #00c8ff; transition: width 0.4s ease; }
+    .label { font-size: 12px; margin-top: 4px; text-align: left; opacity: 0.8; }
+
+    .pulse { margin-top: 12px; font-size: 13px; color: #7de3ff; animation: pulse 1.4s infinite; }
+    @keyframes pulse { 0%{opacity:0.3;} 50%{opacity:1;} 100%{opacity:0.3;} }
+
+    a.login-btn {
+        margin-top: 16px; display: inline-block; color: #00b7ff; text-decoration: none;
+        border: 1px solid #00b7ff; padding: 10px 20px; border-radius: 10px; transition: 0.3s;
+    }
+    a.login-btn:hover { transform: translateY(-3px); box-shadow: 0 8px 30px rgba(0,183,255,0.08); }
+
+    /* Config button */
+    .config-toggle {
+        position: absolute; right: 12px; top: 12px; background: rgba(255,255,255,0.03);
+        border: 1px solid rgba(255,255,255,0.04); padding: 8px; border-radius: 10px; cursor: pointer;
     }
 
-    @keyframes float {
-        0%, 100% { transform: translateY(0); }
-        50% { transform: translateY(-10px); }
+    /* Config panel */
+    .config-panel {
+        position: absolute; right: -440px; top: 12px; width: 400px; padding: 18px; border-radius: 14px;
+        background: linear-gradient(180deg, rgba(8,12,26,0.95), rgba(5,8,20,0.9));
+        box-shadow: 0 6px 30px rgba(0,0,0,0.6); transition: right 0.35s cubic-bezier(.2,.9,.25,1);
+        color: #dcefff; text-align: left;
     }
+    .config-panel.open { right: 12px; }
+    .config-panel h3 { margin-top: 0; font-size: 16px; }
+    .field { margin-bottom: 10px; }
+    .field label { display:block; font-size: 12px; opacity: 0.8; margin-bottom: 6px; }
+    .field input[type="text"], .field input[type="password"], .field select {
+        width: 100%; padding: 8px 10px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.06);
+        background: rgba(255,255,255,0.03); color: #e6f9ff; font-size: 13px;
+    }
+    .row { display:flex; gap:8px; }
+    .small { flex: 1; }
 
-    h1 {
-        margin: 0 0 10px;
-        font-size: 26px;
-        letter-spacing: 1px;
-    }
+    .btn { display:inline-block; padding:8px 12px; border-radius:8px; border:1px solid rgba(255,255,255,0.06); background: rgba(0,183,255,0.06); color:#cff9ff; cursor:pointer; }
+    .btn.secondary { background: transparent; border: 1px dashed rgba(255,255,255,0.04); color:#9fdfff; }
 
-    .status {
-        font-size: 14px;
-        opacity: 0.85;
-        margin-bottom: 25px;
-    }
+    .note { font-size: 12px; opacity: 0.7; margin-top:6px; }
 
-    .bars {
-        display: flex;
-        flex-direction: column;
-        gap: 14px;
-    }
+    .status-dot { display:inline-block; width:10px; height:10px; border-radius:50%; margin-right:8px; vertical-align:middle; }
 
-    .bar {
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 8px;
-        overflow: hidden;
-        height: 16px;
-        position: relative;
-    }
+    .footer-actions { margin-top: 12px; display:flex; gap:8px; justify-content: flex-end; }
 
-    .bar span {
-        display: block;
-        height: 100%;
-        width: 0%;
-        background: linear-gradient(90deg, #00b7ff, #6affff);
-        box-shadow: 0 0 10px #00c8ff;
-        transition: width 0.4s ease;
-    }
-
-    .label {
-        font-size: 12px;
-        margin-top: 4px;
-        text-align: left;
-        opacity: 0.8;
-    }
-
-    .pulse {
-        margin-top: 25px;
-        font-size: 13px;
-        color: #7de3ff;
-        animation: pulse 1.4s infinite;
-    }
-
-    @keyframes pulse {
-        0% { opacity: 0.3; }
-        50% { opacity: 1; }
-        100% { opacity: 0.3; }
-    }
+    @media (max-width:480px){ .container{width:92%; padding:18px;} .config-panel{width:90vw;} }
 </style>
 </head>
 
 <body>
+<div class="container" id="main-card">
+    <button class="config-toggle" id="openConfig" title="Open configuration">⚙️</button>
 
-<div class="container">
+    <div class="config-panel" id="configPanel" aria-hidden="true">
+        <h3>Configuration</h3>
+
+        <div class="field">
+            <label for="discordToken">Bot Token</label>
+            <div style="display:flex; gap:8px;">
+                <input id="discordToken" type="password" placeholder="Paste token here">
+                <button class="btn secondary" id="toggleToken">Show</button>
+            </div>
+            <div class="note">Client-side only. Real validation requires a server call.</div>
+        </div>
+
+        <div class="field">
+            <label for="aiKey">AI Key</label>
+            <input id="aiKey" type="password" placeholder="sk-...">
+            <div class="note">Optional: used by AI interface simulation.</div>
+        </div>
+
+        <div class="field">
+            <label for="statusSelect">Presence status</label>
+            <select id="statusSelect">
+                <option value="online">Online</option>
+                <option value="idle">Idle</option>
+                <option value="dnd">Do Not Disturb</option>
+                <option value="invisible">Invisible</option>
+            </select>
+        </div>
+
+        <div class="field">
+            <label>Auto-ping</label>
+            <div class="row">
+                <div class="small">
+                    <select id="autoPing">
+                        <option value="off">Off</option>
+                        <option value="on">On</option>
+                    </select>
+                </div>
+                <div style="width:110px;">
+                    <input id="pingInterval" type="text" value="15" style="width:100%;" placeholder="Interval (s)">
+                </div>
+            </div>
+            <div class="note">If enabled, the UI will auto-run the ping sequence on the interval (simulated).</div>
+        </div>
+
+        <div class="field">
+            <label>Simulation controls</label>
+            <div style="display:flex; gap:8px;">
+                <button id="testTokenBtn" class="btn">Test Token</button>
+                <button id="saveBtn" class="btn">Save</button>
+                <button id="downloadEnv" class="btn secondary">Download .env</button>
+            </div>
+            <div id="testResult" class="note" style="margin-top:8px;"></div>
+        </div>
+
+        <div class="footer-actions">
+            <button id="applyStart" class="btn">Apply & Start</button>
+            <button id="closeConfig" class="btn secondary">Close</button>
+        </div>
+    </div>
+
     <h1>🔗 Pinging Anna</h1>
     <div class="status" id="status">Initializing modules…</div>
 
@@ -122,11 +161,12 @@
         </div>
     </div>
 
-    <div class="pulse">Waiting for response…</div>
-    <a href="/login" style="margin-top: 20px; display: inline-block; color: #00b7ff; text-decoration: none; border: 1px solid #00b7ff; padding: 10px 20px; border-radius: 10px; transition: 0.3s;">Login with Discord</a>
+    <div class="pulse" id="pulseText">Waiting for response…</div>
+    <a class="login-btn" href="/login" id="loginBtn">Login with Discord</a>
 </div>
 
 <script>
+    // Elements
     const bars = [
         document.getElementById("bar1"),
         document.getElementById("bar2"),
@@ -134,8 +174,116 @@
         document.getElementById("bar4"),
         document.getElementById("bar5")
     ];
+    const statusEl = document.getElementById("status");
+    const pulseText = document.getElementById("pulseText");
 
-    const statuses = [
+    // Config elements
+    const openConfig = document.getElementById("openConfig");
+    const configPanel = document.getElementById("configPanel");
+    const closeConfig = document.getElementById("closeConfig");
+    const testTokenBtn = document.getElementById("testTokenBtn");
+    const saveBtn = document.getElementById("saveBtn");
+    const discordToken = document.getElementById("discordToken");
+    const aiKey = document.getElementById("aiKey");
+    const statusSelect = document.getElementById("statusSelect");
+    const autoPing = document.getElementById("autoPing");
+    const pingInterval = document.getElementById("pingInterval");
+    const testResult = document.getElementById("testResult");
+    const toggleTokenBtn = document.getElementById("toggleToken");
+    const downloadEnv = document.getElementById("downloadEnv");
+    const applyStart = document.getElementById("applyStart");
+
+    // Small UI helpers
+    openConfig.addEventListener("click", () => {
+        configPanel.classList.toggle("open");
+        configPanel.setAttribute("aria-hidden", !configPanel.classList.contains("open"));
+    });
+    closeConfig.addEventListener("click", () => {
+        configPanel.classList.remove("open");
+        configPanel.setAttribute("aria-hidden", "true");
+    });
+
+    // token show/hide toggle
+    toggleTokenBtn.addEventListener("click", () => {
+        if (discordToken.type === "password") {
+            discordToken.type = "text"; toggleTokenBtn.innerText = "Hide";
+        } else {
+            discordToken.type = "password"; toggleTokenBtn.innerText = "Show";
+        }
+    });
+
+    // localStorage save/load
+    const CONFIG_KEY = "pingAnna:config";
+    function saveConfig() {
+        const cfg = {
+            token: discordToken.value,
+            aiKey: aiKey.value,
+            status: statusSelect.value,
+            autoPing: autoPing.value,
+            pingInterval: parseInt(pingInterval.value, 10) || 15
+        };
+        localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg));
+        testResult.innerText = "Settings saved locally.";
+    }
+    function loadConfig() {
+        const raw = localStorage.getItem(CONFIG_KEY);
+        if (!raw) return;
+        try {
+            const cfg = JSON.parse(raw);
+            discordToken.value = cfg.token || "";
+            aiKey.value = cfg.aiKey || "";
+            statusSelect.value = cfg.status || "online";
+            autoPing.value = cfg.autoPing || "off";
+            pingInterval.value = cfg.pingInterval || "15";
+            testResult.innerText = "Loaded saved settings.";
+        } catch (e) { console.warn("Failed to load config", e); }
+    }
+
+    saveBtn.addEventListener("click", saveConfig);
+    loadConfig();
+
+    // Simulated token test (client-side)
+    testTokenBtn.addEventListener("click", () => {
+        const token = discordToken.value.trim();
+        testResult.innerText = "Checking token…";
+        // Simple heuristic simulation (real check must be done server-side calling Discord API)
+        setTimeout(() => {
+            if (!token) {
+                testResult.innerText = "❌ Token empty. Paste your bot token to test.";
+                return;
+            }
+            // heuristic: token that starts with "Bot " or length > 20 will be "valid" in this simulation
+            if (token.startsWith("Bot ") || token.length > 20) {
+                testResult.innerText = "✅ Token looks valid (simulated).";
+            } else {
+                testResult.innerText = "⚠️ Token looks invalid (simulated).";
+            }
+        }, 700);
+    });
+
+    // Download .env helper
+    downloadEnv.addEventListener("click", () => {
+        const lines = [
+            `DISCORD_TOKEN=${discordToken.value}`,
+            `AI_KEY=${aiKey.value}`,
+            `PRESENCE=${statusSelect.value}`
+        ];
+        const blob = new Blob([lines.join("\n")], { type: "text/plain" });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement("a");
+        a.href = url; a.download = ".env"; document.body.appendChild(a); a.click();
+        a.remove(); URL.revokeObjectURL(url);
+    });
+
+    // Apply & Start: saves config and starts the loading sequence
+    applyStart.addEventListener("click", () => {
+        saveConfig();
+        startPingSequence();
+        configPanel.classList.remove("open");
+    });
+
+    // Loading / ping sequence (uses config to tweak messages)
+    const defaultStatuses = [
         "Booting core systems…",
         "Establishing secure connection…",
         "Syncing AI modules…",
@@ -143,29 +291,69 @@
         "Pinging Anna…"
     ];
 
+    let sequenceTimer = null;
     let step = 0;
+
+    function startPingSequence() {
+        // reset bars
+        bars.forEach(b => b.style.width = "0%");
+        step = 0;
+        statusEl.innerText = "Starting sequence…";
+        pulseText.innerText = "Running diagnostics…";
+
+        loadNext();
+        // if autoPing enabled, schedule repeating
+        const cfgRaw = localStorage.getItem(CONFIG_KEY);
+        if (cfgRaw) {
+            try {
+                const cfg = JSON.parse(cfgRaw);
+                if (cfg.autoPing === "on") {
+                    const intervalSec = (cfg.pingInterval && Number(cfg.pingInterval) > 0) ? Number(cfg.pingInterval) : 15;
+                    if (sequenceTimer) clearInterval(sequenceTimer);
+                    sequenceTimer = setInterval(() => {
+                        startPingSequence(); // re-run sequence
+                    }, Math.max(5000, intervalSec * 1000)); // guard min 5s
+                } else {
+                    if (sequenceTimer) { clearInterval(sequenceTimer); sequenceTimer = null; }
+                }
+            } catch (e) { console.warn(e); }
+        }
+    }
 
     function loadNext() {
         if (step < bars.length) {
             let progress = 0;
+            // choose a friendly, config-aware status
+            const cfgRaw = localStorage.getItem(CONFIG_KEY);
+            let customMsg = null;
+            if (cfgRaw) try { const cfg = JSON.parse(cfgRaw); customMsg = cfg.status === "dnd" ? "Respecting DND" : "Presence: " + (cfg.status || "online"); } catch(e){}
+            statusEl.innerText = customMsg || defaultStatuses[step];
             const interval = setInterval(() => {
                 progress += Math.random() * 18;
                 bars[step].style.width = Math.min(progress, 100) + "%";
-
                 if (progress >= 100) {
                     clearInterval(interval);
                     step++;
-                    document.getElementById("status").innerText = statuses[step] || "Connection stable.";
+                    statusEl.innerText = defaultStatuses[step] || "Connection stable.";
                     setTimeout(loadNext, 400);
                 }
             }, 120);
         } else {
-            document.getElementById("status").innerText = "✅ Anna is online and responding.";
+            // finished
+            statusEl.innerText = "✅ Anna is online and responding.";
+            pulseText.innerText = "Last checked: " + new Date().toLocaleTimeString();
+            // show a little pulse animation on the login button
+            const loginBtn = document.getElementById("loginBtn");
+            loginBtn.style.boxShadow = "0 8px 30px rgba(0,183,255,0.12)";
+            setTimeout(() => loginBtn.style.boxShadow = "", 1800);
         }
     }
 
-    loadNext();
-</script>
+    // start automatically once on first load (optional)
+    // startPingSequence();
 
+    // Expose startPingSequence to window for quick console testing
+    window.startPingSequence = startPingSequence;
+</script>
 </body>
 </html>

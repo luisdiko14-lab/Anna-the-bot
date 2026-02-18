@@ -1,4 +1,4 @@
-// index.js (ES module)
+// index.js (ES module) — cleaned: no Gemini/AI, no required DISCORD token usage
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -24,24 +24,18 @@ import {
 
 import { REST } from '@discordjs/rest';
 import { Routes } from 'discord-api-types/v10';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 /* ---------------------------
-   Basic config & checks
+   Basic config
    --------------------------- */
-const DISCORD_TOKEN = process.env.DISCORD_TOKEN;
+// Note: DISCORD_TOKEN is optional now; bot login/command registration is skipped if absent.
+const DISCORD_TOKEN = process.env.DISCORD_TOKE || null;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
 const CALLBACK_URL = 'https://853cb505-0e22-49ec-b716-48bb6375c8aa-00-4jll9e93a7pf.janeway.replit.dev/api/callback';
-const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
-
-if (!DISCORD_TOKEN) {
-  console.error('Missing DISCORD_TOKEN in .env');
-  process.exit(1);
-}
 
 /* ---------------------------
    Express & Passport Setup
@@ -126,7 +120,7 @@ app.listen(port, '0.0.0.0', () => {
 });
 
 /* ---------------------------
-   Discord client
+   Discord client (minimal)
    --------------------------- */
 const client = new Client({
   intents: [
@@ -138,79 +132,8 @@ const client = new Client({
 });
 
 /* ---------------------------
-   Generative AI client + helpers
+   Helper: posting to a channel
    --------------------------- */
-const genAI = GEMINI_API_KEY ? new GoogleGenerativeAI(GEMINI_API_KEY) : null;
-let flashModel = null;
-let selectedModelId = null;
-
-const MODEL_CANDIDATES = [
-  'gemini-1.5-flash',
-  'gemini-1.5-flash-8b',
-  'gemini-1.5-pro',
-  'gemini-1.0-pro',
-];
-
-function extractTextFromAIResult(result) {
-  try {
-    if (!result) return null;
-    if (result.response && typeof result.response.text === 'function') return result.response.text();
-    if (result.response && typeof result.response.text === 'string') return result.response.text;
-    if (typeof result.outputText === 'string') return result.outputText;
-    if (typeof result === 'string') return result;
-    if (Array.isArray(result.candidates) && result.candidates[0]) {
-      if (typeof result.candidates[0].text === 'string') return result.candidates[0].text;
-      if (typeof result.candidates[0].output === 'string') return result.candidates[0].output;
-    }
-    return null;
-  } catch (e) {
-    return null;
-  }
-}
-
-function truncateForDiscord(s, max = 1900) {
-  if (!s) return s;
-  return s.length > max ? (s.slice(0, max) + "\n\n...(truncated)") : s;
-}
-
-async function safeGenerate(prompt) {
-  if (!prompt) return null;
-  if (!genAI) throw new Error('Generative AI client not initialized (GEMINI_API_KEY missing).');
-  if (!flashModel) await initFlashModel();
-  if (!flashModel) throw new Error('No Gemini model available');
-
-  const res = await flashModel.generateContent(prompt);
-  return extractTextFromAIResult(res) || null;
-}
-
-async function initFlashModel() {
-  if (!genAI) {
-    flashModel = null;
-    selectedModelId = null;
-    return;
-  }
-
-  for (const candidate of MODEL_CANDIDATES) {
-    try {
-      console.log(`Trying Gemini model candidate: ${candidate}`);
-      const m = genAI.getGenerativeModel({ model: candidate });
-      const testRes = await m.generateContent('Hello');
-      const txt = extractTextFromAIResult(testRes);
-      if (txt && txt.length > 0) {
-        flashModel = m;
-        selectedModelId = candidate;
-        console.log(`Selected Gemini model: ${candidate}`);
-        return;
-      }
-    } catch (err) {
-      console.warn(`Candidate ${candidate} failed.`);
-    }
-  }
-
-  flashModel = null;
-  selectedModelId = null;
-}
-
 async function postVisible(channel, content, embed = null) {
   try {
     const payload = {};
@@ -223,16 +146,18 @@ async function postVisible(channel, content, embed = null) {
   }
 }
 
+/* ---------------------------
+   Slash commands (no AI-related commands)
+   --------------------------- */
 const commands = [
   new SlashCommandBuilder().setName('activate').setDescription('Activate Anna auto-response in this server'),
-  new SlashCommandBuilder().setName('startconversation').setDescription('Start a Gemini conversation (creates a thread with interactive buttons)'),
-  new SlashCommandBuilder()
-    .setName('prompt')
-    .setDescription('Send a prompt to Gemini Flash and get a direct reply')
-    .addStringOption((option) => option.setName('message').setDescription('Your prompt for the AI').setRequired(true)),
 ].map((c) => c.toJSON());
 
 async function registerCommands(applicationId) {
+  if (!DISCORD_TOKEN) {
+    console.log('DISCORD_TOKEN not set — skipping slash command registration.');
+    return;
+  }
   try {
     const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
     await rest.put(Routes.applicationCommands(applicationId), { body: commands });
@@ -242,20 +167,22 @@ async function registerCommands(applicationId) {
   }
 }
 
+/* ---------------------------
+   Runtime state
+   --------------------------- */
 const activatedGuilds = new Set();
-const activeThreads = new Map();
-const threadLastUserMessage = new Map();
-const annaCooldown = new Map();
 
-client.once('clientReady', async () => {
+/* ---------------------------
+   Client events
+   --------------------------- */
+client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
   const applicationId = CLIENT_ID || client.user.id;
   await registerCommands(applicationId);
-  await initFlashModel();
 
   const statuses = [
-    { name: 'with Gemini', type: ActivityType.Playing },
     { name: 'Helping people', type: ActivityType.Playing },
+    { name: 'Anna Bot', type: ActivityType.Playing },
   ];
 
   let index = 0;
@@ -263,7 +190,9 @@ client.once('clientReady', async () => {
     index = (index + 1) % statuses.length;
     try {
       client.user.setPresence({ activities: [statuses[index]], status: 'online' });
-    } catch (e) {}
+    } catch (e) {
+      // ignore
+    }
   }, 15_000);
 });
 
@@ -275,22 +204,6 @@ client.on('interactionCreate', async (interaction) => {
         if (!interaction.guild) return interaction.reply({ content: 'This command must be used in a server.', flags: [4096] });
         activatedGuilds.add(interaction.guild.id);
         return interaction.reply({ content: '✅ Activation enabled.', flags: [4096] });
-      }
-      if (name === 'startconversation') {
-        return interaction.reply({ content: '✨ Choose a model to start a conversation.', flags: [4096] });
-      }
-      if (name === 'prompt') {
-        const userPrompt = interaction.options.getString('message', true).trim();
-        await interaction.deferReply({ flags: [4096] });
-        try {
-          const resultText = await safeGenerate(userPrompt);
-          const responseText = truncateForDiscord(resultText || '⛔ Could not extract a reply.');
-          const outEmbed = new EmbedBuilder().setTitle(`Gemini • ${selectedModelId || 'flash'}`).setDescription(responseText);
-          await postVisible(interaction.channel, responseText, outEmbed);
-          return interaction.editReply({ content: '✅ Posted reply to the channel.', embeds: [outEmbed] });
-        } catch (err) {
-          return interaction.editReply('❌ Failed to get a response.');
-        }
       }
     }
   } catch (err) {
@@ -307,15 +220,18 @@ client.on('messageCreate', async (message) => {
       await message.channel.sendTyping();
       await postVisible(message.channel, `👋 <@${message.author.id}> you mentioned Anna!`, null);
     }
-
-    if (activeThreads.has(message.channel.id)) {
-      const userPrompt = message.content?.trim();
-      if (!userPrompt || userPrompt.startsWith('/')) return;
-      await message.channel.sendTyping();
-      const responseText = await safeGenerate(userPrompt);
-      await message.reply(truncateForDiscord(responseText || '⛔ No reply.'));
-    }
-  } catch (err) {}
+  } catch (err) {
+    console.error('messageCreate handler error:', err);
+  }
 });
 
-client.login(DISCORD_TOKEN);
+/* ---------------------------
+   Login (optional)
+   --------------------------- */
+if (DISCORD_TOKEN) {
+  client.login(DISCORD_TOKEN).catch((err) => {
+    console.error('Failed to login to Discord:', err);
+  });
+} else {
+  console.log('DISCORD_TOKEN not provided — Discord client will not login. OAuth (web) still works.');
+}
