@@ -77,6 +77,7 @@ async def on_ready():
                     # Start your status task if not already running
                     if not change_status.is_running():
                         change_status.start()
+                        await asyncio.sleep(2)
 
                     # --- SYNC SLASH COMMANDS ---
                     print("🌐 Syncing slash commands...")
@@ -1705,6 +1706,87 @@ async def joke_slash(interaction: discord.Interaction):
         "Why don't scientists trust atoms? Because they make up everything!"
     ]
     await interaction.response.send_message(f"🤣 {random.choice(jokes)}")
+
+
+# 11 Slash (Tree) Commands — NO imports, NO setup
+# Assumes: bot, discord, app_commands, random already exist
+
+POLL_EMOJIS = ["1️⃣","2️⃣","3️⃣","4️⃣","5️⃣"]
+
+@bot.tree.command(name="echo2", description="Echo back your text")
+async def echo(interaction, text: str):
+    await interaction.response.send_message(text)
+
+@bot.tree.command(name="8ball", description="Ask the magic 8ball")
+async def eight_ball(interaction, question: str):
+    answers = ["Yes.","No.","Maybe.","Definitely!","Absolutely not.","Ask again."]
+    await interaction.response.send_message(f"🎱 {random.choice(answers)}")
+
+@bot.tree.command(name="roll", description="Roll dice like 2d6")
+async def roll(interaction, notation: str):
+    try:
+        n, m = notation.lower().split("d")
+        n = int(n) if n else 1
+        m = int(m)
+        rolls = [random.randint(1, m) for _ in range(n)]
+        await interaction.response.send_message(f"🎲 {rolls} → **{sum(rolls)}**")
+    except:
+        await interaction.response.send_message("Invalid format.", ephemeral=True)
+
+@bot.tree.command(name="coin", description="Flip a coin")
+async def coin(interaction):
+    await interaction.response.send_message(f"🪙 {random.choice(['Heads','Tails'])}")
+
+@bot.tree.command(name="rps", description="Rock Paper Scissors")
+@app_commands.choices(choice=[
+    app_commands.Choice(name="Rock", value="rock"),
+    app_commands.Choice(name="Paper", value="paper"),
+    app_commands.Choice(name="Scissors", value="scissors"),
+])
+async def rps(interaction, choice: app_commands.Choice[str]):
+    bot_choice = random.choice(["rock","paper","scissors"])
+    await interaction.response.send_message(f"You: {choice.value} | Bot: {bot_choice}")
+
+@bot.tree.command(name="avatar", description="Show avatar")
+async def avatar(interaction, user: discord.User = None):
+    user = user or interaction.user
+    embed = discord.Embed(title=f"{user}'s Avatar")
+    embed.set_image(url=user.display_avatar.url)
+    await interaction.response.send_message(embed=embed)
+
+@bot.tree.command(name="poll", description="Create a poll (2-5 options)")
+async def poll(interaction, question: str, options: str):
+    opts = [o.strip() for o in options.split(',') if o.strip()]
+    if not 2 <= len(opts) <= 5:
+        await interaction.response.send_message("2-5 options required.", ephemeral=True)
+        return
+    desc = "\n".join(f"{POLL_EMOJIS[i]} {opts[i]}" for i in range(len(opts)))
+    embed = discord.Embed(title=question, description=desc)
+    msg = await interaction.channel.send(embed=embed)
+    for i in range(len(opts)):
+        await msg.add_reaction(POLL_EMOJIS[i])
+    await interaction.response.send_message("Poll created!", ephemeral=True)
+
+@bot.tree.command(name="shuffle", description="Shuffle items")
+async def shuffle(interaction, items: str):
+    arr = [x.strip() for x in items.split(',') if x.strip()]
+    random.shuffle(arr)
+    await interaction.response.send_message("🔀 " + ", ".join(arr))
+
+@bot.tree.command(name="color", description="Random hex color")
+async def color(interaction):
+    hexcol = ''.join(random.choice('0123456789ABCDEF') for _ in range(6))
+    embed = discord.Embed(title=f"#{hexcol}", color=int(hexcol,16))
+    await interaction.response.send_message(embed=embed)
+
+@bot.tree.command(name="ascii", description="Stylized text")
+async def ascii_text(interaction, text: str):
+    await interaction.response.send_message(f"```\n{' '.join(text.upper())}\n```")
+
+@bot.tree.command(name="stats", description="Show latency")
+async def stats(interaction):
+    await interaction.response.send_message(f"🏓 {round(bot.latency*1000)}ms")
+
 
 # 4. Restart
 @bot.tree.command(name="restart2", description="Restarts the bot (Authorized users only)")

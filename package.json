@@ -3,7 +3,8 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "music": "node music.js"
   },
   "dependencies": {
     "@discordjs/builders": "^1.13.1",
@@ -19,7 +20,9 @@
     "erela.js-spotify": "^1.2.0",
     "express": "^5.2.1",
     "express-session": "^1.19.0",
-    "install": "^0.13.0",
+    "lavalink-client": "^2.9.1",
+    "lodash": "^4.17.21",
+    "node-fetch": "^3.3.2",
     "npm": "^11.10.0",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4"
@@ -29,5 +32,21 @@
   },
   "devDependencies": {
     "@types/node": "^22.19.11"
-  }
+  },
+  "description": "Discord bot with Gemini AI + Lavalink music system.",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/luisdiko14-lab/Annna.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/luisdiko14-lab/Annna/issues"
+  },
+  "homepage": "https://github.com/luisdiko14-lab/Annna#readme"
 }
