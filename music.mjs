@@ -57,7 +57,6 @@ if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
 
 /*
   IMPORTANT: do not pass `userId` into the Manager constructor or node options.
-  We'll call manager.init(client.user.id) after the bot is ready so the library
   has a valid user id to include in the "User-Id" header.
 */
 const manager = new Manager({
@@ -84,16 +83,13 @@ const manager = new Manager({
   playNextOnEnd: true,
 });
 
-// Guarded manager init to avoid double-init and to support different client event names
 let _managerInited = false;
 async function initManagerOnce() {
   if (_managerInited) return;
   if (!client.user || !client.user.id) {
-    console.warn("client.user.id not available yet — delaying manager.init");
     return;
   }
   try {
-    await manager.init(client.user.id); // gives manager the correct User-Id
     _managerInited = true;
     console.log("MagmaStream Manager initialized.");
   } catch (err) {
@@ -102,12 +98,6 @@ async function initManagerOnce() {
 }
 
 // Handle both "ready" and "clientReady" (some versions emit clientReady)
-client.once("ready", async () => {
-  console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
-  client.user.setPresence({
-    status: "dnd",
-    activities: [{ name: "/play", type: ActivityType.Playing }],
-  });
 
   await initManagerOnce();
 
@@ -135,10 +125,6 @@ client.once("ready", async () => {
   }
 });
 
-client.once("clientReady", async () => {
-  // some magmastream / discord.js combos emit this event name
-  await initManagerOnce();
-});
 
 // Manager event logging
 manager.on("nodeConnect", (node) => console.log(`Lavalink node "${node.options.identifier}" connected.`));
@@ -251,4 +237,20 @@ client.on("interactionCreate", async (interaction) => {
 
 client.login(TOKEN).catch((err) => {
   console.error("Failed to log in:", err);
+});
+
+client.once("clientReady", async () => {
+  console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
+
+  client.user.setPresence({
+    status: "dnd",
+    activities: [{ name: "/play", type: ActivityType.Playing }],
+  });
+
+  try {
+    await manager.init(client.user.id);
+    console.log("MagmaStream Manager initialized.");
+  } catch (err) {
+    console.error("Manager init failed:", err);
+  }
 });

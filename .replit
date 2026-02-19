@@ -55,7 +55,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "node music.js"
+args = "node music.mjs"
 
 [workflows.workflow.metadata]
 outputType = "console"

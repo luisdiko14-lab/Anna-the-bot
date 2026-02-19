@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "music": "node music.js"
+    "music": "node music.mjs"
   },
   "dependencies": {
     "@discordjs/builders": "^1.13.1",
@@ -25,13 +25,15 @@
     "node-fetch": "^3.3.2",
     "npm": "^11.10.0",
     "passport": "^0.7.0",
-    "passport-discord": "^0.1.4"
+    "passport-discord": "^0.1.4",
+    "ws": "^8.19.0"
   },
   "engines": {
     "node": ">=18"
   },
   "devDependencies": {
-    "@types/node": "^22.19.11"
+    "@types/node": "^22.19.11",
+    "nodemon": "^3.1.11"
   },
   "description": "Discord bot with Gemini AI + Lavalink music system.",
   "main": "index.js",
