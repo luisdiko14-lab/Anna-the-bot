@@ -1,10 +1,11 @@
+import { createRequire } from "module";
+const require = createRequire(import.meta.url);
+const { Manager } = require("magmastream");
+
 import dotenv from "dotenv";
 dotenv.config();
 
 import { Client, GatewayIntentBits, ActivityType, REST, Routes, SlashCommandBuilder } from "discord.js";
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const { Manager } = require("erela.js");
 
 const TOKEN = process.env.DISCORD_TOKEN;
 if (!TOKEN) {
@@ -33,13 +34,19 @@ const manager = new Manager({
       host: LAVALINK_HOST,
       port: LAVALINK_PORT,
       password: LAVALINK_PASSWORD,
-      secure: LAVALINK_SECURE
+      secure: LAVALINK_SECURE,
+      retryAmount: 5,
+      retryDelay: 5000
     }
   ],
   send: (id, payload) => {
     const guild = client.guilds.cache.get(id);
     if (guild) guild.shard.send(payload);
-  }
+  },
+  autoPlay: true,
+  plugins: [],
+  clientName: "AnnaMusic",
+  playNextOnEnd: true
 });
 
 client.once("clientReady", async () => {
@@ -50,6 +57,8 @@ client.once("clientReady", async () => {
     activities: [{ name: "/play", type: ActivityType.Playing }]
   });
 
+  // Magmastream needs the client ID and optionally the user ID to initialize properly
+  manager.options.userId = client.user.id; 
   manager.init(client.user.id);
 
   const commands = [

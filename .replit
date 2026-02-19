@@ -44,7 +44,7 @@ author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
-args = "python client/dashboard_bot.py"
+args = "python bot.py"
 
 [workflows.workflow.metadata]
 outputType = "console"

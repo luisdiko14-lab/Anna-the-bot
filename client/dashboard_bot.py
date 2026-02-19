@@ -1,8 +1,12 @@
 import os
+import sys
 import asyncio
 import discord
 from discord.ext import commands
 from dotenv import load_dotenv
+
+# Ensure root directory is in path for cogs
+sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 
 load_dotenv()
 TOKEN = os.getenv("DISCORD_TOKEN")
