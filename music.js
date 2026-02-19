@@ -42,7 +42,7 @@ const manager = new Manager({
   }
 });
 
-client.once("ready", async () => {
+client.once("clientReady", async () => {
   console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
 
   client.user.setPresence({
@@ -71,7 +71,8 @@ client.once("ready", async () => {
 
   const rest = new REST({ version: "10" }).setToken(TOKEN);
   try {
-    await rest.put(Routes.applicationCommands(client.user.id), { body: commands });
+    const clientId = client.user.id;
+    await rest.put(Routes.applicationCommands(clientId), { body: commands });
     console.log("Slash commands registered.");
   } catch (err) {
     console.error("Failed to register commands:", err);

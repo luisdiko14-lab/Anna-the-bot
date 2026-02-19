@@ -15,7 +15,7 @@
     "discord-api-types": "^0.38.39",
     "discord.js": "^14.25.1",
     "dotenv": "^16.6.1",
-    "erela.js": "^2.4.0",
+    "erela.js": "github:MenuDocs/erela.js#build",
     "erela.js-filters": "^1.2.7",
     "erela.js-spotify": "^1.2.0",
     "express": "^5.2.1",
