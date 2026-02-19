@@ -61,7 +61,7 @@ args = "node music.js"
 outputType = "console"
 
 [nix]
-packages = ["killall", "unixtools.ping"]
+packages = ["killall", "unixtools.ping", "at"]
 channel = "stable-25_05"
 
 [[ports]]

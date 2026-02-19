@@ -1,11 +1,11 @@
-// index.mjs (ES module)
+// music.mjs (ES module)
 import dotenv from "dotenv";
 dotenv.config();
 
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-// require libraries that don't export as ESM
+// Libraries that may not be full ESM
 const { Manager } = require("magmastream");
 const Spotify = require("erela.js-spotify");
 
@@ -44,7 +44,7 @@ const client = new Client({
   ],
 });
 
-// Build plugin list only if Spotify creds present
+// Add Spotify plugin only when credentials present
 const plugins = [];
 if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
   plugins.push(
@@ -56,8 +56,9 @@ if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
 }
 
 /*
-  IMPORTANT: don't set `userId` in the Manager constructor or node objects.
-  We'll let `manager.init(client.user.id)` set the user id properly after the bot is ready.
+  IMPORTANT: do not pass `userId` into the Manager constructor or node options.
+  We'll call manager.init(client.user.id) after the bot is ready so the library
+  has a valid user id to include in the "User-Id" header.
 */
 const manager = new Manager({
   nodes: [
@@ -69,40 +70,48 @@ const manager = new Manager({
       secure: LAVALINK_SECURE,
       retryAmount: 5,
       retryDelay: 5000,
-      // removed userId here
+      // no userId here
     },
   ],
   send: (id, payload) => {
     const guild = client.guilds.cache.get(id);
-    // use optional chaining in case shard/guild isn't present
+    // optional chaining to avoid throwing when shards/guilds aren't available
     if (guild?.shard?.send) guild.shard.send(payload);
   },
   autoPlay: true,
   plugins,
   clientName: "AnnaMusic",
   playNextOnEnd: true,
-  // removed global userId option here; we'll set it on init
 });
 
-// -- events and ready handling --
+// Guarded manager init to avoid double-init and to support different client event names
+let _managerInited = false;
+async function initManagerOnce() {
+  if (_managerInited) return;
+  if (!client.user || !client.user.id) {
+    console.warn("client.user.id not available yet — delaying manager.init");
+    return;
+  }
+  try {
+    await manager.init(client.user.id); // gives manager the correct User-Id
+    _managerInited = true;
+    console.log("MagmaStream Manager initialized.");
+  } catch (err) {
+    console.error("Failed initializing manager:", err);
+  }
+}
+
+// Handle both "ready" and "clientReady" (some versions emit clientReady)
 client.once("ready", async () => {
   console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
-
-  // set presence
   client.user.setPresence({
     status: "dnd",
     activities: [{ name: "/play", type: ActivityType.Playing }],
   });
 
-  // Initialize the manager with the real bot user id ─ this fixes the User-Id header being undefined
-  try {
-    await manager.init(client.user.id);
-    console.log("MagmaStream Manager initialized.");
-  } catch (err) {
-    console.error("Failed initializing manager:", err);
-  }
+  await initManagerOnce();
 
-  // Register slash commands
+  // register slash commands after ready
   const commands = [
     new SlashCommandBuilder()
       .setName("play")
@@ -126,6 +135,11 @@ client.once("ready", async () => {
   }
 });
 
+client.once("clientReady", async () => {
+  // some magmastream / discord.js combos emit this event name
+  await initManagerOnce();
+});
+
 // Manager event logging
 manager.on("nodeConnect", (node) => console.log(`Lavalink node "${node.options.identifier}" connected.`));
 manager.on("nodeError", (node, error) => console.error(`Node ${node.options.identifier} error:`, error));
@@ -134,7 +148,7 @@ manager.on("nodeError", (node, error) => console.error(`Node ${node.options.iden
 manager.on("trackStart", (player, track) => {
   try {
     const textChannel = client.channels.cache.get(player.textChannel);
-    if (textChannel && textChannel.isTextBased?.()) {
+    if (textChannel && typeof textChannel.send === "function") {
       textChannel.send(`🎵 Now playing: **${track.title}**`);
     }
   } catch (e) {
@@ -154,16 +168,23 @@ manager.on("queueEnd", (player) => {
   }, 2500);
 });
 
-// voice state passthrough for the manager (some libs expect the raw event)
-client.on("raw", (d) => manager.updateVoiceState(d));
+// Pass raw gateway voice updates to manager if library expects them
+client.on("raw", (d) => {
+  try {
+    manager.updateVoiceState(d);
+  } catch (e) {
+    // safe-guard: some manager versions may not need raw updates
+  }
+});
 
-// interaction handling (unchanged)
+// interaction handling (commands)
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand?.()) return;
   const { commandName, guild, member } = interaction;
   if (!guild) return interaction.reply({ content: "This command must be used in a server.", ephemeral: true });
 
   const voiceChannel = member?.voice?.channel;
+
   if (commandName === "play") {
     const query = interaction.options.getString("query");
     if (!voiceChannel) return interaction.reply({ content: "Join a voice channel first.", ephemeral: true });
@@ -228,4 +249,6 @@ client.on("interactionCreate", async (interaction) => {
   }
 });
 
-client.login(TOKEN);
+client.login(TOKEN).catch((err) => {
+  console.error("Failed to log in:", err);
+});
