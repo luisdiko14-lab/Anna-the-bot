@@ -36,7 +36,8 @@ const manager = new Manager({
       password: LAVALINK_PASSWORD,
       secure: LAVALINK_SECURE,
       retryAmount: 5,
-      retryDelay: 5000
+      retryDelay: 5000,
+      userId: "1360329809670045731"
     }
   ],
   send: (id, payload) => {
@@ -46,7 +47,8 @@ const manager = new Manager({
   autoPlay: true,
   plugins: [],
   clientName: "AnnaMusic",
-  playNextOnEnd: true
+  playNextOnEnd: true,
+  userId: "1360329809670045731"
 });
 
 client.once("clientReady", async () => {
@@ -57,9 +59,7 @@ client.once("clientReady", async () => {
     activities: [{ name: "/play", type: ActivityType.Playing }]
   });
 
-  // Magmastream needs the client ID and optionally the user ID to initialize properly
-  manager.options.userId = client.user.id; 
-  manager.init(client.user.id);
+  manager.init("1360329809670045731");
 
   const commands = [
     new SlashCommandBuilder()
