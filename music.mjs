@@ -1,11 +1,11 @@
-// music.mjs (ES module)
+// music.mjs
 import dotenv from "dotenv";
 dotenv.config();
 
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 
-// Libraries that may not be full ESM
+// libraries that may not be pure ESM
 const { Manager } = require("magmastream");
 const Spotify = require("erela.js-spotify");
 
@@ -44,7 +44,7 @@ const client = new Client({
   ],
 });
 
-// Add Spotify plugin only when credentials present
+// build plugin list (Spotify optional)
 const plugins = [];
 if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
   plugins.push(
@@ -56,8 +56,9 @@ if (SPOTIFY_CLIENT_ID && SPOTIFY_CLIENT_SECRET) {
 }
 
 /*
-  IMPORTANT: do not pass `userId` into the Manager constructor or node options.
-  has a valid user id to include in the "User-Id" header.
+  IMPORTANT:
+  - don't pass userId into Manager or nodes here.
+  - we initialize manager with the real bot id inside clientReady.
 */
 const manager = new Manager({
   nodes: [
@@ -69,12 +70,10 @@ const manager = new Manager({
       secure: LAVALINK_SECURE,
       retryAmount: 5,
       retryDelay: 5000,
-      // no userId here
     },
   ],
   send: (id, payload) => {
     const guild = client.guilds.cache.get(id);
-    // optional chaining to avoid throwing when shards/guilds aren't available
     if (guild?.shard?.send) guild.shard.send(payload);
   },
   autoPlay: true,
@@ -83,54 +82,10 @@ const manager = new Manager({
   playNextOnEnd: true,
 });
 
-let _managerInited = false;
-async function initManagerOnce() {
-  if (_managerInited) return;
-  if (!client.user || !client.user.id) {
-    return;
-  }
-  try {
-    _managerInited = true;
-    console.log("MagmaStream Manager initialized.");
-  } catch (err) {
-    console.error("Failed initializing manager:", err);
-  }
-}
-
-// Handle both "ready" and "clientReady" (some versions emit clientReady)
-
-  await initManagerOnce();
-
-  // register slash commands after ready
-  const commands = [
-    new SlashCommandBuilder()
-      .setName("play")
-      .setDescription("Play a song (search or URL)")
-      .addStringOption((opt) => opt.setName("query").setDescription("Song name or URL").setRequired(true)),
-    new SlashCommandBuilder().setName("stop").setDescription("Stop playback and leave"),
-    new SlashCommandBuilder().setName("loop").setDescription("Toggle loop for current queue"),
-    new SlashCommandBuilder()
-      .setName("volume")
-      .setDescription("Set player volume 0-100")
-      .addIntegerOption((opt) => opt.setName("amount").setDescription("0-100").setRequired(true)),
-  ].map((c) => c.toJSON());
-
-  const rest = new REST({ version: "10" }).setToken(TOKEN);
-  try {
-    const clientId = client.user.id;
-    await rest.put(Routes.applicationCommands(clientId), { body: commands });
-    console.log("Slash commands registered.");
-  } catch (err) {
-    console.error("Failed to register commands:", err);
-  }
-});
-
-
-// Manager event logging
+// Manager events
 manager.on("nodeConnect", (node) => console.log(`Lavalink node "${node.options.identifier}" connected.`));
 manager.on("nodeError", (node, error) => console.error(`Node ${node.options.identifier} error:`, error));
 
-// playback events
 manager.on("trackStart", (player, track) => {
   try {
     const textChannel = client.channels.cache.get(player.textChannel);
@@ -154,16 +109,63 @@ manager.on("queueEnd", (player) => {
   }, 2500);
 });
 
-// Pass raw gateway voice updates to manager if library expects them
+// forward raw events if magmastream expects them
 client.on("raw", (d) => {
   try {
     manager.updateVoiceState(d);
   } catch (e) {
-    // safe-guard: some manager versions may not need raw updates
+    // some versions don't need this; ignore safely
   }
 });
 
-// interaction handling (commands)
+// single, authoritative ready event handler.
+// Use clientReady only (your environment warned about 'ready' being renamed).
+client.once("clientReady", async () => {
+  console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
+
+  // presence
+  try {
+    client.user.setPresence({
+      status: "dnd",
+      activities: [{ name: "/play", type: ActivityType.Playing }],
+    });
+  } catch (e) {
+    // ignore presence errors
+  }
+
+  // initialize manager ONCE with the real bot user id
+  try {
+    await manager.init(client.user.id);
+    console.log("MagmaStream Manager initialized.");
+  } catch (err) {
+    console.error("Manager init failed:", err);
+  }
+
+  // register global slash commands for this application
+  const commands = [
+    new SlashCommandBuilder()
+      .setName("play")
+      .setDescription("Play a song (search or URL)")
+      .addStringOption((opt) => opt.setName("query").setDescription("Song name or URL").setRequired(true)),
+    new SlashCommandBuilder().setName("stop").setDescription("Stop playback and leave"),
+    new SlashCommandBuilder().setName("loop").setDescription("Toggle loop for current queue"),
+    new SlashCommandBuilder()
+      .setName("volume")
+      .setDescription("Set player volume 0-100")
+      .addIntegerOption((opt) => opt.setName("amount").setDescription("0-100").setRequired(true)),
+  ].map((c) => c.toJSON());
+
+  const rest = new REST({ version: "10" }).setToken(TOKEN);
+  try {
+    const clientId = client.user.id;
+    await rest.put(Routes.applicationCommands(clientId), { body: commands });
+    console.log("Slash commands registered.");
+  } catch (err) {
+    console.error("Failed to register commands:", err);
+  }
+});
+
+// interactions (commands)
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand?.()) return;
   const { commandName, guild, member } = interaction;
@@ -171,86 +173,84 @@ client.on("interactionCreate", async (interaction) => {
 
   const voiceChannel = member?.voice?.channel;
 
-  if (commandName === "play") {
-    const query = interaction.options.getString("query");
-    if (!voiceChannel) return interaction.reply({ content: "Join a voice channel first.", ephemeral: true });
+  try {
+    if (commandName === "play") {
+      const query = interaction.options.getString("query");
+      if (!voiceChannel) return interaction.reply({ content: "Join a voice channel first.", ephemeral: true });
 
-    let player = manager.players.get(guild.id);
-    if (!player) {
-      player = manager.create({
-        guild: guild.id,
-        voiceChannel: voiceChannel.id,
-        textChannel: interaction.channelId,
-        selfDeafen: true,
-      });
-      player.connect();
-    } else if (player.voiceChannel !== voiceChannel.id) {
-      try {
-        await player.setVoiceChannel(voiceChannel.id);
-      } catch (err) {
-        // ignore
+      let player = manager.players.get(guild.id);
+      if (!player) {
+        player = manager.create({
+          guild: guild.id,
+          voiceChannel: voiceChannel.id,
+          textChannel: interaction.channelId,
+          selfDeafen: true,
+        });
+        player.connect();
+      } else if (player.voiceChannel !== voiceChannel.id) {
+        try {
+          await player.setVoiceChannel(voiceChannel.id);
+        } catch (err) {
+          // ignore
+        }
       }
-    }
 
-    await interaction.deferReply();
-    const res = await manager.search(query, interaction.user);
-    if (!res || res.loadType === "NO_MATCHES") {
-      return interaction.followUp({ content: "No results found.", ephemeral: true });
-    }
-    if (res.loadType === "LOAD_FAILED") {
-      return interaction.followUp({ content: "Search/load failed.", ephemeral: true });
-    }
-    if (res.loadType === "PLAYLIST_LOADED") {
-      player.queue.add(res.tracks);
+      await interaction.deferReply();
+      const res = await manager.search(query, interaction.user);
+      if (!res || res.loadType === "NO_MATCHES") {
+        return interaction.followUp({ content: "No results found.", ephemeral: true });
+      }
+      if (res.loadType === "LOAD_FAILED") {
+        return interaction.followUp({ content: "Search/load failed.", ephemeral: true });
+      }
+      if (res.loadType === "PLAYLIST_LOADED") {
+        player.queue.add(res.tracks);
+        if (!player.playing && !player.paused) player.play();
+        return interaction.followUp(`✅ Playlist added (${res.tracks.length} tracks).`);
+      }
+      const track = res.tracks[0];
+      player.queue.add(track);
       if (!player.playing && !player.paused) player.play();
-      return interaction.followUp(`✅ Playlist added (${res.tracks.length} tracks).`);
+      return interaction.followUp(`🎵 Added to queue: **${track.title}**`);
     }
-    const track = res.tracks[0];
-    player.queue.add(track);
-    if (!player.playing && !player.paused) player.play();
-    return interaction.followUp(`🎵 Added to queue: **${track.title}**`);
-  }
 
-  if (commandName === "stop") {
-    const player = manager.players.get(guild.id);
-    if (!player) return interaction.reply({ content: "Nothing is playing.", ephemeral: true });
-    player.destroy();
-    return interaction.reply("⏹️ Stopped and left voice.");
-  }
+    if (commandName === "stop") {
+      const player = manager.players.get(guild.id);
+      if (!player) return interaction.reply({ content: "Nothing is playing.", ephemeral: true });
+      player.destroy();
+      return interaction.reply("⏹️ Stopped and left voice.");
+    }
 
-  if (commandName === "loop") {
-    const player = manager.players.get(guild.id);
-    if (!player) return interaction.reply({ content: "Nothing is playing.", ephemeral: true });
-    player.setQueueRepeat(!player.queueRepeat);
-    return interaction.reply(`🔁 Loop: **${player.queueRepeat ? "Enabled" : "Disabled"}**`);
-  }
+    if (commandName === "loop") {
+      const player = manager.players.get(guild.id);
+      if (!player) return interaction.reply({ content: "Nothing is playing.", ephemeral: true });
+      player.setQueueRepeat(!player.queueRepeat);
+      return interaction.reply(`🔁 Loop: **${player.queueRepeat ? "Enabled" : "Disabled"}**`);
+    }
 
-  if (commandName === "volume") {
-    const amount = interaction.options.getInteger("amount");
-    if (amount < 0 || amount > 100) return interaction.reply({ content: "Volume must be 0-100.", ephemeral: true });
-    const player = manager.players.get(guild.id);
-    if (!player) return interaction.reply({ content: "Nothing is playing.", ephemeral: true });
-    player.setVolume(amount);
-    return interaction.reply(`🔊 Volume set to **${amount}%**`);
+    if (commandName === "volume") {
+      const amount = interaction.options.getInteger("amount");
+      if (amount < 0 || amount > 100) return interaction.reply({ content: "Volume must be 0-100.", ephemeral: true });
+      const player = manager.players.get(guild.id);
+      if (!player) return interaction.reply({ content: "Nothing is playing.", ephemeral: true });
+      player.setVolume(amount);
+      return interaction.reply(`🔊 Volume set to **${amount}%**`);
+    }
+  } catch (err) {
+    console.error("Interaction handler error:", err);
+    try {
+      if (!interaction.replied && !interaction.deferred) {
+        await interaction.reply({ content: "An error occurred while handling the command.", ephemeral: true });
+      } else {
+        await interaction.followUp({ content: "An error occurred.", ephemeral: true });
+      }
+    } catch (_) {
+      // ignore reply failures
+    }
   }
 });
 
+// start login
 client.login(TOKEN).catch((err) => {
   console.error("Failed to log in:", err);
-});
-
-client.once("clientReady", async () => {
-  console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
-
-  client.user.setPresence({
-    status: "dnd",
-    activities: [{ name: "/play", type: ActivityType.Playing }],
-  });
-
-  try {
-    await manager.init(client.user.id);
-    console.log("MagmaStream Manager initialized.");
-  } catch (err) {
-    console.error("Manager init failed:", err);
-  }
 });
