@@ -61,7 +61,7 @@ args = "python ping.py"
 outputType = "console"
 
 [nix]
-packages = ["killall", "unixtools.ping", "at"]
+packages = ["at", "killall", "unixtools.ping"]
 channel = "stable-25_05"
 
 [[ports]]
