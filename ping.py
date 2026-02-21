@@ -2,42 +2,45 @@ import subprocess
 import time
 import os
 import sys
+import requests
 from datetime import datetime
 
+PING_URL = "http://127.0.0.1:5000"  # Change to your deployed URL if needed
+
 def run_services():
-    while True:
-        print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 Starting services...")
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🚀 Starting services...")
 
-        try:
-            # Start website (change app.py if your file is different)
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] 🌐 Starting website on port 5000...")
-            web_process = subprocess.Popen(
-                [sys.executable, "app.py"],
-                env={**os.environ, "PORT": "5000"}
-            )
+    # Start website
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🌐 Starting website on port 5000...")
+    web_process = subprocess.Popen(
+        [sys.executable, "app.py"],
+        env={**os.environ, "PORT": "5000"}
+    )
 
-            # Start bot
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] 🤖 Starting bot.py...")
-            bot_process = subprocess.Popen([sys.executable, "bot.py"])
+    # Start bot
+    print(f"[{datetime.now().strftime('%H:%M:%S')}] 🤖 Starting bot.py...")
+    bot_process = subprocess.Popen([sys.executable, "bot.py"])
 
+    try:
+        while True:
             try:
-                # Wait 50 seconds
-                time.sleep(50)
-                print(f"[{datetime.now().strftime('%H:%M:%S')}] 🔄 Restarting services for maintenance...")
+                response = requests.get(PING_URL)
+                print(f"[{datetime.now().strftime('%H:%M:%S')}] 🔔 Pinged site | Status: {response.status_code}")
+            except Exception as e:
+                print(f"[{datetime.now().strftime('%H:%M:%S')}] ❌ Ping failed: {e}")
 
-            finally:
-                # Terminate both processes safely
-                for process in [web_process, bot_process]:
-                    process.terminate()
-                    try:
-                        process.wait(timeout=5)
-                    except subprocess.TimeoutExpired:
-                        process.kill()
+            time.sleep(15)  # Ping every 15 seconds
 
-        except Exception as e:
-            print(f"[{datetime.now().strftime('%H:%M:%S')}] ❌ Error: {e}")
+    except KeyboardInterrupt:
+        print("\n🛑 Shutting down services...")
 
-        time.sleep(2)
+    finally:
+        for process in [web_process, bot_process]:
+            process.terminate()
+            try:
+                process.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                process.kill()
 
 if __name__ == "__main__":
     run_services()
