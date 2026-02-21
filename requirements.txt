@@ -4,3 +4,6 @@ aiohttp
 yt-dlp
 psutil
 pytest
+flask
+requests
+discord.py@latest
