@@ -6,4 +6,4 @@ psutil
 pytest
 flask
 requests
-discord.py@latest
+
