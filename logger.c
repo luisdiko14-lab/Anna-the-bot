@@ -3175,3 +3175,55 @@ Message    : annasay hi
 Channel    : 『🎤』│ʟᴏᴜɴɢᴇ (1393286486455095326)
 Server     : Incredibox ♫ (1393260947921047723)
 ==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-20 16:09:04
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : 👤 Member, 💎 VIP, 🔨 Moderator, Admin
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : say
+Message    : annasay hi
+Channel    : 💬general-1 (1472313972660109474)
+Server     : ᴍᴜꜱɪᴄʜᴏᴡʟɪɴɢᴍnᴄʟᴜʙ𓃦🎧 (1472313972060585984)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-20 16:12:08
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : 👤 Member, 💎 VIP, 🔨 Moderator, Admin
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/a_fe6de452914e22de9f229d0e80379843.gif?size=1024
+
+Command    : serverinfo
+Message    : !serverinfo
+Channel    : 💬general-1 (1472313972660109474)
+Server     : ᴍᴜꜱɪᴄʜᴏᴡʟɪɴɢᴍnᴄʟᴜʙ𓃦🎧 (1472313972060585984)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-20 16:12:48
+User       : unknownwolf11 (1413303707390705788)
+Admin      : True
+Roles      : 👤 Member, 💎 VIP, 🔨 Moderator, Admin, Wolf
+Avatar CDN : https://cdn.discordapp.com/avatars/1413303707390705788/3381d9905434469eb618175464b2db76.png?size=1024
+
+Command    : serverinfo
+Message    : !serverinfo
+Channel    : 💬general-1 (1472313972660109474)
+Server     : ᴍᴜꜱɪᴄʜᴏᴡʟɪɴɢᴍnᴄʟᴜʙ𓃦🎧 (1472313972060585984)
+==============================================
+
+================ COMMAND LOG =================
+Time       : 2026-02-21 16:37:00
+User       : luisthegoat7301 (1370394029665030295)
+Admin      : True
+Roles      : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Mod Teaser Ping, Incredibox News Ping, Joke Announcements Ping, Announcements Ping, Ask, They/them, He/him, Simon Says {Players}, Verified, ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, Lucky Members, K E Y, Incredibox Fans, Mod Makers, Revive Chat, Animators, Composers, YouTubers, Coders, Mixers, Artists, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Manager, Admin
+Avatar CDN : https://cdn.discordapp.com/guilds/1393260947921047723/users/1370394029665030295/avatars/a_a57bce83787471f67e47a0cfc3141f9f.gif?size=1024
+
+Command    : timeout
+Message    : annatimeout <@1370394029665030295> 1year
+Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server     : Incredibox ♫ (1393260947921047723)
+==============================================

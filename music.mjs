@@ -166,10 +166,13 @@ client.once("clientReady", async () => {
 });
 
 // interactions (commands)
+// NOTE: uses interaction.guildId and passes guildId into manager APIs
 client.on("interactionCreate", async (interaction) => {
   if (!interaction.isChatInputCommand?.()) return;
-  const { commandName, guild, member } = interaction;
-  if (!guild) return interaction.reply({ content: "This command must be used in a server.", ephemeral: true });
+
+  const { commandName, member } = interaction;
+  const guildId = interaction.guildId;
+  if (!guildId) return interaction.reply({ content: "This command must be used in a server.", ephemeral: true });
 
   const voiceChannel = member?.voice?.channel;
 
@@ -178,10 +181,11 @@ client.on("interactionCreate", async (interaction) => {
       const query = interaction.options.getString("query");
       if (!voiceChannel) return interaction.reply({ content: "Join a voice channel first.", ephemeral: true });
 
-      let player = manager.players.get(guild.id);
+      // use guildId everywhere
+      let player = manager.players.get(guildId);
       if (!player) {
         player = manager.create({
-          guild: guild.id,
+          guildId: guildId,                 // <-- required by magmastream
           voiceChannel: voiceChannel.id,
           textChannel: interaction.channelId,
           selfDeafen: true,
@@ -215,14 +219,14 @@ client.on("interactionCreate", async (interaction) => {
     }
 
     if (commandName === "stop") {
-      const player = manager.players.get(guild.id);
+      const player = manager.players.get(guildId);
       if (!player) return interaction.reply({ content: "Nothing is playing.", ephemeral: true });
       player.destroy();
       return interaction.reply("⏹️ Stopped and left voice.");
     }
 
     if (commandName === "loop") {
-      const player = manager.players.get(guild.id);
+      const player = manager.players.get(guildId);
       if (!player) return interaction.reply({ content: "Nothing is playing.", ephemeral: true });
       player.setQueueRepeat(!player.queueRepeat);
       return interaction.reply(`🔁 Loop: **${player.queueRepeat ? "Enabled" : "Disabled"}**`);
@@ -231,7 +235,7 @@ client.on("interactionCreate", async (interaction) => {
     if (commandName === "volume") {
       const amount = interaction.options.getInteger("amount");
       if (amount < 0 || amount > 100) return interaction.reply({ content: "Volume must be 0-100.", ephemeral: true });
-      const player = manager.players.get(guild.id);
+      const player = manager.players.get(guildId);
       if (!player) return interaction.reply({ content: "Nothing is playing.", ephemeral: true });
       player.setVolume(amount);
       return interaction.reply(`🔊 Volume set to **${amount}%**`);
