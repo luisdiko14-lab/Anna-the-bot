@@ -106,7 +106,4 @@ async def help(ctx):
 # ==================================================
 
 if __name__ == "__main__":
-    try:
-        bot.run(TOKEN)
-    except Exception as e:
-        print(f"❌ Critical Error: {e}")
+    bot.run(TOKEN)

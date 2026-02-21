@@ -18,9 +18,9 @@ import {
   SlashCommandBuilder,
 } from "discord.js";
 
-const TOKEN = process.env.DISCORD_TOKEN;
+const TOKEN = process.env.MUSIC_TOKEN;
 if (!TOKEN) {
-  console.error("Missing DISCORD_TOKEN in .env");
+  console.error("Missing MUSIC_TOKEN in .env");
   process.exit(1);
 }
 

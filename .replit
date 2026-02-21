@@ -20,11 +20,11 @@ args = "Web Server & Bot"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Music Bot (music.js)"
+args = "Run Bot"
 
 [[workflows.workflow.tasks]]
 task = "workflow.run"
-args = "Run Bot (via ping.py)"
+args = "Music Bot (music.js)"
 
 [[workflows.workflow]]
 name = "Web Server & Bot"
@@ -39,23 +39,23 @@ args = "node index.js"
 waitForPort = 5000
 
 [[workflows.workflow]]
+name = "Run Bot"
+author = "agent"
+
+[[workflows.workflow.tasks]]
+task = "shell.exec"
+args = "python bot.py"
+
+[workflows.workflow.metadata]
+outputType = "console"
+
+[[workflows.workflow]]
 name = "Music Bot (music.js)"
 author = "agent"
 
 [[workflows.workflow.tasks]]
 task = "shell.exec"
 args = "node music.mjs"
-
-[workflows.workflow.metadata]
-outputType = "console"
-
-[[workflows.workflow]]
-name = "Run Bot (via ping.py)"
-author = "agent"
-
-[[workflows.workflow.tasks]]
-task = "shell.exec"
-args = "python ping.py"
 
 [workflows.workflow.metadata]
 outputType = "console"
