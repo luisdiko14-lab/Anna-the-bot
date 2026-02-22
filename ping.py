@@ -22,7 +22,7 @@ def run_services():
 
             try:
                 # Wait 50 seconds
-                time.sleep(50)
+                time.sleep(100)
                 print(f"[{datetime.now().strftime('%H:%M:%S')}] 🔄 Restarting services for maintenance...")
 
             finally:
