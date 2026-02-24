@@ -1754,10 +1754,10 @@ async def avatar(interaction, user: discord.User = None):
     embed.set_image(url=user.display_avatar.url)
     await interaction.response.send_message(embed=embed)
 
-@bot.tree.command(name="poll", description="Create a poll (2-5 options)")
+@bot.tree.command(name="poll", description="Create a poll (2-10 options)")
 async def poll(interaction, question: str, options: str):
     opts = [o.strip() for o in options.split(',') if o.strip()]
-    if not 2 <= len(opts) <= 5:
+    if not 2 <= len(opts) <= 10:
         await interaction.response.send_message("2-5 options required.", ephemeral=True)
         return
     desc = "\n".join(f"{POLL_EMOJIS[i]} {opts[i]}" for i in range(len(opts)))
