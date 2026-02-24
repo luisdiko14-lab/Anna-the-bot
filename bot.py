@@ -66,30 +66,40 @@ async def before_status():
         # ==================================================
         # --- EVENTS ---
         # ==================================================
+
+
 @bot.event
 async def on_ready():
-                    print("===================================")
-                    print(f"✅ Logged in as {bot.user.name}")
-                    print(f"🆔 ID: {bot.user.id}")
-                    print(f"📡 Ping: {round(bot.latency * 1000)}ms")
-                    print("===================================")
+    # Prevent duplicate execution on reconnect
+    if hasattr(bot, "ready_ran") and bot.ready_ran:
+        return
+    bot.ready_ran = True
 
-                    # Start your status task if not already running
-                    if not change_status.is_running():
-                        change_status.start()
-                        await asyncio.sleep(2)
+    print("===================================")
+    print(f"✅ Logged in as {bot.user} ")
+    print(f"🆔 ID: {bot.user.id}")
+    print(f"📡 Ping: {round(bot.latency * 1000)}ms")
+    print("===================================")
 
-                    # --- SYNC SLASH COMMANDS ---
-                    print("🌐 Syncing slash commands...")
+    # Start status loop safely
+    if not change_status.is_running():
+        change_status.start()
+        print("🔄 Status task started!")
 
-                    # Global sync (may take up to 1 hour)
-                    await bot.tree.sync()
-                    print("✅ Global slash commands synced!")
+    print("🌐 Syncing slash commands...")
 
-                    # Instant per-guild sync
-                    for guild in bot.guilds:
-                        await bot.tree.sync(guild=guild)
-                        print(f"✅ Synced slash commands to {guild.name} ({guild.id})")
+    try:
+        # Global sync (can take up to 1 hour to appear everywhere)
+        synced = await bot.tree.sync()
+        print(f"✅ Synced {len(synced)} global slash commands!")
+
+        # Instant per-guild sync
+        for guild in bot.guilds:
+            guild_synced = await bot.tree.sync(guild=guild)
+            print(f"✅ Synced {len(guild_synced)} commands to {guild.name} ({guild.id})")
+
+    except Exception as e:
+        print(f"❌ Slash sync error: {e}")
 
 @bot.event
 async def on_message(message):
@@ -2275,6 +2285,53 @@ def setup(tree, *, start_time=None):
             # fallback if create_task fails
             pass
 
+# 🔥 Cool Global Sync Command
+@bot.tree.command(name="sync", description="🌍 Sync all slash commands globally.")
+@app_commands.checks.has_permissions(administrator=True)
+async def sync(interaction: discord.Interaction):
+
+    await interaction.response.defer(thinking=True)
+
+    loading_steps = [
+        "🔄 Initializing sync module...",
+        "📡 Connecting to Discord API...",
+        "🌍 Pushing global commands...",
+        "⚡ Finalizing deployment...",
+        "✅ Sync complete!"
+    ]
+
+    message = await interaction.followup.send("🚀 Starting global sync...")
+
+    for step in loading_steps:
+        await asyncio.sleep(1.2)
+        await message.edit(content=step)
+
+    try:
+        synced = await bot.tree.sync()  # Global sync
+
+        embed = discord.Embed(
+            title="🌍 Global Sync Successful!",
+            description=f"✨ **{len(synced)} commands** synced globally.\n\n⚠️ Global sync may take up to **1 hour** to fully update everywhere.",
+            color=discord.Color.green()
+        )
+
+        embed.set_footer(text="Anna Guardian System 🌟")
+
+        await message.edit(content="", embed=embed)
+
+    except Exception as e:
+        await message.edit(content=f"❌ Sync failed:\n```{e}```")
+
+# Optional: Better error handling
+@sync.error
+async def sync_error(interaction: discord.Interaction, error):
+    if isinstance(error, app_commands.errors.MissingPermissions):
+        await interaction.response.send_message(
+            "🚫 You need Administrator permission to use this command.",
+            ephemeral=True
+        )
+
+        
     ####################
     # Misc small things
     ####################
