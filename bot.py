@@ -1835,509 +1835,552 @@ def setup(tree, *, start_time=None):
     # Utility commands
     ####################
 
-    @tree.command(name="pings", description="Check bot latency")
-    async def ping(interaction):
+@bot.tree.command(name="pings", description="Check bot latency")
+async def ping(interaction):
         latency_ms = round(interaction.client.latency * 1000)
         await interaction.response.send_message(f"Pong! {latency_ms}ms")
 
-    @tree.command(name="serverinfo", description="Show server info")
-    async def serverinfo(interaction):
-        g = interaction.guild
-        if not g:
-            await interaction.response.send_message("This command only works in a server.", ephemeral=True)
-            return
-        owner = g.owner or "Unknown"
-        text = (
-            f"**{g.name}** (ID: {g.id})\n"
-            f"Members: {g.member_count}\n"
-            f"Roles: {len(g.roles)}\n"
-            f"Channels: {len(g.channels)}\n"
-            f"Owner: {owner}\n"
-        )
-        await interaction.response.send_message(text)
 
-    @tree.command(name="userinfo", description="Show info about a user")
-    async def userinfo(interaction, user: "discord.Member" = None):
-        member = user or interaction.user
-        roles = ", ".join(r.name for r in member.roles[1:]) or "None"
-        joined = getattr(member, "joined_at", "Unknown")
-        created = getattr(member, "created_at", "Unknown")
-        text = (
-            f"**{member}** (ID: {member.id})\n"
-            f"Joined: {joined}\n"
-            f"Account created: {created}\n"
-            f"Roles: {roles}\n"
-        )
-        await interaction.response.send_message(text)
+        # ---------------------------
+        # Utility: consistent decorator usage: use bot.tree.command
+        # ---------------------------
 
-    @tree.command(name="avatar-2", description="Show a user's avatar")
-    async def avatar(interaction, user: "discord.User" = None):
-        target = user or interaction.user
-        url = target.avatar.url if getattr(target, "avatar", None) else target.default_avatar.url
-        await interaction.response.send_message(url)
+        # ---------- Server / User ----------
+        @bot.tree.command(name="serverinfo", description="Show server info")
+        async def serverinfo(interaction: discord.Interaction):
+            g = interaction.guild
+            if not g:
+                await interaction.response.send_message("This command only works in a server.", ephemeral=True)
+                return
 
-    @tree.command(name="uptime", description="Show bot uptime")
-    async def uptime(interaction):
-        if start_time is None:
-            await interaction.response.send_message("Uptime not available (pass start_time to setup).", ephemeral=True)
-            return
-        # start_time expected to be a datetime in your main file
-        delta = __import__("datetime").datetime.utcnow() - start_time
-        hours, rem = divmod(int(delta.total_seconds()), 3600)
-        minutes, seconds = divmod(rem, 60)
-        await interaction.response.send_message(f"Uptime: {hours}h {minutes}m {seconds}s")
+            owner = g.owner
+            if owner is None and g.owner_id:
+                try:
+                    owner = await bot.fetch_user(g.owner_id)
+                except Exception:
+                    owner = "Unknown"
 
-    @tree.command(name="invite-bot", description="Get the bot invite link template")
-    async def invite(interaction):
-        await interaction.response.send_message(
-            "Invite me with this template (replace CLIENT_ID and permissions as needed):\n"
-            "https://discord.com/oauth2/authorize?client_id=1360329809670045731&scope=bot%20applications.commands&permissions=8"
-        )
+            text = (
+                f"**{g.name}** (ID: {g.id})\n"
+                f"Members: {g.member_count}\n"
+                f"Roles: {len(g.roles)}\n"
+                f"Channels: {len(g.channels)}\n"
+                f"Owner: {getattr(owner, 'mention', str(owner))}\n"
+            )
+            await interaction.response.send_message(text)
 
-    ####################
-    # Fun / utility
-    ####################
+        @bot.tree.command(name="userinfo", description="Show info about a user")
+        @app_commands.describe(user="User to get info about (optional)")
+        async def userinfo(interaction: discord.Interaction, user: Optional[discord.Member] = None):
+            member = user or (interaction.user if isinstance(interaction.user, discord.Member) else None)
+            if member is None:
+                # fallback: try to fetch member if in guild
+                if interaction.guild and interaction.user:
+                    member = await interaction.guild.fetch_member(interaction.user.id)
+            if member is None:
+                await interaction.response.send_message("Could not resolve member info.", ephemeral=True)
+                return
 
-    import random
+            roles = ", ".join(r.name for r in member.roles[1:]) or "None"
+            joined = member.joined_at.isoformat() + " UTC" if getattr(member, "joined_at", None) else "Unknown"
+            created = member.created_at.isoformat() + " UTC" if getattr(member, "created_at", None) else "Unknown"
+            text = (
+                f"**{member}** (ID: {member.id})\n"
+                f"Joined: {joined}\n"
+                f"Account created: {created}\n"
+                f"Roles: {roles}\n"
+            )
+            await interaction.response.send_message(text)
 
-    @tree.command(name="8ball-2", description="Ask the magic 8-ball")
-    async def eightball(interaction, question: str):
-        answers = [
-            "It is certain.", "Without a doubt.", "Yes — definitely.", "Ask again later.",
-            "Cannot predict now.", "Don't count on it.", "My sources say no.", "Very doubtful."
-        ]
-        await interaction.response.send_message(f"🎱 {random.choice(answers)}")
+        @bot.tree.command(name="avatar-2", description="Show a user's avatar")
+        @app_commands.describe(user="User to show avatar for (optional)")
+        async def avatar(interaction: discord.Interaction, user: Optional[discord.User] = None):
+            target = user or interaction.user
+            # use display_avatar for best result
+            url = target.display_avatar.url
+            await interaction.response.send_message(url)
 
-    @tree.command(name="roll-2", description="Roll dice or a number (e.g. 1d6 or 20)")
-    async def roll(interaction, dice: str = "1d6"):
-        try:
-            if "d" in dice:
-                num, sides = dice.lower().split("d")
-                num = int(num) if num else 1
-                sides = int(sides)
-                rolls = [random.randint(1, sides) for _ in range(max(1, num))]
-                total = sum(rolls)
-                await interaction.response.send_message(f"Rolled: {rolls} (total {total})")
-            else:
-                n = int(dice)
-                r = random.randint(1, n)
-                await interaction.response.send_message(f"Rolled: {r}")
-        except Exception:
-            await interaction.response.send_message("Invalid format. Use like `1d6` or `20`.", ephemeral=True)
+        @bot.tree.command(name="uptime", description="Show bot uptime")
+        async def uptime(interaction: discord.Interaction):
+            if start_time is None:
+                await interaction.response.send_message("Uptime not available (bot hasn't fully started).", ephemeral=True)
+                return
+            delta = datetime.datetime.utcnow() - start_time
+            hours, rem = divmod(int(delta.total_seconds()), 3600)
+            minutes, seconds = divmod(rem, 60)
+            await interaction.response.send_message(f"Uptime: {hours}h {minutes}m {seconds}s")
 
-    @tree.command(name="coinflip-2", description="Flip a coin")
-    async def coinflip(interaction):
-        await interaction.response.send_message(random.choice(["Heads", "Tails"]))
+        @bot.tree.command(name="invite-bot", description="Get the bot invite link template")
+        async def invite(interaction: discord.Interaction):
+            await interaction.response.send_message(
+                "Invite me with this template (replace CLIENT_ID and permissions as needed):\n"
+                "https://discord.com/oauth2/authorize?client_id=1360329809670045731&scope=bot%20applications.commands&permissions=8"
+            )
 
-    @tree.command(name="rps-2", description="Play rock-paper-scissors")
-    async def rps(interaction, choice: str):
-        choice = choice.lower()
-        options = ["rock", "paper", "scissors"]
-        if choice not in options:
-            await interaction.response.send_message("Pick rock, paper, or scissors.", ephemeral=True)
-            return
-        bot_choice = random.choice(options)
-        outcome = "tie"
-        if (choice, bot_choice) in [("rock","scissors"),("paper","rock"),("scissors","paper")]:
-            outcome = "you win"
-        elif choice == bot_choice:
-            outcome = "tie"
-        else:
-            outcome = "you lose"
-        await interaction.response.send_message(f"You: {choice} — Bot: {bot_choice} — {outcome}")
+        # ---------------------------
+        # Fun / utility
+        # ---------------------------
+        @bot.tree.command(name="8ball-2", description="Ask the magic 8-ball")
+        @app_commands.describe(question="Your question")
+        async def eightball(interaction: discord.Interaction, question: str):
+            answers = [
+                "It is certain.", "Without a doubt.", "Yes — definitely.", "Ask again later.",
+                "Cannot predict now.", "Don't count on it.", "My sources say no.", "Very doubtful."
+            ]
+            await interaction.response.send_message(f"🎱 {random.choice(answers)}")
 
-    # simple social actions
-    @tree.command(name="slap", description="Slap someone")
-    async def slap(interaction, user: "discord.Member"):
-        await interaction.response.send_message(f"{interaction.user.mention} slaps {user.mention}! Ow!")
-
-    @tree.command(name="hug", description="Hug someone")
-    async def hug(interaction, user: "discord.Member"):
-        await interaction.response.send_message(f"{interaction.user.mention} gives {user.mention} a warm hug 🤗")
-
-    @tree.command(name="pat", description="Pat someone")
-    async def pat(interaction, user: "discord.Member"):
-        await interaction.response.send_message(f"{interaction.user.mention} gently pats {user.mention}.")
-
-    ####################
-    # Poll (quick)
-    ####################
-    @tree.command(name="poll-2", description="Create a quick poll (text only, adds 👍👎🤷)")
-    async def poll(interaction, question: str):
-        await interaction.response.send_message(f"**Poll:** {question}")
-        # add reactions to original response
-        msg = await interaction.original_response()
-        try:
-            await msg.add_reaction("👍")
-            await msg.add_reaction("👎")
-            await msg.add_reaction("🤷")
-        except Exception:
-            # ignore if cannot react
-            pass
-
-    ####################
-    # Moderation (permission checks)
-    ####################
-
-    def _no_perm(ephemeral=True):
-        return {"ephemeral": ephemeral}
-
-    @tree.command(name="kick-2", description="Kick a member")
-    async def kick(interaction, member: "discord.Member", reason: str = None):
-        if not interaction.user.guild_permissions.kick_members:
-            await interaction.response.send_message("You don't have permission to kick members.", **_no_perm())
-            return
-        try:
-            await member.kick(reason=reason)
-            await interaction.response.send_message(f"Kicked {member} ({member.id}).")
-        except Exception as e:
-            await interaction.response.send_message(f"Failed to kick: {e}", **_no_perm())
-
-    @tree.command(name="ban-2", description="Ban a member")
-    async def ban(interaction, member: "discord.Member", reason: str = None):
-        if not interaction.user.guild_permissions.ban_members:
-            await interaction.response.send_message("You don't have permission to ban members.", **_no_perm())
-            return
-        try:
-            await member.ban(reason=reason)
-            await interaction.response.send_message(f"Banned {member} ({member.id}).")
-        except Exception as e:
-            await interaction.response.send_message(f"Failed to ban: {e}", **_no_perm())
-
-    @tree.command(name="unban", description="Unban a user by ID or mention")
-    async def unban(interaction, user: "discord.User"):
-        if not interaction.user.guild_permissions.ban_members:
-            await interaction.response.send_message("You don't have permission to unban members.", **_no_perm())
-            return
-        try:
-            await interaction.guild.unban(user)
-            await interaction.response.send_message(f"Unbanned {user} ({user.id}).")
-        except Exception as e:
-            await interaction.response.send_message(f"Failed to unban: {e}", **_no_perm())
-
-    @tree.command(name="softban", description="Softban = ban+unban to clear messages")
-    async def softban(interaction, member: "discord.Member", reason: str = None):
-        if not interaction.user.guild_permissions.ban_members:
-            await interaction.response.send_message("You don't have permission to softban.", **_no_perm())
-            return
-        try:
-            await interaction.guild.ban(member, reason=reason, delete_message_days=1)
-            await interaction.guild.unban(member)
-            await interaction.response.send_message(f"Softbanned {member}.")
-        except Exception as e:
-            await interaction.response.send_message(f"Failed: {e}", **_no_perm())
-
-    @tree.command(name="purge", description="Delete recent messages (number)")
-    async def purge(interaction, limit: int = 10):
-        if not interaction.user.guild_permissions.manage_messages:
-            await interaction.response.send_message("No permission to manage messages.", **_no_perm())
-            return
-        try:
-            await interaction.response.send_message(f"Deleting {limit} messages...", ephemeral=True)
-            channel = interaction.channel
-            deleted = await channel.purge(limit=limit)
-            await interaction.followup.send(f"Deleted {len(deleted)} messages.")
-        except Exception as e:
-            await interaction.response.send_message(f"Failed: {e}", **_no_perm())
-
-    @tree.command(name="nick", description="Change a member's nickname")
-    async def nick(interaction, member: "discord.Member", *, nickname: str = None):
-        if not interaction.user.guild_permissions.manage_nicknames:
-            await interaction.response.send_message("No permission to change nicknames.", **_no_perm())
-            return
-        try:
-            await member.edit(nick=nickname)
-            await interaction.response.send_message(f"Changed nickname for {member} to {nickname!s}.")
-        except Exception as e:
-            await interaction.response.send_message(f"Failed: {e}", **_no_perm())
-
-    @tree.command(name="addrole", description="Add a role to a user")
-    async def addrole(interaction, member: "discord.Member", role: "discord.Role"):
-        if not interaction.user.guild_permissions.manage_roles:
-            await interaction.response.send_message("No permission to manage roles.", **_no_perm())
-            return
-        try:
-            await member.add_roles(role)
-            await interaction.response.send_message(f"Added {role.name} to {member}.")
-        except Exception as e:
-            await interaction.response.send_message(f"Failed: {e}", **_no_perm())
-
-    @tree.command(name="removerole", description="Remove a role from a user")
-    async def removerole(interaction, member: "discord.Member", role: "discord.Role"):
-        if not interaction.user.guild_permissions.manage_roles:
-            await interaction.response.send_message("No permission to manage roles.", **_no_perm())
-            return
-        try:
-            await member.remove_roles(role)
-            await interaction.response.send_message(f"Removed {role.name} from {member}.")
-        except Exception as e:
-            await interaction.response.send_message(f"Failed: {e}", **_no_perm())
-
-    @tree.command(name="warn", description="Warn a user")
-    async def warn(interaction, member: "discord.Member", *, reason: str = "No reason provided"):
-        if not interaction.user.guild_permissions.kick_members:
-            await interaction.response.send_message("No permission to warn.", **_no_perm())
-            return
-        gw = _get_guild_warns(interaction.guild.id)
-        gw.setdefault(member.id, []).append(reason)
-        await interaction.response.send_message(f"Warned {member}. Reason: {reason}")
-
-    @tree.command(name="warnings", description="Show warnings for a user")
-    async def warnings(interaction, member: "discord.Member" = None):
-        member = member or interaction.user
-        gw = _get_guild_warns(interaction.guild.id)
-        user_warns = gw.get(member.id, [])
-        if not user_warns:
-            await interaction.response.send_message(f"{member} has no warnings.")
-        else:
-            text = "\n".join(f"{i+1}. {r}" for i, r in enumerate(user_warns))
-            await interaction.response.send_message(f"Warnings for {member}:\n{text}")
-
-    @tree.command(name="clearwarns", description="Clear warnings for a user")
-    async def clearwarns(interaction, member: "discord.Member"):
-        if not interaction.user.guild_permissions.kick_members:
-            await interaction.response.send_message("No permission to clear warnings.", **_no_perm())
-            return
-        gw = _get_guild_warns(interaction.guild.id)
-        gw.pop(member.id, None)
-        await interaction.response.send_message(f"Cleared warnings for {member}.")
-
-    @tree.command(name="announce", description="Make an announcement in this channel")
-    async def announce(interaction, message: str):
-        if not interaction.user.guild_permissions.manage_guild:
-            await interaction.response.send_message("No permission to announce.", **_no_perm())
-            return
-        await interaction.response.send_message(f"📢 Announcement:\n{message}")
-
-    @tree.command(name="dm", description="DM a user (mod use only)")
-    async def dm(interaction, user: "discord.User", message: str):
-        if not interaction.user.guild_permissions.manage_messages:
-            await interaction.response.send_message("No permission to DM as bot.", **_no_perm())
-            return
-        try:
-            await user.send(message)
-            await interaction.response.send_message(f"Sent DM to {user}.")
-        except Exception as e:
-            await interaction.response.send_message(f"Failed to DM: {e}", **_no_perm())
-
-    @tree.command(name="say", description="Make the bot say something")
-    async def say(interaction, message: str):
-        if not interaction.user.guild_permissions.manage_messages:
-            await interaction.response.send_message("No permission to use say.", **_no_perm())
-            return
-        await interaction.response.send_message(message)
-
-    ####################
-    # Channel controls (lock/unlock/slowmode)
-    ####################
-
-    @tree.command(name="lock", description="Lock the current channel (remove send messages)")
-    async def lock(interaction):
-        if not interaction.user.guild_permissions.manage_channels:
-            await interaction.response.send_message("No permission to manage channels.", **_no_perm())
-            return
-        ch = interaction.channel
-        overwrite = ch.overwrites_for(interaction.guild.default_role)
-        overwrite.send_messages = False
-        await ch.set_permissions(interaction.guild.default_role, overwrite=overwrite)
-        await interaction.response.send_message("Channel locked.")
-
-    @tree.command(name="unlock", description="Unlock the current channel")
-    async def unlock(interaction):
-        if not interaction.user.guild_permissions.manage_channels:
-            await interaction.response.send_message("No permission to manage channels.", **_no_perm())
-            return
-        ch = interaction.channel
-        overwrite = ch.overwrites_for(interaction.guild.default_role)
-        overwrite.send_messages = True
-        await ch.set_permissions(interaction.guild.default_role, overwrite=overwrite)
-        await interaction.response.send_message("Channel unlocked.")
-
-    @tree.command(name="slowmode", description="Set channel slowmode (seconds)")
-    async def slowmode(interaction, seconds: int = 0):
-        if not interaction.user.guild_permissions.manage_channels:
-            await interaction.response.send_message("No permission to manage channels.", **_no_perm())
-            return
-        await interaction.channel.edit(slowmode_delay=seconds)
-        await interaction.response.send_message(f"Set slowmode to {seconds}s.")
-
-    ####################
-    # Cool / custom text transforms
-    ####################
-
-    @tree.command(name="mewmew", description="Mew-mew text")
-    async def mewmew(interaction, *, text: str):
-        out = "".join(ch + "w" if ch.isalpha() else ch for ch in text)
-        await interaction.response.send_message(out)
-
-    @tree.command(name="emojify", description="Turn text into regional indicator emojis")
-    async def emojify(interaction, *, text: str):
-        mapping = {c: f":regional_indicator_{c}:" for c in "abcdefghijklmnopqrstuvwxyz"}
-        out = " ".join(mapping.get(c.lower(), c) for c in text)
-        await interaction.response.send_message(out)
-
-    @tree.command(name="spoiler", description="Wrap text in spoiler tags")
-    async def spoiler(interaction, *, text: str):
-        await interaction.response.send_message("||" + text + "||")
-
-    @tree.command(name="reverse", description="Reverse text")
-    async def reverse(interaction, *, text: str):
-        await interaction.response.send_message(text[::-1])
-
-    @tree.command(name="mock", description="Mock text (sPoNgEbOb case)")
-    async def mock(interaction, *, text: str):
-        out = "".join(c.upper() if i % 2 else c.lower() for i, c in enumerate(text))
-        await interaction.response.send_message(out)
-
-    @tree.command(name="vaporwave", description="Vaporwave text")
-    async def vaporwave(interaction, *, text: str):
-        # fullwide transform
-        wide = "".join(chr(ord(c) + 0xFEE0) if 33 <= ord(c) <= 126 else c for c in text)
-        await interaction.response.send_message(wide)
-
-    @tree.command(name="binary", description="Text -> binary")
-    async def binary(interaction, *, text: str):
-        out = " ".join(format(ord(c), "08b") for c in text)
-        await interaction.response.send_message(out)
-
-    @tree.command(name="morse", description="Text -> morse (simple)")
-    async def morse(interaction, *, text: str):
-        table = {
-            "a": ".-", "b": "-...", "c": "-.-.", "d": "-..", "e": ".",
-            "f": "..-.", "g": "--.", "h": "....", "i": "..", "j": ".---",
-            "k": "-.-", "l": ".-..", "m": "--", "n": "-.", "o": "---",
-            "p": ".--.", "q": "--.-", "r": ".-.", "s": "...", "t": "-",
-            "u": "..-", "v": "...-", "w": ".--", "x": "-..-", "y": "-.--",
-            "z": "--..", " ": "/"
-        }
-        out = " ".join(table.get(c.lower(), "?") for c in text)
-        await interaction.response.send_message(out)
-
-    @tree.command(name="piglatin", description="Convert text to pig latin")
-    async def piglatin(interaction, *, text: str):
-        def pl(word):
-            vowels = "aeiou"
-            if word[0].lower() in vowels:
-                return word + "way"
-            for i, ch in enumerate(word):
-                if ch.lower() in vowels:
-                    return word[i:] + word[:i] + "ay"
-            return word + "ay"
-        out = " ".join(pl(w) for w in text.split())
-        await interaction.response.send_message(out)
-
-    @tree.command(name="advice", description="Get a random piece of advice")
-    async def advice(interaction):
-        adv = [
-            "Trust the process.", "Break big tasks into small steps.", "Drink water.",
-            "Ask questions — curiosity scales fast."
-        ]
-        await interaction.response.send_message(random.choice(adv))
-
-    @tree.command(name="truth", description="Get a truth prompt")
-    async def truth(interaction):
-        choices = [
-            "What's a small secret you've never told?", "What's your biggest goal right now?"
-        ]
-        await interaction.response.send_message(random.choice(choices))
-
-    @tree.command(name="dare", description="Get a dare prompt")
-    async def dare(interaction):
-        choices = [
-            "Send a funny selfie to a friend.", "Use only emojis for 5 minutes in chat."
-        ]
-        await interaction.response.send_message(random.choice(choices))
-
-    @tree.command(name="joke", description="Tell a joke")
-    async def joke(interaction):
-        jokes = [
-            "Why did the scarecrow win an award? He was outstanding in his field.",
-            "I told my computer I needed a break, it said 'No problem — I'll go to sleep.'"
-        ]
-        await interaction.response.send_message(random.choice(jokes))
-
-    @tree.command(name="iq", description="Roll an IQ score (for fun)")
-    async def iq(interaction, who: "discord.User" = None):
-        who = who or interaction.user
-        score = random.randint(70, 160)
-        await interaction.response.send_message(f"{who} has an IQ of {score} (totally for fun).")
-
-    ####################
-    # Reminder (background task)
-    ####################
-    import asyncio
-
-    @tree.command(name="remindme", description="Set a reminder (seconds) — bot must remain online")
-    async def remindme(interaction, seconds: int, *, message: str):
-        await interaction.response.send_message(f"Okay! I will remind you in {seconds} seconds (if I'm online).", ephemeral=True)
-
-        async def _reminder():
+        @bot.tree.command(name="roll-2", description="Roll dice or a number (e.g. 1d6 or 20)")
+        @app_commands.describe(dice="1d6 style or single number")
+        async def roll(interaction: discord.Interaction, dice: str = "1d6"):
             try:
-                await asyncio.sleep(seconds)
-                await interaction.user.send(f"🔔 Reminder: {message}")
+                if "d" in dice.lower():
+                    num_s, sides_s = dice.lower().split("d", 1)
+                    num = int(num_s) if num_s else 1
+                    sides = int(sides_s)
+                    num = max(1, min(num, 100))      # safety limits
+                    sides = max(1, min(sides, 10000))# safety limits
+                    rolls = [random.randint(1, sides) for _ in range(num)]
+                    total = sum(rolls)
+                    await interaction.response.send_message(f"Rolled: {rolls} (total {total})")
+                else:
+                    n = int(dice)
+                    n = max(1, min(n, 1000000))
+                    r = random.randint(1, n)
+                    await interaction.response.send_message(f"Rolled: {r}")
             except Exception:
-                # fail silently (can't DM etc.)
+                await interaction.response.send_message("Invalid format. Use like `1d6` or `20`.", ephemeral=True)
+
+        @bot.tree.command(name="coinflip-2", description="Flip a coin")
+        async def coinflip(interaction: discord.Interaction):
+            await interaction.response.send_message(random.choice(["Heads", "Tails"]))
+
+        @bot.tree.command(name="rps-2", description="Play rock-paper-scissors")
+        @app_commands.describe(choice="rock, paper or scissors")
+        async def rps(interaction: discord.Interaction, choice: str):
+            choice = choice.lower()
+            options = ["rock", "paper", "scissors"]
+            if choice not in options:
+                await interaction.response.send_message("Pick rock, paper, or scissors.", ephemeral=True)
+                return
+            bot_choice = random.choice(options)
+            if choice == bot_choice:
+                outcome = "tie"
+            elif (choice, bot_choice) in [("rock","scissors"),("paper","rock"),("scissors","paper")]:
+                outcome = "you win"
+            else:
+                outcome = "you lose"
+            await interaction.response.send_message(f"You: {choice} — Bot: {bot_choice} — {outcome}")
+
+        @bot.tree.command(name="slap", description="Slap someone")
+        @app_commands.describe(user="Member to slap")
+        async def slap(interaction: discord.Interaction, user: discord.Member):
+            await interaction.response.send_message(f"{interaction.user.mention} slaps {user.mention}! Ow!")
+
+        @bot.tree.command(name="hug", description="Hug someone")
+        @app_commands.describe(user="Member to hug")
+        async def hug(interaction: discord.Interaction, user: discord.Member):
+            await interaction.response.send_message(f"{interaction.user.mention} gives {user.mention} a warm hug 🤗")
+
+        @bot.tree.command(name="pat", description="Pat someone")
+        @app_commands.describe(user="Member to pat")
+        async def pat(interaction: discord.Interaction, user: discord.Member):
+            await interaction.response.send_message(f"{interaction.user.mention} gently pats {user.mention}.")
+
+        # ---------------------------
+        # Poll (quick)
+        # ---------------------------
+        @bot.tree.command(name="poll-2", description="Create a quick poll (text only, adds 👍👎🤷)")
+        @app_commands.describe(question="Question for the poll")
+        async def poll(interaction: discord.Interaction, question: str):
+            await interaction.response.send_message(f"**Poll:** {question}")
+            # add reactions to original response (bot needs add_reactions permission)
+            try:
+                msg = await interaction.original_response()  # returns Message
+                await msg.add_reaction("👍")
+                await msg.add_reaction("👎")
+                await msg.add_reaction("🤷")
+            except Exception:
                 pass
 
-        try:
-            asyncio.create_task(_reminder())
-        except Exception:
-            # fallback if create_task fails
-            pass
+        # ---------------------------
+        # Moderation helpers & commands
+        # ---------------------------
+        def _no_perm(ephemeral=True):
+            return {"ephemeral": ephemeral}
 
-# 🔥 Cool Global Sync Command
+        @bot.tree.command(name="kick-2", description="Kick a member")
+        @app_commands.describe(member="Member to kick", reason="Reason (optional)")
+        async def kick(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None):
+            if not interaction.user.guild_permissions.kick_members:
+                await interaction.response.send_message("You don't have permission to kick members.", **_no_perm())
+                return
+            try:
+                await member.kick(reason=reason)
+                await interaction.response.send_message(f"Kicked {member} ({member.id}).")
+            except Exception as e:
+                await interaction.response.send_message(f"Failed to kick: {e}", **_no_perm())
+
+        @bot.tree.command(name="ban-2", description="Ban a member")
+        @app_commands.describe(member="Member to ban", reason="Reason (optional)")
+        async def ban(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None):
+            if not interaction.user.guild_permissions.ban_members:
+                await interaction.response.send_message("You don't have permission to ban members.", **_no_perm())
+                return
+            try:
+                await interaction.guild.ban(member, reason=reason)
+                await interaction.response.send_message(f"Banned {member} ({member.id}).")
+            except Exception as e:
+                await interaction.response.send_message(f"Failed to ban: {e}", **_no_perm())
+
+        @bot.tree.command(name="unban", description="Unban a user by ID or mention")
+        @app_commands.describe(user="User to unban (mention or ID)")
+        async def unban(interaction: discord.Interaction, user: discord.User):
+            if not interaction.user.guild_permissions.ban_members:
+                await interaction.response.send_message("You don't have permission to unban members.", **_no_perm())
+                return
+            try:
+                await interaction.guild.unban(user)
+                await interaction.response.send_message(f"Unbanned {user} ({user.id}).")
+            except Exception as e:
+                await interaction.response.send_message(f"Failed to unban: {e}", **_no_perm())
+
+        @bot.tree.command(name="softban", description="Softban = ban+unban to clear messages")
+        @app_commands.describe(member="Member to softban", reason="Reason (optional)")
+        async def softban(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None):
+            if not interaction.user.guild_permissions.ban_members:
+                await interaction.response.send_message("You don't have permission to softban.", **_no_perm())
+                return
+            try:
+                await interaction.guild.ban(member, reason=reason, delete_message_days=1)
+                await interaction.guild.unban(discord.Object(id=member.id))
+                await interaction.response.send_message(f"Softbanned {member}.")
+            except Exception as e:
+                await interaction.response.send_message(f"Failed: {e}", **_no_perm())
+
+        @bot.tree.command(name="purge", description="Delete recent messages (number)")
+        @app_commands.describe(limit="Number of messages to delete (default 10)")
+        async def purge(interaction: discord.Interaction, limit: int = 10):
+            if not interaction.user.guild_permissions.manage_messages:
+                await interaction.response.send_message("No permission to manage messages.", **_no_perm())
+                return
+            try:
+                await interaction.response.send_message(f"Deleting {limit} messages...", ephemeral=True)
+                channel = interaction.channel
+                # some channel types may not support purge; try best-effort
+                deleted = []
+                try:
+                    deleted = await channel.purge(limit=limit)  # type: ignore
+                except Exception:
+                    # fallback: manual bulk delete using history
+                    msgs = [m async for m in channel.history(limit=limit)]
+                    await channel.delete_messages(msgs)
+                    deleted = msgs
+                await interaction.followup.send(f"Deleted {len(deleted)} messages.")
+            except Exception as e:
+                await interaction.response.send_message(f"Failed: {e}", **_no_perm())
+
+        @bot.tree.command(name="nick", description="Change a member's nickname")
+        @app_commands.describe(member="Member", nickname="New nickname")
+        async def nick(interaction: discord.Interaction, member: discord.Member, *, nickname: Optional[str] = None):
+            if not interaction.user.guild_permissions.manage_nicknames:
+                await interaction.response.send_message("No permission to change nicknames.", **_no_perm())
+                return
+            try:
+                await member.edit(nick=nickname)
+                await interaction.response.send_message(f"Changed nickname for {member} to {nickname!s}.")
+            except Exception as e:
+                await interaction.response.send_message(f"Failed: {e}", **_no_perm())
+
+        @bot.tree.command(name="addrole", description="Add a role to a user")
+        @app_commands.describe(member="Member", role="Role to add")
+        async def addrole(interaction: discord.Interaction, member: discord.Member, role: discord.Role):
+            if not interaction.user.guild_permissions.manage_roles:
+                await interaction.response.send_message("No permission to manage roles.", **_no_perm())
+                return
+            try:
+                await member.add_roles(role)
+                await interaction.response.send_message(f"Added {role.name} to {member}.")
+            except Exception as e:
+                await interaction.response.send_message(f"Failed: {e}", **_no_perm())
+
+        @bot.tree.command(name="removerole", description="Remove a role from a user")
+        @app_commands.describe(member="Member", role="Role to remove")
+        async def removerole(interaction: discord.Interaction, member: discord.Member, role: discord.Role):
+            if not interaction.user.guild_permissions.manage_roles:
+                await interaction.response.send_message("No permission to manage roles.", **_no_perm())
+                return
+            try:
+                await member.remove_roles(role)
+                await interaction.response.send_message(f"Removed {role.name} from {member}.")
+            except Exception as e:
+                await interaction.response.send_message(f"Failed: {e}", **_no_perm())
+
+        @bot.tree.command(name="warn", description="Warn a user")
+        @app_commands.describe(member="Member to warn", reason="Reason")
+        async def warn(interaction: discord.Interaction, member: discord.Member, *, reason: str = "No reason provided"):
+            if not interaction.user.guild_permissions.kick_members:
+                await interaction.response.send_message("No permission to warn.", **_no_perm())
+                return
+            gw = _get_guild_warns(interaction.guild.id)
+            gw.setdefault(member.id, []).append(reason)
+            await interaction.response.send_message(f"Warned {member}. Reason: {reason}")
+
+        @bot.tree.command(name="warnings", description="Show warnings for a user")
+        @app_commands.describe(member="Member (optional)")
+        async def warnings(interaction: discord.Interaction, member: Optional[discord.Member] = None):
+            member = member or interaction.user
+            gw = _get_guild_warns(interaction.guild.id)
+            user_warns = gw.get(getattr(member, "id", None), [])
+            if not user_warns:
+                await interaction.response.send_message(f"{member} has no warnings.")
+            else:
+                text = "\n".join(f"{i+1}. {r}" for i, r in enumerate(user_warns))
+                await interaction.response.send_message(f"Warnings for {member}:\n{text}")
+
+        @bot.tree.command(name="clearwarns", description="Clear warnings for a user")
+        @app_commands.describe(member="Member to clear warnings for")
+        async def clearwarns(interaction: discord.Interaction, member: discord.Member):
+            if not interaction.user.guild_permissions.kick_members:
+                await interaction.response.send_message("No permission to clear warnings.", **_no_perm())
+                return
+            gw = _get_guild_warns(interaction.guild.id)
+            gw.pop(member.id, None)
+            await interaction.response.send_message(f"Cleared warnings for {member}.")
+
+        @bot.tree.command(name="announce", description="Make an announcement in this channel")
+        @app_commands.describe(message="Message to announce")
+        async def announce(interaction: discord.Interaction, message: str):
+            if not interaction.user.guild_permissions.manage_guild:
+                await interaction.response.send_message("No permission to announce.", **_no_perm())
+                return
+            await interaction.response.send_message(f"📢 Announcement:\n{message}")
+
+        @bot.tree.command(name="dm", description="DM a user (mod use only)")
+        @app_commands.describe(user="User to DM", message="Message content")
+        async def dm(interaction: discord.Interaction, user: discord.User, message: str):
+            if not interaction.user.guild_permissions.manage_messages:
+                await interaction.response.send_message("No permission to DM as bot.", **_no_perm())
+                return
+            try:
+                await user.send(message)
+                await interaction.response.send_message(f"Sent DM to {user}.")
+            except Exception as e:
+                await interaction.response.send_message(f"Failed to DM: {e}", **_no_perm())
+
+        @bot.tree.command(name="say", description="Make the bot say something")
+        @app_commands.describe(message="Message to send")
+        async def say(interaction: discord.Interaction, message: str):
+            if not interaction.user.guild_permissions.manage_messages:
+                await interaction.response.send_message("No permission to use say.", **_no_perm())
+                return
+            await interaction.response.send_message(message)
+
+        # ---------------------------
+        # Channel controls
+        # ---------------------------
+        @bot.tree.command(name="lock", description="Lock the current channel (remove send messages)")
+        async def lock(interaction: discord.Interaction):
+            if not interaction.user.guild_permissions.manage_channels:
+                await interaction.response.send_message("No permission to manage channels.", **_no_perm())
+                return
+            ch = interaction.channel
+            await ch.set_permissions(interaction.guild.default_role, send_messages=False)
+            await interaction.response.send_message("Channel locked.")
+
+        @bot.tree.command(name="unlock", description="Unlock the current channel")
+        async def unlock(interaction: discord.Interaction):
+            if not interaction.user.guild_permissions.manage_channels:
+                await interaction.response.send_message("No permission to manage channels.", **_no_perm())
+                return
+            ch = interaction.channel
+            await ch.set_permissions(interaction.guild.default_role, send_messages=True)
+            await interaction.response.send_message("Channel unlocked.")
+
+        @bot.tree.command(name="slowmode", description="Set channel slowmode (seconds)")
+        @app_commands.describe(seconds="Slowmode seconds")
+        async def slowmode(interaction: discord.Interaction, seconds: int = 0):
+            if not interaction.user.guild_permissions.manage_channels:
+                await interaction.response.send_message("No permission to manage channels.", **_no_perm())
+                return
+            await interaction.channel.edit(slowmode_delay=seconds)
+            await interaction.response.send_message(f"Set slowmode to {seconds}s.")
+
+        # ---------------------------
+        # Text transforms & small fun
+        # ---------------------------
+        @bot.tree.command(name="mewmew", description="Mew-mew text")
+        async def mewmew(interaction: discord.Interaction, *, text: str):
+            out = "".join(ch + "w" if ch.isalpha() else ch for ch in text)
+            await interaction.response.send_message(out)
+
+        @bot.tree.command(name="emojify", description="Turn text into regional indicator emojis")
+        async def emojify(interaction: discord.Interaction, *, text: str):
+            mapping = {c: f":regional_indicator_{c}:" for c in "abcdefghijklmnopqrstuvwxyz"}
+            out = " ".join(mapping.get(c.lower(), c) for c in text)
+            await interaction.response.send_message(out)
+
+        @bot.tree.command(name="spoiler", description="Wrap text in spoiler tags")
+        async def spoiler(interaction: discord.Interaction, *, text: str):
+            await interaction.response.send_message("||" + text + "||")
+
+        @bot.tree.command(name="reverse", description="Reverse text")
+        async def reverse(interaction: discord.Interaction, *, text: str):
+            await interaction.response.send_message(text[::-1])
+
+        @bot.tree.command(name="mock", description="Mock text (sPoNgEbOb case)")
+        async def mock(interaction: discord.Interaction, *, text: str):
+            out = "".join(c.upper() if i % 2 else c.lower() for i, c in enumerate(text))
+            await interaction.response.send_message(out)
+
+        @bot.tree.command(name="vaporwave", description="Vaporwave text")
+        async def vaporwave(interaction: discord.Interaction, *, text: str):
+            wide = "".join(chr(ord(c) + 0xFEE0) if 33 <= ord(c) <= 126 else c for c in text)
+            await interaction.response.send_message(wide)
+
+        @bot.tree.command(name="binary", description="Text -> binary")
+        async def binary(interaction: discord.Interaction, *, text: str):
+            out = " ".join(format(ord(c), "08b") for c in text)
+            await interaction.response.send_message(out)
+
+        @bot.tree.command(name="morse", description="Text -> morse (simple)")
+        async def morse(interaction: discord.Interaction, *, text: str):
+            table = {
+                "a": ".-", "b": "-...", "c": "-.-.", "d": "-..", "e": ".",
+                "f": "..-.", "g": "--.", "h": "....", "i": "..", "j": ".---",
+                "k": "-.-", "l": ".-..", "m": "--", "n": "-.", "o": "---",
+                "p": ".--.", "q": "--.-", "r": ".-.", "s": "...", "t": "-",
+                "u": "..-", "v": "...-", "w": ".--", "x": "-..-", "y": "-.--",
+                "z": "--..", " ": "/"
+            }
+            out = " ".join(table.get(c.lower(), "?") for c in text)
+            await interaction.response.send_message(out)
+
+        @bot.tree.command(name="piglatin", description="Convert text to pig latin")
+        async def piglatin(interaction: discord.Interaction, *, text: str):
+            def pl(word):
+                vowels = "aeiou"
+                if not word:
+                    return word
+                if word[0].lower() in vowels:
+                    return word + "way"
+                for i, ch in enumerate(word):
+                    if ch.lower() in vowels:
+                        return word[i:] + word[:i] + "ay"
+                return word + "ay"
+            out = " ".join(pl(w) for w in text.split())
+            await interaction.response.send_message(out)
+
+        @bot.tree.command(name="advice", description="Get a random piece of advice")
+        async def advice(interaction: discord.Interaction):
+            adv = [
+                "Trust the process.", "Break big tasks into small steps.", "Drink water.",
+                "Ask questions — curiosity scales fast."
+            ]
+            await interaction.response.send_message(random.choice(adv))
+
+        @bot.tree.command(name="truth", description="Get a truth prompt")
+        async def truth(interaction: discord.Interaction):
+            choices = [
+                "What's a small secret you've never told?", "What's your biggest goal right now?"
+            ]
+            await interaction.response.send_message(random.choice(choices))
+
+        @bot.tree.command(name="dare", description="Get a dare prompt")
+        async def dare(interaction: discord.Interaction):
+            choices = [
+                "Send a funny selfie to a friend.", "Use only emojis for 5 minutes in chat."
+            ]
+            await interaction.response.send_message(random.choice(choices))
+
+        @bot.tree.command(name="joke", description="Tell a joke")
+        async def joke(interaction: discord.Interaction):
+            jokes = [
+                "Why did the scarecrow win an award? He was outstanding in his field.",
+                "I told my computer I needed a break, it said 'No problem — I'll go to sleep.'"
+            ]
+            await interaction.response.send_message(random.choice(jokes))
+
+        @bot.tree.command(name="iq", description="Roll an IQ score (for fun)")
+        @app_commands.describe(who="User (optional)")
+        async def iq(interaction: discord.Interaction, who: Optional[discord.User] = None):
+            who = who or interaction.user
+            score = random.randint(70, 160)
+            await interaction.response.send_message(f"{who} has an IQ of {score} (totally for fun).")
+
+        # ---------------------------
+        # Reminder (background task inside bot; note: bot must remain online)
+        # ---------------------------
+        @bot.tree.command(name="remindme", description="Set a reminder (seconds) — bot must remain online")
+        @app_commands.describe(seconds="Seconds until reminder", message="Reminder message")
+        async def remindme(interaction: discord.Interaction, seconds: int, *, message: str):
+            await interaction.response.send_message(f"Okay! I will remind you in {seconds} seconds (if I'm online).", ephemeral=True)
+
+            async def _reminder():
+                try:
+                    await asyncio.sleep(max(1, seconds))
+                    await interaction.user.send(f"🔔 Reminder: {message}")
+                except Exception:
+                    pass
+
+            try:
+                asyncio.create_task(_reminder())
+            except Exception:
+                pass
+
+        # ---------------------------
+        # Global sync command with admin check
+        # ---------------------------
 @bot.tree.command(name="sync", description="🌍 Sync all slash commands globally.")
 @app_commands.checks.has_permissions(administrator=True)
 async def sync(interaction: discord.Interaction):
+            await interaction.response.defer(thinking=True)
+            loading_steps = [
+                "🔄 Initializing sync module...",
+                "📡 Connecting to Discord API...",
+                "🌍 Pushing global commands...",
+                "⚡ Finalizing deployment...",
+                "✅ Sync complete!"
+            ]
+            message = await interaction.followup.send("🚀 Starting global sync...")
+            for step in loading_steps:
+                await asyncio.sleep(1.2)
+                await message.edit(content=step)
 
-    await interaction.response.defer(thinking=True)
+            try:
+                synced = await bot.tree.sync()  # Global sync
+                embed = discord.Embed(
+                    title="🌍 Global Sync Successful!",
+                    description=f"✨ **{len(synced)} commands** synced globally.\n\n⚠️ Global sync may take up to **1 hour** to fully update everywhere.",
+                    color=discord.Color.green()
+                )
+                embed.set_footer(text="Anna Guardian System 🌟")
+                await message.edit(content="", embed=embed)
+            except Exception as e:
+                await message.edit(content=f"❌ Sync failed:\n```{e}```")
 
-    loading_steps = [
-        "🔄 Initializing sync module...",
-        "📡 Connecting to Discord API...",
-        "🌍 Pushing global commands...",
-        "⚡ Finalizing deployment...",
-        "✅ Sync complete!"
-    ]
+        # Global app-command error handler
+@bot.event
+async def on_app_command_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
+            # Missing perms from checks
+            if isinstance(error, app_commands.MissingPermissions) or isinstance(error, app_commands.CheckFailure):
+                try:
+                    await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
+                except Exception:
+                    pass
+                return
+            # Other errors
+            try:
+                await interaction.response.send_message(f"An error occurred: `{error}`", ephemeral=True)
+            except Exception:
+                pass
 
-    message = await interaction.followup.send("🚀 Starting global sync...")
+        # ---------------------------
+        # Small convenience command to show there is more
+@bot.tree.command(name="advice_short", description="Short advice")
+async def advice_short(interaction: discord.Interaction):
+            await interaction.response.send_message("Take one focused 25-minute session on something important today.")
 
-    for step in loading_steps:
-        await asyncio.sleep(1.2)
-        await message.edit(content=step)
 
-    try:
-        synced = await bot.tree.sync()  # Global sync
-
-        embed = discord.Embed(
-            title="🌍 Global Sync Successful!",
-            description=f"✨ **{len(synced)} commands** synced globally.\n\n⚠️ Global sync may take up to **1 hour** to fully update everywhere.",
-            color=discord.Color.green()
-        )
-
-        embed.set_footer(text="Anna Guardian System 🌟")
-
-        await message.edit(content="", embed=embed)
-
-    except Exception as e:
-        await message.edit(content=f"❌ Sync failed:\n```{e}```")
-
-# Optional: Better error handling
-@sync.error
-async def sync_error(interaction: discord.Interaction, error):
-    if isinstance(error, app_commands.errors.MissingPermissions):
-        await interaction.response.send_message(
-            "🚫 You need Administrator permission to use this command.",
-            ephemeral=True
-        )
-
-        
-    ####################
-    # Misc small things
-    ####################
-    @tree.command(name="advice_short", description="Short advice")  # example if you want more
-    async def advice_short(interaction):
-        await interaction.response.send_message("Take one focused 25-minute session on something important today.")
 
     # register done (functions decorated — nothing to return)
     # (No explicit return necessary)

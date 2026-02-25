@@ -7,7 +7,7 @@ DISCORD_TOKEN = "MTM2MDMyOTgwOTY3MDA0NTczMQ.GLJsTj.DWHaO6L4NFviUTIMPgVHY9jxIH-hv
 GEMINI_API_KEY = "AIzaSyDO3CcialM2_5gDzVeOey3V6RQZsBp14EA"
 
 [workflows]
-runButton = "Project"
+runButton = "Run Bot"
 
 [[workflows.workflow]]
 name = "Project"
