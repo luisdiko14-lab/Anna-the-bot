@@ -1900,8 +1900,8 @@ async def avatar(interaction: discord.Interaction, user: Optional[discord.User] 
             url = target.display_avatar.url
             await interaction.response.send_message(url)
 
-        @bot.tree.command(name="uptime", description="Show bot uptime")
-        async def uptime(interaction: discord.Interaction):
+@bot.tree.command(name="uptime", description="Show bot uptime")
+async def uptime(interaction: discord.Interaction):
             if start_time is None:
                 await interaction.response.send_message("Uptime not available (bot hasn't fully started).", ephemeral=True)
                 return
