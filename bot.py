@@ -1869,9 +1869,9 @@ async def ping(interaction):
             )
             await interaction.response.send_message(text)
 
-        @bot.tree.command(name="userinfo", description="Show info about a user")
-        @app_commands.describe(user="User to get info about (optional)")
-        async def userinfo(interaction: discord.Interaction, user: Optional[discord.Member] = None):
+@bot.tree.command(name="userinfo", description="Show info about a user")
+@app_commands.describe(user="User to get info about (optional)")
+async def userinfo(interaction: discord.Interaction, user: Optional[discord.Member] = None):
             member = user or (interaction.user if isinstance(interaction.user, discord.Member) else None)
             if member is None:
                 # fallback: try to fetch member if in guild
@@ -1892,9 +1892,9 @@ async def ping(interaction):
             )
             await interaction.response.send_message(text)
 
-        @bot.tree.command(name="avatar-2", description="Show a user's avatar")
-        @app_commands.describe(user="User to show avatar for (optional)")
-        async def avatar(interaction: discord.Interaction, user: Optional[discord.User] = None):
+@bot.tree.command(name="avatar-2", description="Show a user's avatar")
+@app_commands.describe(user="User to show avatar for (optional)")
+async def avatar(interaction: discord.Interaction, user: Optional[discord.User] = None):
             target = user or interaction.user
             # use display_avatar for best result
             url = target.display_avatar.url
@@ -1910,8 +1910,8 @@ async def ping(interaction):
             minutes, seconds = divmod(rem, 60)
             await interaction.response.send_message(f"Uptime: {hours}h {minutes}m {seconds}s")
 
-        @bot.tree.command(name="invite-bot", description="Get the bot invite link template")
-        async def invite(interaction: discord.Interaction):
+@bot.tree.command(name="invite-bot", description="Get the bot invite link template")
+async def invite(interaction: discord.Interaction):
             await interaction.response.send_message(
                 "Invite me with this template (replace CLIENT_ID and permissions as needed):\n"
                 "https://discord.com/oauth2/authorize?client_id=1360329809670045731&scope=bot%20applications.commands&permissions=8"
@@ -1920,9 +1920,9 @@ async def ping(interaction):
         # ---------------------------
         # Fun / utility
         # ---------------------------
-        @bot.tree.command(name="8ball-2", description="Ask the magic 8-ball")
-        @app_commands.describe(question="Your question")
-        async def eightball(interaction: discord.Interaction, question: str):
+@bot.tree.command(name="8ball-2", description="Ask the magic 8-ball")
+@app_commands.describe(question="Your question")
+async def eightball(interaction: discord.Interaction, question: str):
             answers = [
                 "It is certain.", "Without a doubt.", "Yes — definitely.", "Ask again later.",
                 "Cannot predict now.", "Don't count on it.", "My sources say no.", "Very doubtful."
@@ -1950,13 +1950,13 @@ async def ping(interaction):
             except Exception:
                 await interaction.response.send_message("Invalid format. Use like `1d6` or `20`.", ephemeral=True)
 
-        @bot.tree.command(name="coinflip-2", description="Flip a coin")
-        async def coinflip(interaction: discord.Interaction):
+@bot.tree.command(name="coinflip-2", description="Flip a coin")
+async def coinflip(interaction: discord.Interaction):
             await interaction.response.send_message(random.choice(["Heads", "Tails"]))
 
-        @bot.tree.command(name="rps-2", description="Play rock-paper-scissors")
-        @app_commands.describe(choice="rock, paper or scissors")
-        async def rps(interaction: discord.Interaction, choice: str):
+@bot.tree.command(name="rps-2", description="Play rock-paper-scissors")
+@app_commands.describe(choice="rock, paper or scissors")
+async def rps(interaction: discord.Interaction, choice: str):
             choice = choice.lower()
             options = ["rock", "paper", "scissors"]
             if choice not in options:
@@ -1971,27 +1971,27 @@ async def ping(interaction):
                 outcome = "you lose"
             await interaction.response.send_message(f"You: {choice} — Bot: {bot_choice} — {outcome}")
 
-        @bot.tree.command(name="slap", description="Slap someone")
-        @app_commands.describe(user="Member to slap")
-        async def slap(interaction: discord.Interaction, user: discord.Member):
+@bot.tree.command(name="slap", description="Slap someone")
+@app_commands.describe(user="Member to slap")
+async def slap(interaction: discord.Interaction, user: discord.Member):
             await interaction.response.send_message(f"{interaction.user.mention} slaps {user.mention}! Ow!")
 
-        @bot.tree.command(name="hug", description="Hug someone")
-        @app_commands.describe(user="Member to hug")
-        async def hug(interaction: discord.Interaction, user: discord.Member):
+@bot.tree.command(name="hug", description="Hug someone")
+@app_commands.describe(user="Member to hug")
+async def hug(interaction: discord.Interaction, user: discord.Member):
             await interaction.response.send_message(f"{interaction.user.mention} gives {user.mention} a warm hug 🤗")
 
-        @bot.tree.command(name="pat", description="Pat someone")
-        @app_commands.describe(user="Member to pat")
-        async def pat(interaction: discord.Interaction, user: discord.Member):
+@bot.tree.command(name="pat", description="Pat someone")
+@app_commands.describe(user="Member to pat")
+async def pat(interaction: discord.Interaction, user: discord.Member):
             await interaction.response.send_message(f"{interaction.user.mention} gently pats {user.mention}.")
 
         # ---------------------------
         # Poll (quick)
         # ---------------------------
-        @bot.tree.command(name="poll-2", description="Create a quick poll (text only, adds 👍👎🤷)")
-        @app_commands.describe(question="Question for the poll")
-        async def poll(interaction: discord.Interaction, question: str):
+@bot.tree.command(name="poll-2", description="Create a quick poll (text only, adds 👍👎🤷)")
+@app_commands.describe(question="Question for the poll")
+async def poll(interaction: discord.Interaction, question: str):
             await interaction.response.send_message(f"**Poll:** {question}")
             # add reactions to original response (bot needs add_reactions permission)
             try:
@@ -2008,9 +2008,9 @@ async def ping(interaction):
         def _no_perm(ephemeral=True):
             return {"ephemeral": ephemeral}
 
-        @bot.tree.command(name="kick-2", description="Kick a member")
-        @app_commands.describe(member="Member to kick", reason="Reason (optional)")
-        async def kick(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None):
+@bot.tree.command(name="kick-2", description="Kick a member")
+@app_commands.describe(member="Member to kick", reason="Reason (optional)")
+async def kick(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None):
             if not interaction.user.guild_permissions.kick_members:
                 await interaction.response.send_message("You don't have permission to kick members.", **_no_perm())
                 return
@@ -2020,9 +2020,9 @@ async def ping(interaction):
             except Exception as e:
                 await interaction.response.send_message(f"Failed to kick: {e}", **_no_perm())
 
-        @bot.tree.command(name="ban-2", description="Ban a member")
-        @app_commands.describe(member="Member to ban", reason="Reason (optional)")
-        async def ban(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None):
+@bot.tree.command(name="ban-2", description="Ban a member")
+@app_commands.describe(member="Member to ban", reason="Reason (optional)")
+async def ban(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None):
             if not interaction.user.guild_permissions.ban_members:
                 await interaction.response.send_message("You don't have permission to ban members.", **_no_perm())
                 return
@@ -2032,9 +2032,9 @@ async def ping(interaction):
             except Exception as e:
                 await interaction.response.send_message(f"Failed to ban: {e}", **_no_perm())
 
-        @bot.tree.command(name="unban", description="Unban a user by ID or mention")
-        @app_commands.describe(user="User to unban (mention or ID)")
-        async def unban(interaction: discord.Interaction, user: discord.User):
+@bot.tree.command(name="unban", description="Unban a user by ID or mention")
+@app_commands.describe(user="User to unban (mention or ID)")
+async def unban(interaction: discord.Interaction, user: discord.User):
             if not interaction.user.guild_permissions.ban_members:
                 await interaction.response.send_message("You don't have permission to unban members.", **_no_perm())
                 return
@@ -2057,9 +2057,9 @@ async def ping(interaction):
             except Exception as e:
                 await interaction.response.send_message(f"Failed: {e}", **_no_perm())
 
-        @bot.tree.command(name="purge", description="Delete recent messages (number)")
-        @app_commands.describe(limit="Number of messages to delete (default 10)")
-        async def purge(interaction: discord.Interaction, limit: int = 10):
+@bot.tree.command(name="purge", description="Delete recent messages (number)")
+@app_commands.describe(limit="Number of messages to delete (default 10)")
+async def purge(interaction: discord.Interaction, limit: int = 10):
             if not interaction.user.guild_permissions.manage_messages:
                 await interaction.response.send_message("No permission to manage messages.", **_no_perm())
                 return
@@ -2079,9 +2079,9 @@ async def ping(interaction):
             except Exception as e:
                 await interaction.response.send_message(f"Failed: {e}", **_no_perm())
 
-        @bot.tree.command(name="nick", description="Change a member's nickname")
-        @app_commands.describe(member="Member", nickname="New nickname")
-        async def nick(interaction: discord.Interaction, member: discord.Member, *, nickname: Optional[str] = None):
+@bot.tree.command(name="nick", description="Change a member's nickname")
+@app_commands.describe(member="Member", nickname="New nickname")
+async def nick(interaction: discord.Interaction, member: discord.Member, *, nickname: Optional[str] = None):
             if not interaction.user.guild_permissions.manage_nicknames:
                 await interaction.response.send_message("No permission to change nicknames.", **_no_perm())
                 return
@@ -2115,9 +2115,9 @@ async def ping(interaction):
             except Exception as e:
                 await interaction.response.send_message(f"Failed: {e}", **_no_perm())
 
-        @bot.tree.command(name="warn", description="Warn a user")
-        @app_commands.describe(member="Member to warn", reason="Reason")
-        async def warn(interaction: discord.Interaction, member: discord.Member, *, reason: str = "No reason provided"):
+@bot.tree.command(name="warn", description="Warn a user")
+@app_commands.describe(member="Member to warn", reason="Reason")
+async def warn(interaction: discord.Interaction, member: discord.Member, *, reason: str = "No reason provided"):
             if not interaction.user.guild_permissions.kick_members:
                 await interaction.response.send_message("No permission to warn.", **_no_perm())
                 return
@@ -2125,9 +2125,9 @@ async def ping(interaction):
             gw.setdefault(member.id, []).append(reason)
             await interaction.response.send_message(f"Warned {member}. Reason: {reason}")
 
-        @bot.tree.command(name="warnings", description="Show warnings for a user")
-        @app_commands.describe(member="Member (optional)")
-        async def warnings(interaction: discord.Interaction, member: Optional[discord.Member] = None):
+@bot.tree.command(name="warnings", description="Show warnings for a user")
+@app_commands.describe(member="Member (optional)")
+async def warnings(interaction: discord.Interaction, member: Optional[discord.Member] = None):
             member = member or interaction.user
             gw = _get_guild_warns(interaction.guild.id)
             user_warns = gw.get(getattr(member, "id", None), [])
@@ -2155,9 +2155,9 @@ async def ping(interaction):
                 return
             await interaction.response.send_message(f"📢 Announcement:\n{message}")
 
-        @bot.tree.command(name="dm", description="DM a user (mod use only)")
-        @app_commands.describe(user="User to DM", message="Message content")
-        async def dm(interaction: discord.Interaction, user: discord.User, message: str):
+@bot.tree.command(name="dm", description="DM a user (mod use only)")
+@app_commands.describe(user="User to DM", message="Message content")
+async def dm(interaction: discord.Interaction, user: discord.User, message: str):
             if not interaction.user.guild_permissions.manage_messages:
                 await interaction.response.send_message("No permission to DM as bot.", **_no_perm())
                 return
@@ -2178,8 +2178,8 @@ async def ping(interaction):
         # ---------------------------
         # Channel controls
         # ---------------------------
-        @bot.tree.command(name="lock", description="Lock the current channel (remove send messages)")
-        async def lock(interaction: discord.Interaction):
+@bot.tree.command(name="lock", description="Lock the current channel (remove send messages)")
+async def lock(interaction: discord.Interaction):
             if not interaction.user.guild_permissions.manage_channels:
                 await interaction.response.send_message("No permission to manage channels.", **_no_perm())
                 return
@@ -2187,8 +2187,8 @@ async def ping(interaction):
             await ch.set_permissions(interaction.guild.default_role, send_messages=False)
             await interaction.response.send_message("Channel locked.")
 
-        @bot.tree.command(name="unlock", description="Unlock the current channel")
-        async def unlock(interaction: discord.Interaction):
+@bot.tree.command(name="unlock", description="Unlock the current channel")
+async def unlock(interaction: discord.Interaction):
             if not interaction.user.guild_permissions.manage_channels:
                 await interaction.response.send_message("No permission to manage channels.", **_no_perm())
                 return
@@ -2310,9 +2310,9 @@ async def ping(interaction):
         # ---------------------------
         # Reminder (background task inside bot; note: bot must remain online)
         # ---------------------------
-        @bot.tree.command(name="remindme", description="Set a reminder (seconds) — bot must remain online")
-        @app_commands.describe(seconds="Seconds until reminder", message="Reminder message")
-        async def remindme(interaction: discord.Interaction, seconds: int, *, message: str):
+@bot.tree.command(name="remindme", description="Set a reminder (seconds) — bot must remain online")
+@app_commands.describe(seconds="Seconds until reminder", message="Reminder message")
+async def remindme(interaction: discord.Interaction, seconds: int, *, message: str):
             await interaction.response.send_message(f"Okay! I will remind you in {seconds} seconds (if I'm online).", ephemeral=True)
 
             async def _reminder():
