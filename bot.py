@@ -1929,9 +1929,9 @@ async def eightball(interaction: discord.Interaction, question: str):
             ]
             await interaction.response.send_message(f"🎱 {random.choice(answers)}")
 
-        @bot.tree.command(name="roll-2", description="Roll dice or a number (e.g. 1d6 or 20)")
-        @app_commands.describe(dice="1d6 style or single number")
-        async def roll(interaction: discord.Interaction, dice: str = "1d6"):
+@bot.tree.command(name="roll-2", description="Roll dice or a number (e.g. 1d6 or 20)")
+@app_commands.describe(dice="1d6 style or single number")
+async def roll(interaction: discord.Interaction, dice: str = "1d6"):
             try:
                 if "d" in dice.lower():
                     num_s, sides_s = dice.lower().split("d", 1)
