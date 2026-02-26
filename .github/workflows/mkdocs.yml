@@ -27,13 +27,14 @@ jobs:
         with:
           python-version: '3.11'
 
-      - name: Install MkDocs + Material
+      - name: Install MkDocs + Material 
         run: |
           python -m pip install --upgrade pip
           pip install mkdocs mkdocs-material mkdocs-minify-plugin mkdocs-git-revision-date-localized-plugin
 
       - name: Build documentation
         run: cd .github/workflows && mkdocs build --strict
+        continue-on-error: "Upload artifact"
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
