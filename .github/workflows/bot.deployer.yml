@@ -103,7 +103,7 @@ jobs:
           echo "node_version=$(node --version 2>&1)" >> $GITHUB_OUTPUT
 
   lint-and-test:
-    name: 🧪 Lint & Test (matrix: linux + macos) — fast checks
+    name: 🧪Lint & Test (matrix: linux + macos) — fast checks
     needs: prepare
     strategy:
       matrix:
