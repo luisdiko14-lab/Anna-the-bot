@@ -33,7 +33,7 @@ jobs:
           pip install mkdocs mkdocs-material mkdocs-minify-plugin mkdocs-git-revision-date-localized-plugin
 
       - name: Build documentation
-        run: mkdocs build --strict
+        run: cd .github/workflows && mkdocs build --strict
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
