@@ -33,9 +33,11 @@ jobs:
             echo "ping.py not found"
           fi
 
-      - name: Notify Discord (optional)
-        if: ${{ secrets.DISCORD_WEBHOOK_URL != 'https://discord.com/api/webhooks/1476648003396702258/xvb-jviyRPnqmjHzGYZ6hC8IJmXT1ZzDb9EDe44a9GigtkWNV4qVMTLp7KtS9zafKnG-' }}
+       - name: Notify Discord (optional)
+        if: ${{ secrets.DISCORD_WEBHOOK_URL }}
+        env:
+          DISCORD_WEBHOOK_URL: ${{ secrets.DISCORD_WEBHOOK_URL }}
         run: |
-          curl -H "Content-Type: application/json" \
-               -d '{"content": "✅ Ping executed successfully for Anna The Guardian"}' \
-               ${{ secrets.DISCORD_WEBHOOK_URL }}
+          curl -s -X POST "$DISCORD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{\"content\": \"✅ Ping executed successfully for Anna The Guardian\"}"
