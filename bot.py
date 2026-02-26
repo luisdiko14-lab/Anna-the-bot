@@ -2002,11 +2002,11 @@ async def poll(interaction: discord.Interaction, question: str):
             except Exception:
                 pass
 
-        # ---------------------------
-        # Moderation helpers & commands
-        # ---------------------------
-        def _no_perm(ephemeral=True):
-            return {"ephemeral": ephemeral}
+# ---------------------------
+# Moderation helpers & commands
+# ---------------------------
+def _no_perm(ephemeral=True):
+    return {"ephemeral": ephemeral}
 
 @bot.tree.command(name="kick-2", description="Kick a member")
 @app_commands.describe(member="Member to kick", reason="Reason (optional)")
