@@ -58,7 +58,7 @@ async def change_status():
     await bot.change_presence(status=discord.Status.dnd, activity=activity)
     print(f"🔄 Status changed to: {activity_name}")
 
-    @change_status.before_loop
+@change_status.before_loop
 async def before_status():
     await bot.wait_until_ready()
 
