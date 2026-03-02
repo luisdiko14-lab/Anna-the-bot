@@ -38,33 +38,33 @@ bot = commands.Bot(command_prefix=PREFIX, intents=intents, help_command=None)
 # ==================================================
 
 nature_scenes = [
-    "Pokemon! 🌲",
-    "MEW! 🌅",
-    "Flowing Rivers 🌊",
-    "Pikachu 🏔️",
-    "Starry Nights 🌌",
-    "Blooming Pokemons 🌸",
-    "Falling Rain 🌧️",
-    "Mew is cool! i like it",
-    "Just Got verified! ✅"
+"Pokemon! 🌲",
+"MEW! 🌅",
+"Flowing Rivers 🌊",
+"Pikachu 🏔️",
+"Starry Nights 🌌",
+"Blooming Pokemons 🌸",
+"Falling Rain 🌧️",
+"Mew is cool! i like it",
+"Just Got verified! ✅"
 ]
 @tasks.loop(seconds=2)
 async def change_status():
     activity_name = random.choice(nature_scenes)
     activity = discord.Activity(
-    type=discord.ActivityType.playing,
-    name=activity_name
+        type=discord.ActivityType.playing,
+        name=activity_name
     )
     await bot.change_presence(status=discord.Status.dnd, activity=activity)
     print(f"🔄 Status changed to: {activity_name}")
 
-@change_status.before_loop
+    @change_status.before_loop
 async def before_status():
     await bot.wait_until_ready()
 
-# ==================================================
-# --- EVENTS ---
-# ==================================================
+    # ==================================================
+    # --- EVENTS ---
+    # ==================================================
 
 
 @bot.event
@@ -117,12 +117,12 @@ async def on_message(message):
     await bot.process_commands(message)
 
 
-# ==================================================
-# --- ERROR HANDLING ---
-# ==================================================
+    # ==================================================
+    # --- ERROR HANDLING ---
+    # ==================================================
 
 @bot.event
-async def on_command_error(ctx, error)
+async def on_command_error(ctx, error):
     pass
     if isinstance(error, commands.CommandNotFound):
     return
@@ -133,91 +133,87 @@ async def on_command_error(ctx, error)
     else:
     print(f"❌ Unexpected Error: {error}")
 
-# ==================================================
-# --- COMMAND LOGGING ---
-# ==================================================
+    # ==================================================
+    # --- COMMAND LOGGING ---
+    # ==================================================
 @bot.event
 async def on_command(ctx):
-    pass
 from datetime import datetime
 import os
 
-timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-guild = ctx.guild
-author = ctx.author
-channel = ctx.channel
+    guild = ctx.guild
+    author = ctx.author
+    channel = ctx.channel
 
-guild_name = guild.name if guild else "Direct Message"
-guild_id = guild.id if guild else "N/A"
+    guild_name = guild.name if guild else "Direct Message"
+    guild_id = guild.id if guild else "N/A"
 
-channel_name = getattr(channel, "name", "DM")
-channel_id = getattr(channel, "id", "N/A")
+    channel_name = getattr(channel, "name", "DM")
+    channel_id = getattr(channel, "id", "N/A")
 
-command_name = ctx.command.name if ctx.command else "Unknown"
-command_content = ctx.message.content if ctx.message else "N/A"
+    command_name = ctx.command.name if ctx.command else "Unknown"
+    command_content = ctx.message.content if ctx.message else "N/A"
 
-# Roles (ONLY if in guild)
-if guild:
-roles = [role.name for role in author.roles if role.name != "@everyone"]
-roles_text = ", ".join(roles) if roles else "No Roles"
-is_admin = author.guild_permissions.administrator
-else:
-roles_text = "No Roles (DM)"
-is_admin = False
+    # Roles (ONLY if in guild)
+    if guild:
+    roles = [role.name for role in author.roles if role.name != "@everyone"]
+    roles_text = ", ".join(roles) if roles else "No Roles"
+    is_admin = author.guild_permissions.administrator
+    else:
+    roles_text = "No Roles (DM)"
+    is_admin = False
 
-avatar_url = author.display_avatar.url
+    avatar_url = author.display_avatar.url
 
-log_message = (
-"\n"
-"================ COMMAND LOG =================\n"
-f"Time       : {timestamp}\n"
-f"User       : {author} ({author.id})\n"
-f"Admin      : {is_admin}\n"
-f"Roles      : {roles_text}\n"
-f"Avatar CDN : {avatar_url}\n"
-"\n"
-f"Command    : {command_name}\n"
-f"Message    : {command_content}\n"
-f"Channel    : {channel_name} ({channel_id})\n"
-f"Server     : {guild_name} ({guild_id})\n"
-"==============================================\n"
-)
+    log_message = (
+    "\n"
+    "================ COMMAND LOG =================\n"
+    f"Time       : {timestamp}\n"
+    f"User       : {author} ({author.id})\n"
+    f"Admin      : {is_admin}\n"
+    f"Roles      : {roles_text}\n"
+    f"Avatar CDN : {avatar_url}\n"
+    "\n"
+    f"Command    : {command_name}\n"
+    f"Message    : {command_content}\n"
+    f"Channel    : {channel_name} ({channel_id})\n"
+    f"Server     : {guild_name} ({guild_id})\n"
+    "==============================================\n"
+    )
 
-# ---- PRINT ----
-print(log_message)
+    # ---- PRINT ----
+    print(log_message)
 
-# ---- WRITE FILE SAFELY ----
-try:
+    # ---- WRITE FILE SAFELY ----
+    try:
+    pass
+    with open("logger.c", "a", encoding="utf-8") as f:
+    f.write(log_message)
+    f.flush()
+    os.fsync(f.fileno())
+    except Exception as e:
+    print(f"[LOGGER ERROR] {e}")
+
+    # ---- DM USER ----
+    try:
+    pass
+    await author.send(
+    f"📜 Logged `{command_name}` at {timestamp}\n"
+    f"Server: {guild_name}\n"
+    f"Channel: {channel_name}"
+    )
+    except Exception:
     pass
     pass
-with open("logger.c", "a", encoding="utf-8") as f:
-f.write(log_message)
-f.flush()
-os.fsync(f.fileno())
-except Exception as e:
-print(f"[LOGGER ERROR] {e}")
-
-# ---- DM USER ----
-try:
-    pass
-    pass
-await author.send(
-f"📜 Logged `{command_name}` at {timestamp}\n"
-f"Server: {guild_name}\n"
-f"Channel: {channel_name}"
-)
-except Exception:
-    pass
-    pass
-pass
 
 
 
 
-# ==================================================
-# --- BOT CONTROL COMMANDS ---
-# ==============================================================
+    # ==================================================
+    # --- BOT CONTROL COMMANDS ---
+    # ==============================================================
 @bot.tree.command(name="start", description="Signals bot is active")
 async def start(interaction: discord.Interaction):
     await interaction.response.send_message("🌲 **AnnaBot is online and guarding the forest!**")
@@ -235,72 +231,64 @@ async def start(interaction: discord.Interaction):
     await interaction.followup.send(message)
 
 @bot.tree.command(name="shutdown", description="Shuts down the bot (dev only)")
-async def shutdown(interaction: discord.Interaction)
+async def shutdown(interaction: discord.Interaction):
     pass
     # ✅ Authorized usernames
 AUTHORIZED_USERS = ["luisthegoat7301", "zelda_life"]  # Put exact usernames here (case-sensitive)
 
-if interaction.user.name not in AUTHORIZED_USERS:
-return await interaction.response.send_message(
+    if interaction.user.name not in AUTHORIZED_USERS:
+    return await interaction.response.send_message(
     "⛔ Only authorized developers can shut me down.",
     ephemeral=True
-)
+    )
 
-await interaction.response.send_message("💤 Powering down... Goodbye.")
+    await interaction.response.send_message("💤 Powering down... Goodbye.")
 
-print(f"Shutdown initiated by {interaction.user}")
+    print(f"Shutdown initiated by {interaction.user}")
 
-# Gracefully close Discord connection
-await bot.close()
+    # Gracefully close Discord connection
+    await bot.close()
 
-# Force stop Python process
+    # Force stop Python process
 import sys
-sys.exit()
+    sys.exit()
 
 
 
 
 @bot.tree.command(name="restart", description="Restarts the bot systems (dev only)")
-async def restart(interaction: discord.Interaction)
+async def restart(interaction: discord.Interaction):
     pass
     if (str(interaction.user) not in AUTHORIZED_USERS) and (interaction.user.name not in AUTHORIZED_USERS):
     return await interaction.response.send_message("⛔ Unauthorized.", ephemeral=True)
 
     try:
     pass
-    pass
     change_status.stop()
     except Exception:
-    pass
     pass
     pass
 
     try:
     pass
-    pass
     await bot.change_presence(status=discord.Status.invisible)
     except Exception:
-    pass
     pass
     pass
 
     await interaction.response.send_message("🔄 Restarting systems...")
     try:
     pass
-    pass
     await asyncio.sleep(5)
     except Exception:
-    pass
     pass
     pass
 
     await interaction.followup.send("✅ Systems rebooted successfully.")
     try:
     pass
-    pass
     change_status.start()
     except Exception:
-    pass
     pass
     pass
 
@@ -308,10 +296,9 @@ async def restart(interaction: discord.Interaction)
 
 
     # UI CLASSES (Must be defined globally)
-# ------------------------------------------------------------------
+    # ------------------------------------------------------------------
 
 class TypeModal(discord.ui.Modal, title="Set Activity Type"):
-    pass
 def __init__(self, parent_view):
     super().__init__()
     self.parent_view = parent_view
@@ -323,7 +310,7 @@ def __init__(self, parent_view):
     max_length=64,
     )
 
-async def on_submit(self, interaction: discord.Interaction)
+async def on_submit(self, interaction: discord.Interaction):
     pass
     # Map string to Discord ActivityType
     type_map = {
@@ -342,7 +329,6 @@ async def on_submit(self, interaction: discord.Interaction)
     await interaction.response.edit_message(content=self.parent_view.build_preview(), view=self.parent_view)
 
 class MessageModal(discord.ui.Modal, title="Set Presence Message"):
-    pass
 def __init__(self, parent_view):
     super().__init__()
     self.parent_view = parent_view
@@ -360,7 +346,6 @@ async def on_submit(self, interaction: discord.Interaction):
     await interaction.response.edit_message(content=self.parent_view.build_preview(), view=self.parent_view)
 
 class PresenceView(discord.ui.View):
-    pass
 def __init__(self, ctx):
     super().__init__(timeout=120)
     self.ctx = ctx
@@ -396,7 +381,7 @@ async def set_message(self, interaction: discord.Interaction, button: discord.ui
     await interaction.response.send_modal(MessageModal(parent_view=self))
 
     @discord.ui.button(label="Confirm", style=discord.ButtonStyle.success)
-async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button)
+async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
     pass
     if not self.activity_type:
     return await interaction.response.send_message("❌ Set Activity Type first.", ephemeral=True)
@@ -404,7 +389,6 @@ async def confirm(self, interaction: discord.Interaction, button: discord.ui.But
     return await interaction.response.send_message("❌ Set Message first.", ephemeral=True)
 
     try:
-    pass
     pass
     act = None
     if self.activity_type == discord.ActivityType.streaming
@@ -427,7 +411,6 @@ async def confirm(self, interaction: discord.Interaction, button: discord.ui.But
     await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
 
 class StatusView(discord.ui.View):
-    pass
 def __init__(self, ctx):
     super().__init__(timeout=120)
     self.ctx = ctx
@@ -442,7 +425,7 @@ async def interaction_check(self, interaction: discord.Interaction) -> bool
     return False
     return True
 
-def build_preview(self, confirmed=False)
+def build_preview(self, confirmed=False):
     pass
     if confirmed:
     return f"✅ Status updated to **{self.chosen_raw}**"
@@ -475,7 +458,6 @@ async def invisible(self, interaction: discord.Interaction, button: discord.ui.B
 async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button):
     try:
     pass
-    pass
     await self.ctx.bot.change_presence(status=self.chosen)
     for child in self.children:
     child.disabled = True
@@ -484,11 +466,11 @@ async def confirm(self, interaction: discord.Interaction, button: discord.ui.But
     except Exception as e:
     await interaction.response.send_message(f"❌ Error: {e}", ephemeral=True)
 
-# ------------------------------------------------------------------
-# COMMANDS
-# ------------------------------------------------------------------
+    # ------------------------------------------------------------------
+    # COMMANDS
+    # ------------------------------------------------------------------
 @bot.command(name="changePresence")
-async def changePresence(ctx)
+async def changePresence(ctx):
     pass
     # Checks the username (e.g., 'johndoe') against your list
     if ctx.author.name not in AUTHORIZED_USERS:
@@ -498,7 +480,7 @@ async def changePresence(ctx)
     await ctx.send(view.build_preview(), view=view)
 
 @bot.command(name="changeStatus")
-async def changeStatus(ctx)
+async def changeStatus(ctx):
     pass
     # Checks the username (e.g., 'johndoe') against your list
     if ctx.author.name not in AUTHORIZED_USERS:
@@ -511,7 +493,7 @@ async def changeStatus(ctx)
 
 
 @bot.tree.command(name="makerole", description="Create a role with permissions (dev only)")
-async def makerole(interaction: discord.Interaction, perm: str, name: str)
+async def makerole(interaction: discord.Interaction, perm: str, name: str):
     pass
     if (str(interaction.user) not in AUTHORIZED_USERS) and (interaction.user.name not in AUTHORIZED_USERS):
     return await interaction.response.send_message("⛔ Developer access only.", ephemeral=True)
@@ -530,21 +512,20 @@ async def makerole(interaction: discord.Interaction, perm: str, name: str)
 
     try:
     pass
-    pass
     role = await interaction.guild.create_role(name=name, permissions=perms, color=discord.Color.random(), hoist=True)
     await interaction.response.send_message(f"✅ Created role **{role.name}** with **{p}** permissions!")
     except Exception as e:
     await interaction.response.send_message(f"❌ Error creating role: {e}", ephemeral=True)
 
 
-# ==================================================
-# --- RUN BOT ---
-# 
+    # ==================================================
+    # --- RUN BOT ---
+    # 
 
 
-# ==============================================================================
-# SECTION 1: GENERAL COMMANDS
-# ==============================================================================
+    # ==============================================================================
+    # SECTION 1: GENERAL COMMANDS
+    # ==============================================================================
 
 
 
@@ -585,7 +566,6 @@ async def ping(ctx):
 async def react(ctx, message_id: int, emoji: str):
     try:
     pass
-    pass
     # Fetch the message from the current channel
     message = await ctx.channel.fetch_message(message_id)
 
@@ -609,9 +589,8 @@ from discord import ui
 
 
 
-# ---------- Buttons UI ----------
+    # ---------- Buttons UI ----------
 class ServerInfoView(ui.View):
-    pass
 def __init__(self, guild: discord.Guild, author: discord.Member):
     super().__init__(timeout=120)
     self.guild = guild
@@ -641,7 +620,7 @@ async def show_roles(self, interaction: discord.Interaction, button: ui.Button):
     await interaction.response.send_message("\n".join(roles[:25]), ephemeral=True)
 
     @ui.button(label="📸Server Icon📸", style=discord.ButtonStyle.green)
-async def show_icon(self, interaction: discord.Interaction, button: ui.Button)
+async def show_icon(self, interaction: discord.Interaction, button: ui.Button):
     pass
     if self.guild.icon:
     await interaction.response.send_message(f"[Click here to view the icon]({self.guild.icon.url})", ephemeral=True)
@@ -649,16 +628,16 @@ async def show_icon(self, interaction: discord.Interaction, button: ui.Button)
     await interaction.response.send_message("No server icon.", ephemeral=True)
 
     @ui.button(label="🖼️Server Banner🖼️", style=discord.ButtonStyle.green)
-async def show_banner(self, interaction: discord.Interaction, button: ui.Button)
+async def show_banner(self, interaction: discord.Interaction, button: ui.Button):
     pass
     if self.guild.banner:
     await interaction.response.send_message(f"[Click here to view the banner]({self.guild.banner.url})", ephemeral=True)
     else:
     await interaction.response.send_message("No banner found.", ephemeral=True)
 
-# ---------- Server Info Command ----------
+    # ---------- Server Info Command ----------
 @bot.command(name="serverinfo")
-@commands.guild_only()
+    @commands.guild_only()
 async def serverinfo(ctx):
     guild = ctx.guild
     owner = guild.owner or await guild.fetch_owner()
@@ -700,12 +679,11 @@ from discord.ext import commands
 from discord import ui
 
 
-# ==============================
-# USER INFO VIEW (BUTTONS)
-# ==============================
+    # ==============================
+    # USER INFO VIEW (BUTTONS)
+    # ==============================
 
 class UserInfoView(ui.View):
-    pass
 def __init__(self, member: discord.Member, author: discord.Member):
     super().__init__(timeout=60)
     self.member = member
@@ -732,16 +710,16 @@ async def show_perms(self, interaction: discord.Interaction, button: ui.Button):
     await interaction.response.send_message(f"🔐 **Permissions for {self.member.name}:**\n{text}", ephemeral=True)
 
     @ui.button(label="Show Admins", emoji="🛡️", style=discord.ButtonStyle.secondary)
-async def show_admins(self, interaction: discord.Interaction, button: ui.Button)
+async def show_admins(self, interaction: discord.Interaction, button: ui.Button):
     pass
     # Finds all non-bot members with Administrator permission
     admins = [m.mention for m in interaction.guild.members if m.guild_permissions.administrator and not m.bot]
     text = ", ".join(admins) if admins else "No admins found."
     await interaction.response.send_message(f"🛡️ **Server Admins:**\n{text}", ephemeral=True)
 
-# ==============================
-# USER INFO COMMAND
-# ==============================
+    # ==============================
+    # USER INFO COMMAND
+    # ==============================
 
 @bot.command()
 async def userinfo(ctx, member: discord.Member = None):
@@ -859,7 +837,6 @@ async def giveviewacessandmsg(
 
     try:
     pass
-    pass
     await channel.set_permissions(
     user,
     view_channel=True,
@@ -896,9 +873,9 @@ async def pat(ctx, member: discord.Member):
 
 @bot.tree.command(name="showchannels", description="Show channels from a server")
 @app_commands.describe(
-server="Server name (must share with bot)",
-amount="How many channels to show (0-250)"
-)
+    server="Server name (must share with bot)",
+    amount="How many channels to show (0-250)"
+    )
 async def showchannels(
     interaction: discord.Interaction,
     server: str,
@@ -950,27 +927,27 @@ async def showchannels(
 
 
 
-# ==============================================================================
-# SECTION 2: MODERATION COMMANDS
-# ==============================================================================
+    # ==============================================================================
+    # SECTION 2: MODERATION COMMANDS
+    # ==============================================================================
 
 
 @bot.command()
-@commands.has_permissions(kick_members=True)
+    @commands.has_permissions(kick_members=True)
 async def kick(ctx, member: discord.Member, *, reason="None"):
     await member.kick(reason=reason)
     await ctx.send(f"👢 Kicked {member}")
 
 
 @bot.command()
-@commands.has_permissions(ban_members=True)
+    @commands.has_permissions(ban_members=True)
 async def ban(ctx, member: discord.Member, *, reason="None"):
     await member.ban(reason=reason)
     await ctx.send(f"🔨 Banned {member}")
 
 
 @bot.command()
-@commands.has_permissions(ban_members=True)
+    @commands.has_permissions(ban_members=True)
 async def unban(ctx, *, user_id: int):
     user = await bot.fetch_user(user_id)
     await ctx.guild.unban(user)
@@ -978,7 +955,7 @@ async def unban(ctx, *, user_id: int):
 
 
 @bot.command()
-@commands.has_permissions(ban_members=True)
+    @commands.has_permissions(ban_members=True)
 async def softban(ctx, member: discord.Member):
     await member.ban(reason="Softban", delete_message_days=1)
     await member.unban()
@@ -986,14 +963,14 @@ async def softban(ctx, member: discord.Member):
 
 
 @bot.command()
-@commands.has_permissions(moderate_members=True)
+    @commands.has_permissions(moderate_members=True)
 async def timeout(ctx, member: discord.Member, minutes: int):
     await member.timeout(timedelta(minutes=minutes))
     await ctx.send(f"⏰ {member} timed out for {minutes}m.")
 
 
 @bot.command()
-@commands.has_permissions(moderate_members=True)
+    @commands.has_permissions(moderate_members=True)
 async def untimeout(ctx, member: discord.Member):
     await member.timeout(None)
     await ctx.send(f"🔊 Removed timeout for {member}")
@@ -1054,7 +1031,7 @@ async def giveacess(ctx, *, user_input: str):
 
 
 @bot.command()
-@commands.has_permissions(manage_messages=True)
+    @commands.has_permissions(manage_messages=True)
 async def purge(ctx, amount: int = 5):
     await ctx.channel.purge(limit=amount + 1)
     await ctx.send(f"🗑️ Deleted {amount} messages.", delete_after=3)
@@ -1064,7 +1041,7 @@ async def purge(ctx, amount: int = 5):
 
 
 @bot.command()
-@commands.has_permissions(manage_channels=True)
+    @commands.has_permissions(manage_channels=True)
 async def lock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role,
     send_messages=False)
@@ -1072,7 +1049,7 @@ async def lock(ctx):
 
 
 @bot.command()
-@commands.has_permissions(manage_channels=True)
+    @commands.has_permissions(manage_channels=True)
 async def unlock(ctx):
     await ctx.channel.set_permissions(ctx.guild.default_role,
     send_messages=True)
@@ -1080,21 +1057,21 @@ async def unlock(ctx):
 
 
 @bot.command()
-@commands.has_permissions(manage_channels=True)
+    @commands.has_permissions(manage_channels=True)
 async def slowmode(ctx, seconds: int):
     await ctx.channel.edit(slowmode_delay=seconds)
     await ctx.send(f"🐢 Slowmode: {seconds}s.")
 
 
 @bot.command()
-@commands.has_permissions(manage_nicknames=True)
+    @commands.has_permissions(manage_nicknames=True)
 async def nick(ctx, member: discord.Member, *, name=None):
     await member.edit(nick=name)
     await ctx.send(f"🏷️ Changed nick for {member.name}")
 
 
 @bot.command()
-@commands.has_permissions(manage_roles=True)
+    @commands.has_permissions(manage_roles=True)
 async def addrole(ctx,
     member: discord.Member,
     role: discord.Role,
@@ -1105,7 +1082,7 @@ async def addrole(ctx,
 
 
 @bot.command()
-@commands.has_permissions(manage_roles=True)
+    @commands.has_permissions(manage_roles=True)
 async def removerole(ctx,
     member: discord.Member,
     role: discord.Role,
@@ -1119,8 +1096,8 @@ async def removerole(ctx,
 
 
 @bot.command()
-@commands.has_permissions(kick_members=True)
-async def warn(ctx, member: discord.Member, *, r="No reason")
+    @commands.has_permissions(kick_members=True)
+async def warn(ctx, member: discord.Member, *, r="No reason"):
     pass
     if member.id not in warnings: warnings[member.id] = []
     warnings[member.id].append(r)
@@ -1136,13 +1113,13 @@ async def warnings_list(ctx, member: discord.Member):
 
 
 @bot.command()
-@commands.has_permissions(kick_members=True)
+    @commands.has_permissions(kick_members=True)
 async def clearwarns(ctx, member: discord.Member):
     warnings[member.id] = []
     await ctx.send(f"🧼 Cleared {member.name}")
 
 @bot.command()
-async def joinvc(ctx)
+async def joinvc(ctx):
     pass
     if ctx.author.voice is None:
     await ctx.send("You must be in a voice channel first!")
@@ -1164,17 +1141,16 @@ async def joinvc(ctx)
 
 
 @bot.command()
-@commands.has_permissions(administrator=True)
+    @commands.has_permissions(administrator=True)
 async def announce(ctx, channel: discord.TextChannel, *, msg):
     await channel.send(embed=discord.Embed(
     title="📢 Announcement", description=msg, color=discord.Color.red()))
 
 
 @bot.command()
-@commands.has_permissions(administrator=True)
+    @commands.has_permissions(administrator=True)
 async def dm(ctx, member: discord.Member, *, msg):
     try:
-    pass
     pass
     await member.send(f"📩 Staff: {msg}")
     await ctx.send("Sent.")
@@ -1183,15 +1159,15 @@ async def dm(ctx, member: discord.Member, *, msg):
 
 
 @bot.command()
-@commands.has_permissions(manage_messages=True)
+    @commands.has_permissions(manage_messages=True)
 async def say(ctx, *, msg):
     await ctx.message.delete()
     await ctx.send(msg)
 
 
-# ==============================================================================
-# SECTION 3: CUSTOM COOL COMMANDS
-# =====================================================================
+    # ==============================================================================
+    # SECTION 3: CUSTOM COOL COMMANDS
+    # =====================================================================
 
 
 @bot.command()
@@ -1208,7 +1184,7 @@ async def spoiler(ctx, *, text):
 
 @bot.command()
 async def reverse(ctx, *, text):
-    await ctx.send(text[::-1])
+    await ctx.send(text[:-1])
 
 
 @bot.command()
@@ -1349,7 +1325,7 @@ async def pickagain(ctx):
     await ctx.send(f"🎨 Your random color is: **{random.choice(colors)}**")
 
 @bot.command()
-async def a(ctx)
+async def a(ctx):
     pass
     # Get the member by name#discriminator
     member = discord.utils.get(ctx.guild.members, name="elian01676")
@@ -1448,7 +1424,7 @@ async def flip(ctx):
 
 
 @bot.command()
-@commands.has_permissions(manage_channels=True)
+    @commands.has_permissions(manage_channels=True)
 async def sync(ctx):
     """
     Syncs the slash commands to the server instantly.
@@ -1457,9 +1433,9 @@ async def sync(ctx):
     await ctx.send(f"✅ Synced {len(fmt)} slash commands!")
 
 
-# --- 1. TEXT COMMAND VERSION (FIXED) ---
+    # --- 1. TEXT COMMAND VERSION (FIXED) ---
 @bot.command()
-@commands.has_permissions(manage_emojis=True)
+    @commands.has_permissions(manage_emojis=True)
 async def copyEmoji(ctx,
     emoji: str):  # changed to str to prevent conversion errors
     """
@@ -1467,7 +1443,6 @@ async def copyEmoji(ctx,
     Usage: !copyEmoji <emoji>
     """
     try:
-    pass
     pass
     # Manually convert the string to a PartialEmoji
     partial_emoji = discord.PartialEmoji.from_str(emoji)
@@ -1492,7 +1467,7 @@ async def copyEmoji(ctx,
     await ctx.send(f"❌ Error: {e}")
 
 
-# --- 2. SLASH COMMAND VERSION ---
+    # --- 2. SLASH COMMAND VERSION ---
 @bot.tree.command(name="copy_emoji",
       description="Steal a custom emoji from another server")
 @app_commands.describe(emoji="Paste the emoji here")
@@ -1501,7 +1476,6 @@ async def copy_emoji_slash(interaction: discord.Interaction, emoji: str):
     await interaction.response.defer()
 
     try:
-    pass
     pass
     # Convert string to emoji object
     partial_emoji = discord.PartialEmoji.from_str(emoji)
@@ -1519,7 +1493,7 @@ async def copy_emoji_slash(interaction: discord.Interaction, emoji: str):
 
 
 @bot.command()
-@commands.has_permissions(manage_roles=True)
+    @commands.has_permissions(manage_roles=True)
 async def give_role(ctx, target: str, role: discord.Role):
     """
     Gives a role to a specific member or EVERYONE in the server.
@@ -1531,125 +1505,120 @@ async def give_role(ctx, target: str, role: discord.Role):
     return await ctx.send(
     "❌ My role is not high enough to assign this role!")
 
-# --- MODE: ALL ---
-if target.lower() == "all":
-status_msg = await ctx.send(
-"⏳ Starting mass-role for **all** members. This may take a while..."
-)
-count = 0
+    # --- MODE: ALL ---
+    if target.lower() == "all":
+    status_msg = await ctx.send(
+    "⏳ Starting mass-role for **all** members. This may take a while..."
+    )
+    count = 0
 
-for member in ctx.guild.members:
-        pass
-# Skip if they already have it or if it's a bot (optional)
-if role not in member.roles:
+    for member in ctx.guild.members:
+    # Skip if they already have it or if it's a bot (optional)
+    if role not in member.roles:
     try:
     pass
-    pass
-await member.add_roles(role)
-count += 1
-# Small sleep to prevent Discord rate limits (Very Important!)
-await asyncio.sleep(0.5)
+    await member.add_roles(role)
+    count += 1
+    # Small sleep to prevent Discord rate limits (Very Important!)
+    await asyncio.sleep(0.5)
     except discord.Forbidden:
-continue
+    continue
     except Exception as e:
-print(f"Error giving role to {member}: {e}")
+    print(f"Error giving role to {member}: {e}")
 
-await status_msg.edit(
-content=f"✅ Finished! Added {role.name} to **{count}** members.")
+    await status_msg.edit(
+    content=f"✅ Finished! Added {role.name} to **{count}** members.")
 
-# --- MODE: SINGLE MEMBER ---
-else:
-try:
+    # --- MODE: SINGLE MEMBER ---
+    else:
+    try:
     pass
-    pass
-# Try to find the member by ID or Mention
-member = await commands.MemberConverter().convert(ctx, target)
-await member.add_roles(role)
-await ctx.send(f"✅ Added {role.name} to **{member.display_name}**."
-   )
-except commands.MemberNotFound:
-await ctx.send(
+    # Try to find the member by ID or Mention
+    member = await commands.MemberConverter().convert(ctx, target)
+    await member.add_roles(role)
+    await ctx.send(f"✅ Added {role.name} to **{member.display_name}**."
+    )
+    except commands.MemberNotFound:
+    await ctx.send(
     f"❌ Could not find a member named `{target}`. Use a mention, ID, or type `all`."
-)
+    )
 
 
 @bot.tree.command(name="ping", description="Check latency and system specs")
 async def ping_slash(interaction: discord.Interaction):
-    pass
+    # --- CPU ---
+    cpu_name = platform.processor() or "Unknown CPU"
+    physical = psutil.cpu_count(logical=False) or 0
+    logical = psutil.cpu_count(logical=True) or 0
 
-# --- CPU ---
-cpu_name = platform.processor() or "Unknown CPU"
-physical = psutil.cpu_count(logical=False) or 0
-logical = psutil.cpu_count(logical=True) or 0
+    # --- RAM (GB) ---
+    total_ram = psutil.virtual_memory().total / (1024 ** 3)
+    ram_gb = f"{total_ram:.2f} GB"
 
-# --- RAM (GB) ---
-total_ram = psutil.virtual_memory().total / (1024 ** 3)
-ram_gb = f"{total_ram:.2f} GB"
+    # --- GPU (Windows VM expected) ---
+    gpu_name = "Windows VM Graphics Driver 2"
 
-# --- GPU (Windows VM expected) ---
-gpu_name = "Windows VM Graphics Driver 2"
+    # --- Device Name ---
+    device_name = "Desktop-LUIS-Anna-VITRUAL-MACCHINE"
 
-# --- Device Name ---
-device_name = "Desktop-LUIS-Anna-VITRUAL-MACCHINE"
+    # --- Real Uptime ---
+    boot_time = psutil.boot_time()
+    uptime_seconds = int(time.time() - boot_time)
 
-# --- Real Uptime ---
-boot_time = psutil.boot_time()
-uptime_seconds = int(time.time() - boot_time)
+    now = datetime.now()
+    delta = timedelta(seconds=uptime_seconds)
+    # Using a simple calculation if psutil boot_time is too far back or just format the delta
+    days = delta.days
+    hours, rem = divmod(delta.seconds, 3600)
+    minutes, seconds = divmod(rem, 60)
 
-now = datetime.now()
-delta = timedelta(seconds=uptime_seconds)
-# Using a simple calculation if psutil boot_time is too far back or just format the delta
-days = delta.days
-hours, rem = divmod(delta.seconds, 3600)
-minutes, seconds = divmod(rem, 60)
+    uptime_str = f"{days}d {hours}h {minutes}m {seconds}s"
 
-uptime_str = f"{days}d {hours}h {minutes}m {seconds}s"
+    # --- Latency ---
+    latency = round(bot.latency * 1000)
 
-# --- Latency ---
-latency = round(bot.latency * 1000)
+    embed = discord.Embed(
+    title="🖥️ System Specs",
+    color=0x2f3136
+    )
 
-embed = discord.Embed(
-title="🖥️ System Specs",
-color=0x2f3136
-)
+    embed.add_field(
+    name="Device",
+    value=f"`{device_name}`",
+    inline=False
+    )
 
-embed.add_field(
-name="Device",
-value=f"`{device_name}`",
-inline=False
-)
+    embed.add_field(
+    name="CPU",
+    value=f"{cpu_name}\n{physical}C / {logical}T",
+    inline=False
+    )
 
-embed.add_field(
-name="CPU",
-value=f"{cpu_name}\n{physical}C / {logical}T",
-inline=False
-)
+    embed.add_field(
+    name="RAM",
+    value=ram_gb,
+    inline=True
+    )
 
-embed.add_field(
-name="RAM",
-value=ram_gb,
-inline=True
-)
+    embed.add_field(
+    name="Graphics",
+    value=gpu_name,
+    inline=True
+    )
 
-embed.add_field(
-name="Graphics",
-value=gpu_name,
-inline=True
-)
+    embed.add_field(
+    name="Real Uptime",
+    value=uptime_str,
+    inline=False
+    )
 
-embed.add_field(
-name="Real Uptime",
-value=uptime_str,
-inline=False
-)
+    embed.add_field(
+    name="Latency",
+    value=f"🏓 {latency}ms",
+    inline=True
+    )
 
-embed.add_field(
-name="Latency",
-value=f"🏓 {latency}ms",
-inline=True
-)
-
-await interaction.response.send_message(embed=embed)
+    await interaction.response.send_message(embed=embed)
 
 @bot.tree.command(name="echo", description="Make the bot repeat your message")
 @app_commands.describe(message="The message to repeat")
@@ -1673,13 +1642,13 @@ async def user_info_slash(interaction: discord.Interaction, member: discord.Memb
 
     await interaction.response.send_message(embed=embed)
 
-# --- ADDITIONAL SLASH COMMANDS (fixed) ---
+    # --- ADDITIONAL SLASH COMMANDS (fixed) ---
 
-# 1. Moderation
+    # 1. Moderation
 @bot.tree.command(name="ban", description="Ban a member from the server")
 @app_commands.describe(member="The member to ban", reason="Reason for the ban")
 @app_commands.checks.has_permissions(ban_members=True)
-async def ban_slash(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided")
+async def ban_slash(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided"):
     pass
     if interaction.guild is None:
     return await interaction.response.send_message("⛔ This command can only be used in a server.", ephemeral=True)
@@ -1696,7 +1665,6 @@ async def ban_slash(interaction: discord.Interaction, member: discord.Member, re
 
     try:
     pass
-    pass
     await member.ban(reason=reason)
     await interaction.response.send_message(f"✅ Banned **{member}** for: {reason}")
     except discord.Forbidden:
@@ -1707,7 +1675,7 @@ async def ban_slash(interaction: discord.Interaction, member: discord.Member, re
 @bot.tree.command(name="kick", description="Kick a member from the server")
 @app_commands.describe(member="The member to kick", reason="Reason for the kick")
 @app_commands.checks.has_permissions(kick_members=True)
-async def kick_slash(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided")
+async def kick_slash(interaction: discord.Interaction, member: discord.Member, reason: str = "No reason provided"):
     pass
     if interaction.guild is None:
     return await interaction.response.send_message("⛔ This command can only be used in a server.", ephemeral=True)
@@ -1724,7 +1692,6 @@ async def kick_slash(interaction: discord.Interaction, member: discord.Member, r
 
     try:
     pass
-    pass
     await member.kick(reason=reason)
     await interaction.response.send_message(f"✅ Kicked **{member}** for: {reason}")
     except discord.Forbidden:
@@ -1735,7 +1702,7 @@ async def kick_slash(interaction: discord.Interaction, member: discord.Member, r
 @bot.tree.command(name="clear", description="Clear a number of messages (1-100)")
 @app_commands.describe(amount="Number of messages to clear (1-100)")
 @app_commands.checks.has_permissions(manage_messages=True)
-async def clear_slash(interaction: discord.Interaction, amount: int)
+async def clear_slash(interaction: discord.Interaction, amount: int):
     pass
     if interaction.guild is None:
     return await interaction.response.send_message("⛔ This command can only be used in a server.", ephemeral=True)
@@ -1750,7 +1717,6 @@ async def clear_slash(interaction: discord.Interaction, amount: int)
 
     await interaction.response.defer(ephemeral=True)
     try:
-    pass
     pass
     # note: purge will skip messages older than 14 days automatically
     deleted = await channel.purge(limit=amount)
@@ -1780,7 +1746,7 @@ async def server_info_slash(interaction: discord.Interaction):
     # 3. Fun
 @bot.tree.command(name="roll_dice", description="Roll a dice")
 @app_commands.describe(sides="Number of sides (default 6)")
-async def roll_slash(interaction: discord.Interaction, sides: int = 6)
+async def roll_slash(interaction: discord.Interaction, sides: int = 6):
     pass
     if sides < 2:
     return await interaction.response.send_message("⛔ Sides must be at least 2.", ephemeral=True)
@@ -1815,7 +1781,6 @@ async def eight_ball(interaction, question: str):
 async def roll(interaction, notation: str):
     try:
     pass
-    pass
     n, m = notation.lower().split("d")
     n = int(n) if n else 1
     m = int(m)
@@ -1830,11 +1795,11 @@ async def coin(interaction):
 
 @bot.tree.command(name="rps", description="Rock Paper Scissors")
 @app_commands.choices(choice=[
-app_commands.Choice(name="Rock", value="rock"),
-app_commands.Choice(name="Paper", value="paper"),
-app_commands.Choice(name="Scissors", value="scissors"),
-])
-async def rps(interaction, choice: app_commands.Choice[str])
+    app_commands.Choice(name="Rock", value="rock"),
+    app_commands.Choice(name="Paper", value="paper"),
+    app_commands.Choice(name="Scissors", value="scissors"),
+    ])
+async def rps(interaction, choice: app_commands.Choice[str]):
     pass
     bot_choice = random.choice(["rock","paper","scissors"])
     await interaction.response.send_message(f"You: {choice.value} | Bot: {bot_choice}")
@@ -1882,7 +1847,7 @@ async def stats(interaction):
 
     # 4. Restart
 @bot.tree.command(name="restart2", description="Restarts the bot (Authorized users only)")
-async def restart_slash(interaction: discord.Interaction)
+async def restart_slash(interaction: discord.Interaction):
     pass
     # Support either AUTHORIZED_USER (single str/id) or AUTHORIZED_USERS (iterable)
     user_ok = False
@@ -1892,10 +1857,8 @@ async def restart_slash(interaction: discord.Interaction)
     auth_list = globals().get("AUTHORIZED_USERS", [])
     try:
     pass
-    pass
     user_ok = (str(interaction.user) in auth_list) or (str(interaction.user.id) in [str(x) for x in auth_list])
     except Exception:
-    pass
     pass
     user_ok = False
 
@@ -1910,7 +1873,7 @@ async def restart_slash(interaction: discord.Interaction)
     # No imports or token/login code here — only command registration.
     # Call: setup(tree, start_time=your_bot_start_datetime) after you create the tree.
 
-def setup(tree, *, start_time=None)
+def setup(tree, *, start_time=None):
     pass
     # in-memory warnings store: {guild_id: {user_id: [reason, ...]}}
     warnings_store = {}
@@ -1929,11 +1892,11 @@ async def ping(interaction):
     await interaction.response.send_message(f"Pong! {latency_ms}ms")
 
 
-# ---------------------------
-# Utility: consistent decorator usage: use bot.tree.command
-# ---------------------------
+    # ---------------------------
+    # Utility: consistent decorator usage: use bot.tree.command
+    # ---------------------------
 
-# ---------- Server / User ----------
+    # ---------- Server / User ----------
 @bot.tree.command(name="serverinfo", description="Show server info")
 async def serverinfo(interaction: discord.Interaction):
     g = interaction.guild
@@ -1945,10 +1908,8 @@ async def serverinfo(interaction: discord.Interaction):
     if owner is None and g.owner_id:
     try:
     pass
-    pass
     owner = await bot.fetch_user(g.owner_id)
     except Exception:
-    pass
     pass
     owner = "Unknown"
 
@@ -1994,7 +1955,7 @@ async def avatar(interaction: discord.Interaction, user: Optional[discord.User] 
     await interaction.response.send_message(url)
 
 @bot.tree.command(name="uptime", description="Show bot uptime")
-async def uptime(interaction: discord.Interaction)
+async def uptime(interaction: discord.Interaction):
     pass
     if start_time is None:
     await interaction.response.send_message("Uptime not available (bot hasn't fully started).", ephemeral=True)
@@ -2011,9 +1972,9 @@ async def invite(interaction: discord.Interaction):
     "https://discord.com/oauth2/authorize?client_id=1360329809670045731&scope=bot%20applications.commands&permissions=8"
     )
 
-# ---------------------------
-# Fun / utility
-# ---------------------------
+    # ---------------------------
+    # Fun / utility
+    # ---------------------------
 @bot.tree.command(name="8ball-2", description="Ask the magic 8-ball")
 @app_commands.describe(question="Your question")
 async def eightball(interaction: discord.Interaction, question: str):
@@ -2027,7 +1988,6 @@ async def eightball(interaction: discord.Interaction, question: str):
 @app_commands.describe(dice="1d6 style or single number")
 async def roll(interaction: discord.Interaction, dice: str = "1d6"):
     try:
-    pass
     pass
     if "d" in dice.lower():
     num_s, sides_s = dice.lower().split("d", 1)
@@ -2044,7 +2004,6 @@ async def roll(interaction: discord.Interaction, dice: str = "1d6"):
     r = random.randint(1, n)
     await interaction.response.send_message(f"Rolled: {r}")
     except Exception:
-    pass
     pass
     await interaction.response.send_message("Invalid format. Use like `1d6` or `20`.", ephemeral=True)
 
@@ -2084,16 +2043,15 @@ async def hug(interaction: discord.Interaction, user: discord.Member):
 async def pat(interaction: discord.Interaction, user: discord.Member):
     await interaction.response.send_message(f"{interaction.user.mention} gently pats {user.mention}.")
 
-# ---------------------------
-# Poll (quick)
-# ---------------------------
+    # ---------------------------
+    # Poll (quick)
+    # ---------------------------
 @bot.tree.command(name="poll-2", description="Create a quick poll (text only, adds 👍👎🤷)")
 @app_commands.describe(question="Question for the poll")
 async def poll(interaction: discord.Interaction, question: str):
     await interaction.response.send_message(f"**Poll:** {question}")
     # add reactions to original response (bot needs add_reactions permission)
     try:
-    pass
     pass
     msg = await interaction.original_response()  # returns Message
     await msg.add_reaction("👍")
@@ -2102,23 +2060,21 @@ async def poll(interaction: discord.Interaction, question: str):
     except Exception:
     pass
     pass
-    pass
 
-# ---------------------------
-# Moderation helpers & commands
-# ---------------------------
+    # ---------------------------
+    # Moderation helpers & commands
+    # ---------------------------
 def _no_perm(ephemeral=True):
     return {"ephemeral": ephemeral}
 
 @bot.tree.command(name="kick-2", description="Kick a member")
 @app_commands.describe(member="Member to kick", reason="Reason (optional)")
-async def kick(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None)
+async def kick(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None):
     pass
     if not interaction.user.guild_permissions.kick_members:
     await interaction.response.send_message("You don't have permission to kick members.", **_no_perm())
     return
     try:
-    pass
     pass
     await member.kick(reason=reason)
     await interaction.response.send_message(f"Kicked {member} ({member.id}).")
@@ -2127,13 +2083,12 @@ async def kick(interaction: discord.Interaction, member: discord.Member, reason:
 
 @bot.tree.command(name="ban-2", description="Ban a member")
 @app_commands.describe(member="Member to ban", reason="Reason (optional)")
-async def ban(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None)
+async def ban(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None):
     pass
     if not interaction.user.guild_permissions.ban_members:
     await interaction.response.send_message("You don't have permission to ban members.", **_no_perm())
     return
     try:
-    pass
     pass
     await interaction.guild.ban(member, reason=reason)
     await interaction.response.send_message(f"Banned {member} ({member.id}).")
@@ -2142,13 +2097,12 @@ async def ban(interaction: discord.Interaction, member: discord.Member, reason: 
 
 @bot.tree.command(name="unban", description="Unban a user by ID or mention")
 @app_commands.describe(user="User to unban (mention or ID)")
-async def unban(interaction: discord.Interaction, user: discord.User)
+async def unban(interaction: discord.Interaction, user: discord.User):
     pass
     if not interaction.user.guild_permissions.ban_members:
     await interaction.response.send_message("You don't have permission to unban members.", **_no_perm())
     return
     try:
-    pass
     pass
     await interaction.guild.unban(user)
     await interaction.response.send_message(f"Unbanned {user} ({user.id}).")
@@ -2157,13 +2111,12 @@ async def unban(interaction: discord.Interaction, user: discord.User)
 
 @bot.tree.command(name="softban", description="Softban = ban+unban to clear messages")
 @app_commands.describe(member="Member to softban", reason="Reason (optional)")
-async def softban(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None)
+async def softban(interaction: discord.Interaction, member: discord.Member, reason: Optional[str] = None):
     pass
     if not interaction.user.guild_permissions.ban_members:
     await interaction.response.send_message("You don't have permission to softban.", **_no_perm())
     return
     try:
-    pass
     pass
     await interaction.guild.ban(member, reason=reason, delete_message_days=1)
     await interaction.guild.unban(discord.Object(id=member.id))
@@ -2173,13 +2126,12 @@ async def softban(interaction: discord.Interaction, member: discord.Member, reas
 
 @bot.tree.command(name="purge", description="Delete recent messages (number)")
 @app_commands.describe(limit="Number of messages to delete (default 10)")
-async def purge(interaction: discord.Interaction, limit: int = 10)
+async def purge(interaction: discord.Interaction, limit: int = 10):
     pass
     if not interaction.user.guild_permissions.manage_messages:
     await interaction.response.send_message("No permission to manage messages.", **_no_perm())
     return
     try:
-    pass
     pass
     await interaction.response.send_message(f"Deleting {limit} messages...", ephemeral=True)
     channel = interaction.channel
@@ -2187,10 +2139,8 @@ async def purge(interaction: discord.Interaction, limit: int = 10)
     deleted = []
     try:
     pass
-    pass
     deleted = await channel.purge(limit=limit)  # type: ignore
     except Exception:
-    pass
     pass
     # fallback: manual bulk delete using history
     msgs = [m async for m in channel.history(limit=limit)]
@@ -2202,13 +2152,12 @@ async def purge(interaction: discord.Interaction, limit: int = 10)
 
 @bot.tree.command(name="nick", description="Change a member's nickname")
 @app_commands.describe(member="Member", nickname="New nickname")
-async def nick(interaction: discord.Interaction, member: discord.Member, *, nickname: Optional[str] = None)
+async def nick(interaction: discord.Interaction, member: discord.Member, *, nickname: Optional[str] = None):
     pass
     if not interaction.user.guild_permissions.manage_nicknames:
     await interaction.response.send_message("No permission to change nicknames.", **_no_perm())
     return
     try:
-    pass
     pass
     await member.edit(nick=nickname)
     await interaction.response.send_message(f"Changed nickname for {member} to {nickname!s}.")
@@ -2217,13 +2166,12 @@ async def nick(interaction: discord.Interaction, member: discord.Member, *, nick
 
 @bot.tree.command(name="addrole", description="Add a role to a user")
 @app_commands.describe(member="Member", role="Role to add")
-async def addrole(interaction: discord.Interaction, member: discord.Member, role: discord.Role)
+async def addrole(interaction: discord.Interaction, member: discord.Member, role: discord.Role):
     pass
     if not interaction.user.guild_permissions.manage_roles:
     await interaction.response.send_message("No permission to manage roles.", **_no_perm())
     return
     try:
-    pass
     pass
     await member.add_roles(role)
     await interaction.response.send_message(f"Added {role.name} to {member}.")
@@ -2232,13 +2180,12 @@ async def addrole(interaction: discord.Interaction, member: discord.Member, role
 
 @bot.tree.command(name="removerole", description="Remove a role from a user")
 @app_commands.describe(member="Member", role="Role to remove")
-async def removerole(interaction: discord.Interaction, member: discord.Member, role: discord.Role)
+async def removerole(interaction: discord.Interaction, member: discord.Member, role: discord.Role):
     pass
     if not interaction.user.guild_permissions.manage_roles:
     await interaction.response.send_message("No permission to manage roles.", **_no_perm())
     return
     try:
-    pass
     pass
     await member.remove_roles(role)
     await interaction.response.send_message(f"Removed {role.name} from {member}.")
@@ -2247,7 +2194,7 @@ async def removerole(interaction: discord.Interaction, member: discord.Member, r
 
 @bot.tree.command(name="warn", description="Warn a user")
 @app_commands.describe(member="Member to warn", reason="Reason")
-async def warn(interaction: discord.Interaction, member: discord.Member, *, reason: str = "No reason provided")
+async def warn(interaction: discord.Interaction, member: discord.Member, *, reason: str = "No reason provided"):
     pass
     if not interaction.user.guild_permissions.kick_members:
     await interaction.response.send_message("No permission to warn.", **_no_perm())
@@ -2270,7 +2217,7 @@ async def warnings(interaction: discord.Interaction, member: Optional[discord.Me
 
 @bot.tree.command(name="clearwarns", description="Clear warnings for a user")
 @app_commands.describe(member="Member to clear warnings for")
-async def clearwarns(interaction: discord.Interaction, member: discord.Member)
+async def clearwarns(interaction: discord.Interaction, member: discord.Member):
     pass
     if not interaction.user.guild_permissions.kick_members:
     await interaction.response.send_message("No permission to clear warnings.", **_no_perm())
@@ -2281,7 +2228,7 @@ async def clearwarns(interaction: discord.Interaction, member: discord.Member)
 
 @bot.tree.command(name="announce", description="Make an announcement in this channel")
 @app_commands.describe(message="Message to announce")
-async def announce(interaction: discord.Interaction, message: str)
+async def announce(interaction: discord.Interaction, message: str):
     pass
     if not interaction.user.guild_permissions.manage_guild:
     await interaction.response.send_message("No permission to announce.", **_no_perm())
@@ -2290,13 +2237,12 @@ async def announce(interaction: discord.Interaction, message: str)
 
 @bot.tree.command(name="dm", description="DM a user (mod use only)")
 @app_commands.describe(user="User to DM", message="Message content")
-async def dm(interaction: discord.Interaction, user: discord.User, message: str)
+async def dm(interaction: discord.Interaction, user: discord.User, message: str):
     pass
     if not interaction.user.guild_permissions.manage_messages:
     await interaction.response.send_message("No permission to DM as bot.", **_no_perm())
     return
     try:
-    pass
     pass
     await user.send(message)
     await interaction.response.send_message(f"Sent DM to {user}.")
@@ -2305,18 +2251,18 @@ async def dm(interaction: discord.Interaction, user: discord.User, message: str)
 
 @bot.tree.command(name="say", description="Make the bot say something")
 @app_commands.describe(message="Message to send")
-async def say(interaction: discord.Interaction, message: str)
+async def say(interaction: discord.Interaction, message: str):
     pass
     if not interaction.user.guild_permissions.manage_messages:
     await interaction.response.send_message("No permission to use say.", **_no_perm())
     return
     await interaction.response.send_message(message)
 
-# ---------------------------
-# Channel controls
-# ---------------------------
+    # ---------------------------
+    # Channel controls
+    # ---------------------------
 @bot.tree.command(name="lock", description="Lock the current channel (remove send messages)")
-async def lock(interaction: discord.Interaction)
+async def lock(interaction: discord.Interaction):
     pass
     if not interaction.user.guild_permissions.manage_channels:
     await interaction.response.send_message("No permission to manage channels.", **_no_perm())
@@ -2326,7 +2272,7 @@ async def lock(interaction: discord.Interaction)
     await interaction.response.send_message("Channel locked.")
 
 @bot.tree.command(name="unlock", description="Unlock the current channel")
-async def unlock(interaction: discord.Interaction)
+async def unlock(interaction: discord.Interaction):
     pass
     if not interaction.user.guild_permissions.manage_channels:
     await interaction.response.send_message("No permission to manage channels.", **_no_perm())
@@ -2337,7 +2283,7 @@ async def unlock(interaction: discord.Interaction)
 
 @bot.tree.command(name="slowmode", description="Set channel slowmode (seconds)")
 @app_commands.describe(seconds="Slowmode seconds")
-async def slowmode(interaction: discord.Interaction, seconds: int = 0)
+async def slowmode(interaction: discord.Interaction, seconds: int = 0):
     pass
     if not interaction.user.guild_permissions.manage_channels:
     await interaction.response.send_message("No permission to manage channels.", **_no_perm())
@@ -2345,9 +2291,9 @@ async def slowmode(interaction: discord.Interaction, seconds: int = 0)
     await interaction.channel.edit(slowmode_delay=seconds)
     await interaction.response.send_message(f"Set slowmode to {seconds}s.")
 
-# ---------------------------
-# Text transforms & small fun
-# ---------------------------
+    # ---------------------------
+    # Text transforms & small fun
+    # ---------------------------
 @bot.tree.command(name="mewmew", description="Mew-mew text")
 async def mewmew(interaction: discord.Interaction, *, text: str):
     out = "".join(ch + "w" if ch.isalpha() else ch for ch in text)
@@ -2365,7 +2311,7 @@ async def spoiler(interaction: discord.Interaction, *, text: str):
 
 @bot.tree.command(name="reverse", description="Reverse text")
 async def reverse(interaction: discord.Interaction, *, text: str):
-    await interaction.response.send_message(text[::-1])
+    await interaction.response.send_message(text[:-1])
 
 @bot.tree.command(name="mock", description="Mock text (sPoNgEbOb case)")
 async def mock(interaction: discord.Interaction, *, text: str):
@@ -2397,7 +2343,6 @@ async def morse(interaction: discord.Interaction, *, text: str):
 
 @bot.tree.command(name="piglatin", description="Convert text to pig latin")
 async def piglatin(interaction: discord.Interaction, *, text: str):
-    pass
 def pl(word):
     vowels = "aeiou"
     if not word:
@@ -2405,8 +2350,7 @@ def pl(word):
     if word[0].lower() in vowels:
     return word + "way"
     for i, ch in enumerate(word):
-        pass
-if ch.lower() in vowels:
+    if ch.lower() in vowels:
     return word[i:] + word[:i] + "ay"
     return word + "ay"
     out = " ".join(pl(w) for w in text.split())
@@ -2449,9 +2393,9 @@ async def iq(interaction: discord.Interaction, who: Optional[discord.User] = Non
     score = random.randint(70, 160)
     await interaction.response.send_message(f"{who} has an IQ of {score} (totally for fun).")
 
-# ---------------------------
-# Reminder (background task inside bot; note: bot must remain online)
-# ---------------------------
+    # ---------------------------
+    # Reminder (background task inside bot; note: bot must remain online)
+    # ---------------------------
 @bot.tree.command(name="remindme", description="Set a reminder (seconds) — bot must remain online")
 @app_commands.describe(seconds="Seconds until reminder", message="Reminder message")
 async def remindme(interaction: discord.Interaction, seconds: int, *, message: str):
@@ -2460,26 +2404,22 @@ async def remindme(interaction: discord.Interaction, seconds: int, *, message: s
 async def _reminder():
     try:
     pass
-    pass
     await asyncio.sleep(max(1, seconds))
     await interaction.user.send(f"🔔 Reminder: {message}")
     except Exception:
     pass
     pass
-    pass
 
     try:
-    pass
     pass
     asyncio.create_task(_reminder())
     except Exception:
     pass
     pass
-    pass
 
-# ---------------------------
-# Global sync command with admin check
-# ---------------------------
+    # ---------------------------
+    # Global sync command with admin check
+    # ---------------------------
 @bot.tree.command(name="sync", description="🌍 Sync all slash commands globally.")
 @app_commands.checks.has_permissions(administrator=True)
 async def sync(interaction: discord.Interaction):
@@ -2498,7 +2438,6 @@ async def sync(interaction: discord.Interaction):
 
     try:
     pass
-    pass
     synced = await bot.tree.sync()  # Global sync
     embed = discord.Embed(
     title="🌍 Global Sync Successful!",
@@ -2512,31 +2451,27 @@ async def sync(interaction: discord.Interaction):
 
     # Global app-command error handler
 @bot.event
-async def on_app_command_error(interaction: discord.Interaction, error: app_commands.AppCommandError)
+async def on_app_command_error(interaction: discord.Interaction, error: app_commands.AppCommandError):
     pass
     # Missing perms from checks
     if isinstance(error, app_commands.MissingPermissions) or isinstance(error, app_commands.CheckFailure):
     try:
     pass
-    pass
     await interaction.response.send_message("🚫 You don't have permission to use this command.", ephemeral=True)
     except Exception:
-    pass
     pass
     pass
     return
     # Other errors
     try:
     pass
-    pass
     await interaction.response.send_message(f"An error occurred: `{error}`", ephemeral=True)
     except Exception:
     pass
     pass
-    pass
 
-# ---------------------------
-# Small convenience command to show there is more
+    # ---------------------------
+    # Small convenience command to show there is more
 @bot.tree.command(name="advice_short", description="Short advice")
 async def advice_short(interaction: discord.Interaction):
     await interaction.response.send_message("Take one focused 25-minute session on something important today.")
@@ -2546,5 +2481,5 @@ async def advice_short(interaction: discord.Interaction):
     # register done (functions decorated — nothing to return)
     # (No explicit return necessary)
 
-# ----- RUN BOT -----
-bot.run(TOKEN)
+    # ----- RUN BOT -----
+    bot.run(TOKEN)
