@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnnaBot Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div id="root">
+        <div class="dashboard">
+            <header>
+                <h1>🌿 AnnaBot Dashboard</h1>
+                <div id="status-badge" class="badge">Checking...</div>
+            </header>
+            <main>
+                <div class="stats-grid">
+                    <div class="card">
+                        <h3>CPU Usage</h3>
+                        <p id="cpu-val">--</p>
+                    </div>
+                    <div class="card">
+                        <h3>RAM Usage</h3>
+                        <p id="ram-val">--</p>
+                    </div>
+                    <div class="card">
+                        <h3>System</h3>
+                        <p id="platform-val">--</p>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
