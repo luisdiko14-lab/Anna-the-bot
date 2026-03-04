@@ -60,47 +60,46 @@ async def before_status():
 
 # ==================================================
 # --- EVENTS ---
-# ==================================================
+# ===============================================
 @bot.event
 async def on_ready():
-    # Prevent duplicate execution on reconnect
-    if hasattr(bot, "ready_ran") and bot.ready_ran:
-        return
-    bot.ready_ran = True
-    print("===================================")
-    print(f"✅ Logged in as {bot.user} ")
-    print(f"🆔 ID: {bot.user.id}")
-    print(f"📡 Ping: {round(bot.latency * 1000)}ms")
-    print("===================================")
-    # Start status loop safely
-    if not change_status.is_running():
-        change_status.start()
-        print("🔄 Status task started!")
-    print("🌐 Syncing slash commands...")
-    try:
-        # Global sync (can take up to 1 hour to appear everywhere)
-        synced = await bot.tree.sync()
-        print(f"✅ Synced {len(synced)} global slash commands!")
-        # Instant per-guild sync
-        for guild in bot.guilds:
-            guild_synced = await bot.tree.sync(guild=guild)
-            print(f"✅ Synced {len(guild_synced)} commands to {guild.name} ({guild.id})")
-    except Exception as e:
-        print(f"❌ Slash sync error: {e}")
+        if getattr(bot, "ready_ran", False):
+            return
+        bot.ready_ran = True
+
+        print("===================================")
+        print(f"✅ Logged in as {bot.user}")
+        print(f"🆔 ID: {bot.user.id}")
+        print(f"📡 Ping: {round(bot.latency * 1000)}ms")
+        print("===================================")
+
+        if not change_status.is_running():
+            change_status.start()
+            print("🔄 Status task started!")
+
+        print("🌐 Syncing slash commands...")
+        try:
+            synced = await bot.tree.sync()
+            print(f"✅ Synced {len(synced)} global slash commands!")
+
+            for guild in bot.guilds:
+                guild_synced = await bot.tree.sync(guild=guild)
+                print(f"✅ Synced {len(guild_synced)} commands to {guild.name} ({guild.id})")
+        except Exception as e:
+            print(f"❌ Slash sync error: {e}")
+
 
 @bot.event
 async def on_message(message):
-    # 1. Ignore bots (including yourself)
-    if message.author.bot:
-        return
-    # 2. Check if the message starts with "anna" or "!"
-    # Using .lower() ensures "Anna" or "ANNA" also work
-    if message.content.lower().startswith(('anna', '!')):
-        async with message.channel.typing():
-            await asyncio.sleep(5)
-            # You can add a response here if you want!
-    # 3. Important: This allows your other @bot.commands to still run
-    await bot.process_commands(message)
+        if message.author.bot:
+            return
+
+        if message.content.lower().startswith(("anna", "!")):
+            async with message.channel.typing():
+                await asyncio.sleep(2)
+                # Optional: Add response here
+
+        await bot.process_commands(message)
 
 # ==================================================
 # --- ERROR HANDLING ---
