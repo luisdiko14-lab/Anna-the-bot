@@ -63,43 +63,43 @@ async def before_status():
 # ===============================================
 @bot.event
 async def on_ready():
-        if getattr(bot, "ready_ran", False):
-            return
-        bot.ready_ran = True
+    if getattr(bot, "ready_ran", False):
+        return
+    bot.ready_ran = True
 
-        print("===================================")
-        print(f"✅ Logged in as {bot.user}")
-        print(f"🆔 ID: {bot.user.id}")
-        print(f"📡 Ping: {round(bot.latency * 1000)}ms")
-        print("===================================")
+    print("===================================")
+    print(f"✅ Logged in as {bot.user}")
+    print(f"🆔 ID: {bot.user.id}")
+    print(f"📡 Ping: {round(bot.latency * 1000)}ms")
+    print("===================================")
 
-        if not change_status.is_running():
-            change_status.start()
-            print("🔄 Status task started!")
+    if not change_status.is_running():
+        change_status.start()
+        print("🔄 Status task started!")
 
-        print("🌐 Syncing slash commands...")
-        try:
-            synced = await bot.tree.sync()
-            print(f"✅ Synced {len(synced)} global slash commands!")
+    print("🌐 Syncing slash commands...")
+    try:
+        synced = await bot.tree.sync()
+        print(f"✅ Synced {len(synced)} global slash commands!")
 
-            for guild in bot.guilds:
-                guild_synced = await bot.tree.sync(guild=guild)
-                print(f"✅ Synced {len(guild_synced)} commands to {guild.name} ({guild.id})")
-        except Exception as e:
-            print(f"❌ Slash sync error: {e}")
+        for guild in bot.guilds:
+            guild_synced = await bot.tree.sync(guild=guild)
+            print(f"✅ Synced {len(guild_synced)} commands to {guild.name} ({guild.id})")
+    except Exception as e:
+        print(f"❌ Slash sync error: {e}")
 
 
 @bot.event
 async def on_message(message):
-        if message.author.bot:
-            return
+    if message.author.bot:
+        return
 
-        if message.content.lower().startswith(("anna", "!")):
-            async with message.channel.typing():
-                await asyncio.sleep(2)
-                # Optional: Add response here
+    # Trigger typing only for "anna" or "!" commands
+    if message.content.lower().startswith(("anna", "!")):
+        # We don't sleep here anymore to keep it snappy
+        pass
 
-        await bot.process_commands(message)
+    await bot.process_commands(message)
 
 # ==================================================
 # --- ERROR HANDLING ---
@@ -174,6 +174,47 @@ async def on_command(ctx):
     except Exception:
         pass
 
+# ==================================================
+# --- HELP COMMAND ---
+# ==================================================
+@bot.command(name="help")
+async def help_command(ctx):
+    embed = discord.Embed(
+        title="🌿 AnnaBot Help Menu",
+        description="Welcome! I am Anna, your forest guardian. Here are my available commands.",
+        color=discord.Color.green()
+    )
+    embed.add_field(
+        name="🛠️ Bot Control (Slash Only)",
+        value="`/start`, `/shutdown`, `/restart`, `/sync` (Manual sync: `!sync`) ",
+        inline=False
+    )
+    embed.add_field(
+        name="📊 Information",
+        value="`!ping`, `!serverinfo`, `!userinfo @user`, `!avatar @user`, `!uptime` (Slash)",
+        inline=False
+    )
+    embed.add_field(
+        name="🛡️ Moderation",
+        value="`!kick @user`, `!ban @user`, `!purge 10`, `!warn @user`, `!warnings @user`",
+        inline=False
+    )
+    embed.add_field(
+        name="🎲 Fun & Utility",
+        value="`!8ball question`, `!roll 1d20`, `!coinflip`, `!joke`, `!advice`, `!truth`, `!dare`, `!wouldyourather`, `!fact` ",
+        inline=False
+    )
+    embed.add_field(
+        name="✨ Text Effects",
+        value="`!mewmew text`, `!reverse text`, `!mock text`, `!binary text`, `!morse text`, `!emojify text` ",
+        inline=False
+    )
+    embed.set_footer(text="Use !command or anna command | Guardian of the Forest 🌲")
+    await ctx.send(embed=embed)
+
+# ==================================================
+# --- HELP COMMAND ---
+# ==================================================
 # ==================================================
 # --- BOT CONTROL COMMANDS ---
 # ==============================================================

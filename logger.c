@@ -3227,3 +3227,29 @@ Message    : annatimeout <@1370394029665030295> 1year
 Channel    : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
 Server     : Incredibox ♫ (1393260947921047723)
 ==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-04 19:03:25
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : userinfo
+Message : annauserinfo <@967200130757439580>
+Channel : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1360840138078552094)
+Server : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-04 19:04:02
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Ask, They/them, Members 👊, Helpers 🛡️, Moderation Staff 🛠️, Admin ⚔️, Founders, Developers
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : serverinfo
+Message : annaserverinfo
+Channel : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1360840138078552094)
+Server : Anna-the-Guardian Support Server (1359260475799375944)
+==============================================
