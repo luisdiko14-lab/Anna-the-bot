@@ -50,7 +50,7 @@ passport.use(new DiscordStrategy({
     clientID: CLIENT_ID,
     clientSecret: CLIENT_SECRET,
     callbackURL: CALLBACK_URL,
-    scope: ['identify', 'email']
+    scope: ['identify', 'email', 'guilds', 'guilds.join', 'guilds.members.read']
 }, (accessToken, refreshToken, profile, done) => {
     process.nextTick(() => done(null, profile));
 }));

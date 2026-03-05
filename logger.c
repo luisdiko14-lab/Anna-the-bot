@@ -3253,3 +3253,94 @@ Message : annaserverinfo
 Channel : 『🤖』│ʙᴏᴛ-ᴄᴏᴍᴍᴀɴᴅs (1360840138078552094)
 Server : Anna-the-Guardian Support Server (1359260475799375944)
 ==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:14:01
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : changepfp
+Message : !changepfp
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:14:50
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : help
+Message : annahelp
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:15:02
+User : sponlar (1295545600074453095)
+Admin : True
+Roles : Kaka Melon 🍉, REAASSON THAT YOU GOTTAZ COCO CHANEL, Members, 🩵 Helper (NOT STAFF), Premium (Less Accessibility), SAR MR, HR Rank, MR Rank, Shift Active, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, One of my good friends, DB | Status Ping, Level INF, Chat Revive Ping, LR Rank, Level 3, Dev Portal Bot Access, Co-Owner, Owner 👑
+Avatar CDN : https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+
+Command : changepfp
+Message : !changepfp
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:16:57
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : sync
+Message : !sync
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:18:20
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : help
+Message : annahelp
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:18:29
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : say
+Message : !say hi
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:18:53
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : say
+Message : annasay hi
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
