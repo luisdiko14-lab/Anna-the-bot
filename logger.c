@@ -1,3 +1,229 @@
+// index.js (ES module)
+import dotenv from 'dotenv';
+dotenv.config();
+
+import express from 'express';
+import session from 'express-session';
+import passport from 'passport';
+import { Strategy as DiscordStrategy } from 'passport-discord';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+import {
+  Client,
+  GatewayIntentBits,
+  Partials,
+  ActionRowBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ChannelType,
+  SlashCommandBuilder,
+  EmbedBuilder,
+  ActivityType,
+} from 'discord.js';
+
+import { REST } from '@discordjs/rest';
+import { Routes } from 'discord-api-types/v10';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+/* ---------------------------
+   Basic config
+   --------------------------- */
+// Fixed the typo from DISCORD_TOKE to DISCORD_TOKEN
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN || null;
+const CLIENT_ID = process.env.CLIENT_ID;
+const CLIENT_SECRET = process.env.CLIENT_SECRET;
+const CALLBACK_URL = 'https://853cb505-0e22-49ec-b716-48bb6375c8aa-00-4jll9e93a7pf.janeway.replit.dev/api/callback';
+
+/* ---------------------------
+   Express & Passport Setup
+   --------------------------- */
+const app = express();
+const port = 5000;
+
+passport.serializeUser((user, done) => done(null, user));
+passport.deserializeUser((obj, done) => done(null, obj));
+
+passport.use(new DiscordStrategy({
+    clientID: CLIENT_ID,
+    clientSecret: CLIENT_SECRET,
+    callbackURL: CALLBACK_URL,
+    scope: ['identify', 'email', 'guilds', 'guilds.join', 'guilds.members.read']
+}, (accessToken, refreshToken, profile, done) => {
+    process.nextTick(() => done(null, profile));
+}));
+
+app.use(session({
+    secret: 'anna-bot-secret',
+    resave: false,
+    saveUninitialized: false
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+// --- MODIFIED SECTION: ALLOW ALL /src/dashboard FILES ---
+// This makes everything inside /src/dashboard accessible at the root level (e.g., /style.css)
+const dashboardPath = path.join(__dirname, 'src', 'dashboard');
+app.use(express.static(dashboardPath));
+
+app.get('/', (req, res) => {
+    // Serves the index.html specifically from your dashboard folder
+    res.sendFile(path.join(dashboardPath, 'index.html'));
+});
+// -------------------------------------------------------
+
+app.get('/login', passport.authenticate('discord'));
+
+app.get('/api/callback', passport.authenticate('discord', {
+    failureRedirect: '/'
+}), (req, res) => {
+    res.redirect('/profile');
+});
+
+app.get('/profile', (req, res) => {
+    if (!req.isAuthenticated()) return res.redirect('/login');
+    res.send(`
+        <html>
+            <head>
+                <title>Anna Bot Profile</title>
+                <style>
+                    body { background: #0a0f1f; color: white; font-family: sans-serif; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+                    .card { background: rgba(255,255,255,0.1); padding: 40px; border-radius: 20px; text-align: center; box-shadow: 0 0 20px rgba(0,170,255,0.2); }
+                    img { border-radius: 50%; border: 3px solid #00b7ff; margin-bottom: 20px; }
+                    h1 { margin: 0; color: #00b7ff; }
+                    p { opacity: 0.8; }
+                    a { color: #00b7ff; text-decoration: none; margin-top: 20px; display: inline-block; border: 1px solid #00b7ff; padding: 10px 20px; border-radius: 10px; transition: 0.3s; }
+                    a:hover { background: #00b7ff; color: white; }
+                </style>
+            </head>
+            <body>
+                <div class="card">
+                    <img src="https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png" width="128">
+                    <h1>Welcome, ${req.user.username}!</h1>
+                    <p>Logged in via Discord Auth</p>
+                    <p>Email: ${req.user.email}</p>
+                    <a href="/">Back to Home</a>
+                    <a href="/logout" style="border-color: #ff4444; color: #ff4444;">Logout</a>
+                </div>
+            </body>
+        </html>
+    `);
+});
+
+app.get('/logout', (req, res) => {
+    req.logout(() => {
+        res.redirect('/');
+    });
+});
+
+app.listen(port, '0.0.0.0', () => {
+    console.log(`Web server running at http://0.0.0.0:${port}`);
+});
+
+/* ---------------------------
+   Discord client (minimal)
+   --------------------------- */
+const client = new Client({
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent,
+  ],
+  partials: [Partials.Channel],
+});
+
+async function postVisible(channel, content, embed = null) {
+  try {
+    const payload = {};
+    if (embed) payload.embeds = [embed];
+    if (content) payload.content = content;
+    return await channel.send(payload);
+  } catch (err) {
+    console.error('postVisible error:', err);
+    throw err;
+  }
+}
+
+const commands = [
+  new SlashCommandBuilder().setName('activate').setDescription('Activate Anna auto-response in this server'),
+].map((c) => c.toJSON());
+
+async function registerCommands(applicationId) {
+  if (!DISCORD_TOKEN) {
+    console.log('DISCORD_TOKEN not set — skipping slash command registration.');
+    return;
+  }
+  try {
+    const rest = new REST({ version: '10' }).setToken(DISCORD_TOKEN);
+    await rest.put(Routes.applicationCommands(applicationId), { body: commands });
+    console.log('Commands registered.');
+  } catch (err) {
+    console.error('Failed to register slash commands:', err);
+  }
+}
+
+const activatedGuilds = new Set();
+
+client.once('ready', async () => {
+  console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
+  const applicationId = CLIENT_ID || client.user.id;
+  await registerCommands(applicationId);
+
+  const statuses = [
+    { name: 'Helping people', type: ActivityType.Playing },
+    { name: 'Anna Bot', type: ActivityType.Playing },
+  ];
+
+  let index = 0;
+  setInterval(() => {
+    index = (index + 1) % statuses.length;
+    try {
+      client.user.setPresence({ activities: [statuses[index]], status: 'online' });
+    } catch (e) {
+      // ignore
+    }
+  }, 15_000);
+});
+
+client.on('interactionCreate', async (interaction) => {
+  try {
+    if (interaction.isChatInputCommand()) {
+      const name = interaction.commandName;
+      if (name === 'activate') {
+        if (!interaction.guild) return interaction.reply({ content: 'This command must be used in a server.', flags: [4096] });
+        activatedGuilds.add(interaction.guild.id);
+        return interaction.reply({ content: '✅ Activation enabled.', flags: [4096] });
+      }
+    }
+  } catch (err) {
+    console.error('Interaction handler error:', err);
+  }
+});
+
+client.on('messageCreate', async (message) => {
+  try {
+    if (message.author?.bot) return;
+    if (!message.guild) return;
+
+    if (activatedGuilds.has(message.guild.id) && /anna/i.test(message.content)) {
+      await message.channel.sendTyping();
+      await postVisible(message.channel, `👋 <@${message.author.id}> you mentioned Anna!`, null);
+    }
+  } catch (err) {
+    console.error('messageCreate handler error:', err);
+  }
+});
+
+if (DISCORD_TOKEN) {
+  client.login(DISCORD_TOKEN).catch((err) => {
+    console.error('Failed to login to Discord:', err);
+  });
+} else {
+  console.log('DISCORD_TOKEN not provided — Discord client will not login. OAuth (web) still works.');
+}
 [2026-02-12 17:59:30] User: luisthegoat7301 (1370394029665030295) | Command: restart | Channel: #『💎』│ʙᴏᴏsᴛᴇʀs-ᴄʜᴀᴛ (1467560764327071884) | Server: Incredibox ♫ (1393260947921047723) | Admin: False
 [2026-02-12 18:00:03] User: luisthegoat7301 (1370394029665030295) | Command: hello | Channel: #『❤️』│ᴠᴀʟᴇɴᴛɪɴᴇ-ᴄʜᴀᴛ (1471204363975266547) | Server: Incredibox ♫ (1393260947921047723) | Admin: False
 [2026-02-12 18:00:07] User: luisthegoat7301 (1370394029665030295) | Command: hello | Channel: #『❤️』│ᴠᴀʟᴇɴᴛɪɴᴇ-ᴄʜᴀᴛ (1471204363975266547) | Server: Incredibox ♫ (1393260947921047723) | Admin: False
@@ -3343,4 +3569,329 @@ Command : say
 Message : annasay hi
 Channel : 🔈│VC CH | 2 (1361294244190486568)
 Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:22:32
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : say
+Message : annasay hi
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:22:40
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:23:11
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : help
+Message : annahelp
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:23:50
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : say
+Message : annasay HELLO
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:23:58
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : say
+Message : annasay https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:24:00
+User : sponlar (1295545600074453095)
+Admin : True
+Roles : Kaka Melon 🍉, REAASSON THAT YOU GOTTAZ COCO CHANEL, Members, 🩵 Helper (NOT STAFF), Premium (Less Accessibility), SAR MR, HR Rank, MR Rank, Shift Active, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, One of my good friends, DB | Status Ping, Level INF, Chat Revive Ping, LR Rank, Level 3, Dev Portal Bot Access, Co-Owner, Owner 👑
+Avatar CDN : https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+
+Command : say
+Message : annasay goon
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:24:15
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:24:17
+User : sponlar (1295545600074453095)
+Admin : True
+Roles : Kaka Melon 🍉, REAASSON THAT YOU GOTTAZ COCO CHANEL, Members, 🩵 Helper (NOT STAFF), Premium (Less Accessibility), SAR MR, HR Rank, MR Rank, Shift Active, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, One of my good friends, DB | Status Ping, Level INF, Chat Revive Ping, LR Rank, Level 3, Dev Portal Bot Access, Co-Owner, Owner 👑
+Avatar CDN : https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+
+Command : say
+Message : annasay gooning myself
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:25:16
+User : sponlar (1295545600074453095)
+Admin : True
+Roles : Kaka Melon 🍉, REAASSON THAT YOU GOTTAZ COCO CHANEL, Members, 🩵 Helper (NOT STAFF), Premium (Less Accessibility), SAR MR, HR Rank, MR Rank, Shift Active, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, One of my good friends, DB | Status Ping, Level INF, Chat Revive Ping, LR Rank, Level 3, Dev Portal Bot Access, Co-Owner, Owner 👑
+Avatar CDN : https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+
+Command : say
+Message : annasay Gooning luis
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:25:38
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : ban
+Message : annaban <@1295545600074453095> gooning me
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:25:48
+User : sponlar (1295545600074453095)
+Admin : True
+Roles : Kaka Melon 🍉, REAASSON THAT YOU GOTTAZ COCO CHANEL, Members, 🩵 Helper (NOT STAFF), Premium (Less Accessibility), SAR MR, HR Rank, MR Rank, Shift Active, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, One of my good friends, DB | Status Ping, Level INF, Chat Revive Ping, LR Rank, Level 3, Dev Portal Bot Access, Co-Owner, Owner 👑
+Avatar CDN : https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+
+Command : say
+Message : annasay Fuck you luis
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:26:15
+User : sponlar (1295545600074453095)
+Admin : True
+Roles : Kaka Melon 🍉, REAASSON THAT YOU GOTTAZ COCO CHANEL, Members, 🩵 Helper (NOT STAFF), Premium (Less Accessibility), SAR MR, HR Rank, MR Rank, Shift Active, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, One of my good friends, DB | Status Ping, Level INF, Chat Revive Ping, LR Rank, Level 3, Dev Portal Bot Access, Co-Owner, Owner 👑
+Avatar CDN : https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+
+Command : say
+Message : annasay 🖕🏻
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:27:19
+User : sponlar (1295545600074453095)
+Admin : True
+Roles : Kaka Melon 🍉, REAASSON THAT YOU GOTTAZ COCO CHANEL, Members, 🩵 Helper (NOT STAFF), Premium (Less Accessibility), SAR MR, HR Rank, MR Rank, Shift Active, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, One of my good friends, DB | Status Ping, Level INF, Chat Revive Ping, LR Rank, Level 3, Dev Portal Bot Access, Co-Owner, Owner 👑
+Avatar CDN : https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+
+Command : say
+Message : annasay 💚💙🔥🤎🔥🎊🔥🤎🔥💓❤️‍🩹💙❤️‍🩹💘❣️💟❣️💟❣️♥️💌💝🩷💙🕳️💯⭐💥⭐💥⭐⚡🌟⚡🔥✨🩵🎉
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:27:33
+User : sponlar (1295545600074453095)
+Admin : True
+Roles : Kaka Melon 🍉, REAASSON THAT YOU GOTTAZ COCO CHANEL, Members, 🩵 Helper (NOT STAFF), Premium (Less Accessibility), SAR MR, HR Rank, MR Rank, Shift Active, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, One of my good friends, DB | Status Ping, Level INF, Chat Revive Ping, LR Rank, Level 3, Dev Portal Bot Access, Co-Owner, Owner 👑
+Avatar CDN : https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+
+Command : say
+Message : annasay FUCKING MYSELF WITH LUIS
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:36:54
+User : sponlar (1295545600074453095)
+Admin : True
+Roles : Kaka Melon 🍉, REAASSON THAT YOU GOTTAZ COCO CHANEL, Members, 🩵 Helper (NOT STAFF), Premium (Less Accessibility), SAR MR, HR Rank, MR Rank, Shift Active, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, One of my good friends, DB | Status Ping, Level INF, Chat Revive Ping, LR Rank, Level 3, Dev Portal Bot Access, Co-Owner, Owner 👑
+Avatar CDN : https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:36:54
+User : sponlar (1295545600074453095)
+Admin : True
+Roles : Kaka Melon 🍉, REAASSON THAT YOU GOTTAZ COCO CHANEL, Members, 🩵 Helper (NOT STAFF), Premium (Less Accessibility), SAR MR, HR Rank, MR Rank, Shift Active, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, One of my good friends, DB | Status Ping, Level INF, Chat Revive Ping, LR Rank, Level 3, Dev Portal Bot Access, Co-Owner, Owner 👑
+Avatar CDN : https://cdn.discordapp.com/avatars/1295545600074453095/8ed6fd65b9c12f5a968979aa87493810.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:42:13
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:42:13
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:51:19
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 12:51:19
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Kaka Melon 🍉, Developer Team, Members, 🩵 Helper (NOT STAFF), Cool VIP, MR Rank, Artist, Pancake's Office 🔑, Vibify Team, Staff, Game News PING, DB | Status Ping, Dev Portal Bot Access, Co-Owner
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 🔈│VC CH | 2 (1361294244190486568)
+Server : Vibify & Harvestia (1357882872781996242)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 16:05:53
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Mod Teaser Ping, Giveaways Ping, Incredibox News Ping, Joke Announcements Ping, Announcements Ping, Ask, Any pronouns, They/them, He/him, Simon Says {Players}, Verified, All Members (Humans and Bots), ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, Incredibox Fans, Mod Makers, Revive Chat, Animators, Composers, Coders, Mixers, Designers, Artists, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Managers, Admin
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : help
+Message : annahelp
+Channel : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 16:09:21
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Mod Teaser Ping, Giveaways Ping, Incredibox News Ping, Joke Announcements Ping, Announcements Ping, Ask, Any pronouns, They/them, He/him, Simon Says {Players}, Verified, All Members (Humans and Bots), ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, Incredibox Fans, Mod Makers, Revive Chat, Animators, Composers, Coders, Mixers, Designers, Artists, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Managers, Admin
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 16:10:11
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Mod Teaser Ping, Giveaways Ping, Incredibox News Ping, Joke Announcements Ping, Announcements Ping, Ask, Any pronouns, They/them, He/him, Simon Says {Players}, Verified, All Members (Humans and Bots), ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, Incredibox Fans, Mod Makers, Revive Chat, Animators, Composers, Coders, Mixers, Designers, Artists, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Managers, Admin
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 16:10:12
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Mod Teaser Ping, Giveaways Ping, Incredibox News Ping, Joke Announcements Ping, Announcements Ping, Ask, Any pronouns, They/them, He/him, Simon Says {Players}, Verified, All Members (Humans and Bots), ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, Incredibox Fans, Mod Makers, Revive Chat, Animators, Composers, Coders, Mixers, Designers, Artists, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Managers, Admin
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : joinvc
+Message : annajoinvc
+Channel : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server : Incredibox ♫ (1393260947921047723)
+==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-05 16:10:43
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Mod Teaser Ping, Giveaways Ping, Incredibox News Ping, Joke Announcements Ping, Announcements Ping, Ask, Any pronouns, They/them, He/him, Simon Says {Players}, Verified, All Members (Humans and Bots), ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, Incredibox Fans, Mod Makers, Revive Chat, Animators, Composers, Coders, Mixers, Designers, Artists, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Managers, Admin
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : say
+Message : annasay idk
+Channel : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server : Incredibox ♫ (1393260947921047723)
 ==============================================

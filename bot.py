@@ -63,23 +63,7 @@ async def before_status():
 # --- EVENTS ---
 # ===============================================
 
-@bot.event
-async def on_message(message):
-    # 1. Ignore bot's own messages to prevent infinite loops
-    if message.author.bot:
-        return
 
-    content = message.content.lower()
-
-    # 2. Trigger "typing" behavior for specific keywords
-    # Note: Using "!" in content will trigger this for EVERY command. 
-    # If that's intentional, keep it; otherwise, you might prefer message.startswith("!")
-    if "anna" in content or "!" in content:
-        async with message.channel.typing():
-            await asyncio.sleep(3) 
-
-    # 3. Always process commands last
-    await bot.process_commands(message)
 
 @bot.event
 async def on_ready():
@@ -108,18 +92,20 @@ async def on_ready():
     except Exception as e:
         print(f"❌ Slash sync error: {e}")
 
+# ==================================================
+# --- MESSAGE HANDLER ---
+# ==================================================
+@bot.event
+async def on_message(message):
+    if message.author.bot:
+        return
 
-    @bot.event
-    async def on_message(message):
-        if message.author.bot:
-            return
+    # Trigger only if message starts with "anna" or "!"
+    if message.content.lower().startswith(("anna", "!")):
+        async with message.channel.typing():
+            await asyncio.sleep(3)
 
-        # Trigger only if message starts with "anna" or "!"
-        if message.content.lower().startswith(("anna", "!")):
-            async with message.channel.typing():
-                await asyncio.sleep(3)
-
-        await bot.process_commands(message)
+    await bot.process_commands(message)
 
 # ==================================================
 # --- ERROR HANDLING ---

@@ -1,4 +1,4 @@
-// index.js (ES module) — cleaned: no Gemini/AI, no required DISCORD token usage
+// index.js (ES module) — fixed serving of dashboard and env var typo
 import dotenv from 'dotenv';
 dotenv.config();
 
@@ -7,18 +7,14 @@ import session from 'express-session';
 import passport from 'passport';
 import { Strategy as DiscordStrategy } from 'passport-discord';
 import path from 'path';
+import fs from 'fs';
 import { fileURLToPath } from 'url';
 
 import {
   Client,
   GatewayIntentBits,
   Partials,
-  ActionRowBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  ChannelType,
   SlashCommandBuilder,
-  EmbedBuilder,
   ActivityType,
 } from 'discord.js';
 
@@ -31,17 +27,18 @@ const __dirname = path.dirname(__filename);
 /* ---------------------------
    Basic config
    --------------------------- */
-// Note: DISCORD_TOKEN is optional now; bot login/command registration is skipped if absent.
-const DISCORD_TOKEN = process.env.DISCORD_TOKE || null;
+// Use the correct env var name
+const DISCORD_TOKEN = process.env.DISCORD_TOKEN || null;
 const CLIENT_ID = process.env.CLIENT_ID;
 const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const CALLBACK_URL = 'https://853cb505-0e22-49ec-b716-48bb6375c8aa-00-4jll9e93a7pf.janeway.replit.dev/api/callback';
+// keep your existing callback URL or set via env
+const CALLBACK_URL = process.env.CALLBACK_URL || 'https://853cb505-0e22-49ec-b716-48bb6375c8aa-00-4jll9e93a7pf.janeway.replit.dev/api/callback';
 
 /* ---------------------------
    Express & Passport Setup
    --------------------------- */
 const app = express();
-const port = 5000;
+const port = process.env.PORT || 5000;
 
 passport.serializeUser((user, done) => done(null, user));
 passport.deserializeUser((obj, done) => done(null, obj));
@@ -64,12 +61,17 @@ app.use(session({
 app.use(passport.initialize());
 app.use(passport.session());
 
-app.set('view engine', 'html');
-app.use(express.static(path.join(__dirname, 'public')));
+/* ---------------------------
+   Static / Dashboard serving
+   --------------------------- */
+// Serve static files (CSS, JS, images, etc)
+app.use(express.static(path.join(__dirname, 'src', 'dashboard', 'static')));
 
+// Serve dashboard index.html as the SPA entrypoint
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'src', 'dashboard', 'index.html'));
 });
+// -------------------------------------------------------
 
 app.get('/login', passport.authenticate('discord'));
 
@@ -97,21 +99,25 @@ app.get('/profile', (req, res) => {
             </head>
             <body>
                 <div class="card">
-                    <img src="https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png" width="128">
+                    <img src="https://cdn.discordapp.com/avatars/${req.user.id}/${req.user.avatar}.png" width="128" />
                     <h1>Welcome, ${req.user.username}!</h1>
                     <p>Logged in via Discord Auth</p>
-                    <p>Email: ${req.user.email}</p>
-                    <a href="/">Back to Home</a>
-                    <a href="/logout" style="border-color: #ff4444; color: #ff4444;">Logout</a>
+                    <p>Email: ${req.user.email || '—'}</p>
+                    <p style="margin-top:16px;">
+                      <a href="/">Back to Home</a>
+                      <a href="/logout" style="margin-left:12px; border-color: #ff4444; color: #ff4444;">Logout</a>
+                    </p>
                 </div>
             </body>
         </html>
     `);
 });
 
-app.get('/logout', (req, res) => {
-    req.logout(() => {
-        res.redirect('/');
+app.get('/logout', (req, res, next) => {
+    // passport 0.6+ expects a callback: req.logout(cb)
+    req.logout(function(err) {
+      if (err) { return next(err); }
+      res.redirect('/');
     });
 });
 
@@ -131,9 +137,6 @@ const client = new Client({
   partials: [Partials.Channel],
 });
 
-/* ---------------------------
-   Helper: posting to a channel
-   --------------------------- */
 async function postVisible(channel, content, embed = null) {
   try {
     const payload = {};
@@ -146,9 +149,6 @@ async function postVisible(channel, content, embed = null) {
   }
 }
 
-/* ---------------------------
-   Slash commands (no AI-related commands)
-   --------------------------- */
 const commands = [
   new SlashCommandBuilder().setName('activate').setDescription('Activate Anna auto-response in this server'),
 ].map((c) => c.toJSON());
@@ -167,14 +167,8 @@ async function registerCommands(applicationId) {
   }
 }
 
-/* ---------------------------
-   Runtime state
-   --------------------------- */
 const activatedGuilds = new Set();
 
-/* ---------------------------
-   Client events
-   --------------------------- */
 client.once('ready', async () => {
   console.log(`Logged in as ${client.user.tag} (${client.user.id})`);
   const applicationId = CLIENT_ID || client.user.id;
@@ -225,9 +219,6 @@ client.on('messageCreate', async (message) => {
   }
 });
 
-/* ---------------------------
-   Login (optional)
-   --------------------------- */
 if (DISCORD_TOKEN) {
   client.login(DISCORD_TOKEN).catch((err) => {
     console.error('Failed to login to Discord:', err);
