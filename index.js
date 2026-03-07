@@ -63,13 +63,34 @@ app.use(passport.session());
 
 /* ---------------------------
    Static / Dashboard serving
+   Allow: HTML, CSS, JS, JSX, TS, TSX, JSON, PNG, JPG, SVG, etc.
    --------------------------- */
-// Serve static files (CSS, JS, images, etc)
-app.use(express.static(path.join(__dirname, 'src', 'dashboard', 'static')));
+// Serve static files with all common extensions
+const staticPath = path.join(__dirname, 'src', 'dashboard', 'static');
+app.use(express.static(staticPath, {
+    setHeaders: (res, filePath) => {
+        // Serve TypeScript/TSX files as JavaScript
+        if (filePath.endsWith('.tsx') || filePath.endsWith('.ts')) {
+            res.setHeader('Content-Type', 'application/javascript');
+        }
+        // Cache control
+        res.setHeader('Cache-Control', 'public, max-age=3600');
+    }
+}));
 
 // Serve dashboard index.html as the SPA entrypoint
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'src', 'dashboard', 'index.html'));
+});
+
+// Serve other HTML files from src/dashboard/
+app.get('/:file.html', (req, res) => {
+    const filePath = path.join(__dirname, 'src', 'dashboard', req.params.file + '.html');
+    if (fs.existsSync(filePath)) {
+        res.sendFile(filePath);
+    } else {
+        res.status(404).send('File not found');
+    }
 });
 // -------------------------------------------------------
 

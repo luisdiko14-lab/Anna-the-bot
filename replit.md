@@ -18,17 +18,29 @@ Preferred communication style: Simple, everyday language.
 
 ### Discord Bot (Python - Primary Application)
 - **Framework**: discord.py with `commands.Bot` using the `commands` and `tasks` extensions
-- **Entry Point**: `bot.py` is the main bot file; `ping.py` acts as a supervisor that restarts `bot.py` every 50 seconds if it crashes
+- **Entry Point**: `bot.py` with 76+ synced slash commands and moderation tools
 - **Command Prefix**: Dual prefix — `"anna"` and `"!"`
 - **Intents**: Uses `discord.Intents.all()` for full gateway intent access
-- **Auth Model**: Token loaded from `.env` file via `python-dotenv`; certain commands restricted to a hardcoded list of authorized Discord usernames
-- **Status Rotation**: A `tasks.loop` cycles through nature/Pokémon-themed status messages every 67 seconds
+- **Auth Model**: Token loaded from `.env` file via `python-dotenv`; certain commands restricted to authorized usernames
+- **Status Rotation**: A `tasks.loop` cycles through nature/Pokémon-themed status messages
+- **Message Handler**: `on_message` event listener for prefix command processing
 
-### Web Server (Node.js - Keep-Alive)
-- **Framework**: Express.js v4
-- **Purpose**: Serves a static HTML page on port 3000 to keep the Replit project alive via external pinging services
+### Web Server (Node.js - Express)
+- **Framework**: Express.js v4 with Passport.js for Discord OAuth
+- **Purpose**: Serves premium dashboard with Discord authentication on port 5000
 - **Entry Point**: `index.js`
-- **Static Files**: Served from a `public/` directory; `index.html` is the landing page
+- **Static Files**: Served from `src/dashboard/static/` with support for HTML, CSS, JS, JSX, TS, TSX, JSON, images
+- **Authentication**: Discord OAuth2 with `/login`, `/profile`, `/logout` routes
+- **Features**: Premium dashboard UI, Stripe payment integration (TEST mode)
+
+### Dashboard (Premium UI)
+- **Location**: `src/dashboard/index.html`
+- **Features**: 
+  - Discord "Sign in with Discord" button with OAuth login flow
+  - Feature showcase (76+ commands, moderation, fun utilities, real-time stats)
+  - Stripe integration for $9.99 Premium subscription
+  - Flask backend at `src/dashboard/app.py` for payment processing
+  - System stats API endpoint at `/api/stats`
 
 ### Avatar Generator (`s.py`)
 - **Purpose**: Downloads the bot's Discord avatar, overlays random sparkle/emoji decorations, and saves as an animated GIF
@@ -46,14 +58,13 @@ Preferred communication style: Simple, everyday language.
 ### Key Files
 | File | Purpose |
 |------|---------|
-| `bot.py` | Main Discord bot with commands, status loop, event handling |
-| `ping.py` | Supervisor script that restarts bot.py periodically |
-| `Test.py` | Standalone script for setting bot avatar |
-| `s.py` | Avatar GIF generator with sparkle effects |
-| `index.js` | Express web server for keep-alive |
-| `index.html` | Static landing page |
-| `bot_rich.js` | Discord Rich Presence client |
-| `main.py` | Default Replit entry point (placeholder) |
+| `bot.py` | Discord bot (2130 lines) with 76+ slash commands, moderation, fun utilities, and event handlers |
+| `index.js` | Express web server with Passport Discord OAuth, dashboard serving, and static file handling (HTML/CSS/JS/TS/TSX) |
+| `src/dashboard/index.html` | Premium dashboard landing page with Discord login button and feature showcase |
+| `src/dashboard/app.py` | Flask backend for Stripe payment processing and system stats API |
+| `src/dashboard/templates/index.html` | Stripe checkout template |
+| `src/dashboard/static/style.css` | Premium dashboard styles |
+| `.env` | Environment variables: DISCORD_TOKEN, CLIENT_ID, CLIENT_SECRET, STRIPE_PUBLISHABLE_KEY, STRIPE_SECRET_KEY |
 
 ## External Dependencies
 
