@@ -3895,3 +3895,16 @@ Message : annasay idk
 Channel : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
 Server : Incredibox ♫ (1393260947921047723)
 ==============================================
+
+================ COMMAND LOG =================
+Time : 2026-03-07 10:01:11
+User : luisthegoat7301 (1370394029665030295)
+Admin : True
+Roles : Level 5, Level 10, Level 15, Level 30, Level 40, Level 50, Level 69, Level 100, Mod Teaser Ping, Giveaways Ping, Incredibox News Ping, Joke Announcements Ping, Announcements Ping, Ask, Any pronouns, They/them, He/him, Simon Says {Players}, Verified, All Members (Humans and Bots), ♩ 𝙼𝚎𝚖𝚋𝚎𝚛𝚜 ♩, Incredibox Fans, Mod Makers, Revive Chat, Animators, Composers, Coders, Mixers, Designers, Artists, Respect, DJ, ♫ 𝚂𝚝𝚊𝚏𝚏 𝚃𝚎𝚊𝚖 ♫, Moderators, Managers, Head Managers, Admin
+Avatar CDN : https://cdn.discordapp.com/avatars/1370394029665030295/fe6de452914e22de9f229d0e80379843.png?size=1024
+
+Command : help
+Message : annahelp
+Channel : 『💬』│ɢᴇɴᴇʀᴀʟ (1400193275498987560)
+Server : Incredibox ♫ (1393260947921047723)
+==============================================

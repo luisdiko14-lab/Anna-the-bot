@@ -26,6 +26,7 @@
     "npm": "^11.10.0",
     "passport": "^0.7.0",
     "passport-discord": "^0.1.4",
+    "passport-google-oauth20": "^2.0.0",
     "ws": "^8.19.0"
   },
   "engines": {
