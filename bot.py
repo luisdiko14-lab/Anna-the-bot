@@ -2128,5 +2128,87 @@ async def advice_short(interaction: discord.Interaction):
 # register done (functions decorated — nothing to return)
 # (No explicit return necessary)
 
+# ---------------------------
+# Extra utility + fun features
+# ---------------------------
+@bot.command()
+async def timestamp(ctx, *, when: str = "now"):
+    """Create a Discord timestamp from now or unix seconds."""
+    when = when.strip().lower()
+    if when == "now":
+        ts = int(datetime.utcnow().timestamp())
+    else:
+        try:
+            ts = int(when)
+        except ValueError:
+            return await ctx.send("❌ Use `!timestamp now` or `!timestamp <unix_seconds>`.")
+    await ctx.send(f"🕒 `<t:{ts}:F>` • Relative: <t:{ts}:R>")
+
+@bot.command()
+async def calc(ctx, *, expression: str):
+    allowed = "0123456789+-*/(). %"
+    if any(ch not in allowed for ch in expression):
+        return await ctx.send("❌ Only numbers and + - * / ( ) % . are allowed.")
+    try:
+        result = eval(expression, {"__builtins__": {}}, {})
+    except Exception:
+        return await ctx.send("❌ Invalid expression.")
+    await ctx.send(f"🧮 `{expression}` = **{result}**")
+
+@bot.command()
+async def goals(ctx):
+    prompts = [
+        "Finish one pending task in 25 minutes.",
+        "Drink a full glass of water right now.",
+        "Write down your top 3 priorities for today.",
+        "Take a 5 minute stretch break.",
+    ]
+    await ctx.send(f"🎯 Goal prompt: **{random.choice(prompts)}**")
+
+@bot.command()
+async def roast(ctx, member: discord.Member = None):
+    member = member or ctx.author
+    lines = [
+        "Your Wi-Fi is so slow, even your thoughts buffer.",
+        "You bring everyone joy... when you go offline.",
+        "You're not late — you're on dramatic timing.",
+    ]
+    await ctx.send(f"🔥 {member.mention} — {random.choice(lines)}")
+
+@bot.command()
+async def afk(ctx, *, reason: str = "AFK"):
+    await ctx.send(f"💤 {ctx.author.mention} is now AFK: **{reason}**")
+
+@bot.command()
+async def leaderboard(ctx):
+    members = [m for m in ctx.guild.members if not m.bot]
+    sample = random.sample(members, k=min(5, len(members))) if members else []
+    if not sample:
+        return await ctx.send("No members to rank.")
+    lines = [f"**{i+1}.** {m.mention}" for i, m in enumerate(sample)]
+    await ctx.send("🏆 Random activity leaderboard:\n" + "\n".join(lines))
+
+@bot.tree.command(name="server_health", description="Show quick server + bot health snapshot")
+async def server_health(interaction: discord.Interaction):
+    guild = interaction.guild
+    if guild is None:
+        return await interaction.response.send_message("Use this in a server.", ephemeral=True)
+    embed = discord.Embed(title="🩺 Server Health", color=discord.Color.teal())
+    embed.add_field(name="Latency", value=f"{round(bot.latency * 1000)}ms")
+    embed.add_field(name="Members", value=str(guild.member_count or 0))
+    embed.add_field(name="Channels", value=str(len(guild.channels)))
+    embed.add_field(name="Roles", value=str(len(guild.roles) - 1))
+    embed.add_field(name="Boosts", value=str(getattr(guild, "premium_subscription_count", 0)))
+    embed.add_field(name="Uptime", value=f"<t:{int(start_time.timestamp())}:R>")
+    await interaction.response.send_message(embed=embed)
+
+@bot.tree.command(name="choose_from", description="Choose one option from a | separated list")
+@app_commands.describe(options="Example: pizza | burger | tacos")
+async def choose_from(interaction: discord.Interaction, options: str):
+    choices = [c.strip() for c in options.split("|") if c.strip()]
+    if len(choices) < 2:
+        return await interaction.response.send_message("Provide at least 2 options separated by `|`.", ephemeral=True)
+    await interaction.response.send_message(f"🎯 I choose: **{random.choice(choices)}**")
+
 # ----- RUN BOT -----
 bot.run(TOKEN)
