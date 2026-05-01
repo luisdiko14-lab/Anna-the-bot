@@ -9,6 +9,9 @@ import sys
 import platform
 import psutil
 import time
+import math
+import json
+import textwrap
 from datetime import timedelta, datetime
 from dotenv import load_dotenv
 
@@ -17,12 +20,29 @@ from dotenv import load_dotenv
 # ==================================================
 load_dotenv()
 start_time = datetime.utcnow()
+FEATURE_STORE = "feature_store.json"
 TOKEN = os.getenv("DISCORD_TOKEN")
 AUTHORIZED_USERS = ["luisthegoat7301", "zelda_life", "blackopsmode"]
 if not TOKEN:
     print("❌ ERROR: Token not found! Put DISCORD_TOKEN in .env file.")
     sys.exit()
 PREFIX = ("anna", "!")
+
+
+def _load_store() -> dict:
+    if not os.path.exists(FEATURE_STORE):
+        return {"todos": {}, "quotes": [], "polls": {}}
+    try:
+        with open(FEATURE_STORE, "r", encoding="utf-8") as f:
+            data = json.load(f)
+            return data if isinstance(data, dict) else {"todos": {}, "quotes": [], "polls": {}}
+    except Exception:
+        return {"todos": {}, "quotes": [], "polls": {}}
+
+
+def _save_store(data: dict) -> None:
+    with open(FEATURE_STORE, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
 
 # ==================================================
 # --- SETUP ---
@@ -2125,6 +2145,138 @@ async def on_app_command_error(interaction: discord.Interaction, error: app_comm
 @bot.tree.command(name="advice_short", description="Short advice")
 async def advice_short(interaction: discord.Interaction):
     await interaction.response.send_message("Take one focused 25-minute session on something important today.")
+
+
+@bot.command(name="choose")
+async def choose(ctx, *, options: str):
+    items = [x.strip() for x in options.split(",") if x.strip()]
+    if len(items) < 2:
+        return await ctx.send("Give at least 2 options separated by commas.")
+    await ctx.send(f"🎯 I choose: **{random.choice(items)}**")
+
+
+@bot.command(name="timer")
+async def timer(ctx, seconds: int):
+    seconds = max(1, min(seconds, 600))
+    await ctx.send(f"⏳ Timer set for {seconds} seconds.")
+    await asyncio.sleep(seconds)
+    await ctx.send(f"🔔 {ctx.author.mention} timer finished!")
+
+
+@bot.command(name="todo_add")
+async def todo_add(ctx, *, item: str):
+    store = _load_store()
+    key = str(ctx.author.id)
+    store["todos"].setdefault(key, [])
+    store["todos"][key].append(item[:120])
+    _save_store(store)
+    await ctx.send("✅ Added to your to-do list.")
+
+
+@bot.command(name="todo_list")
+async def todo_list(ctx):
+    store = _load_store()
+    items = store.get("todos", {}).get(str(ctx.author.id), [])
+    if not items:
+        return await ctx.send("Your to-do list is empty.")
+    formatted = "\n".join(f"{i+1}. {t}" for i, t in enumerate(items[:20]))
+    await ctx.send(f"📝 **Your To-Do List**\n{formatted}")
+
+
+@bot.command(name="todo_done")
+async def todo_done(ctx, index: int):
+    store = _load_store()
+    key = str(ctx.author.id)
+    items = store.get("todos", {}).get(key, [])
+    if not items or index < 1 or index > len(items):
+        return await ctx.send("Invalid index.")
+    removed = items.pop(index - 1)
+    _save_store(store)
+    await ctx.send(f"✅ Done and removed: **{removed}**")
+
+
+@bot.command(name="quote_add")
+async def quote_add(ctx, *, quote: str):
+    store = _load_store()
+    store.setdefault("quotes", []).append({"text": quote[:220], "by": str(ctx.author), "at": datetime.utcnow().isoformat()})
+    _save_store(store)
+    await ctx.send("📚 Quote saved.")
+
+
+@bot.command(name="quote_random")
+async def quote_random(ctx):
+    store = _load_store()
+    quotes = store.get("quotes", [])
+    if not quotes:
+        return await ctx.send("No quotes saved yet.")
+    q = random.choice(quotes)
+    await ctx.send(f"“{q['text']}” — {q['by']}")
+
+
+@bot.command(name="calc")
+async def calc(ctx, *, expression: str):
+    safe = set("0123456789+-*/(). %")
+    if any(ch not in safe for ch in expression):
+        return await ctx.send("Only numbers and +-*/().% are allowed.")
+    try:
+        result = eval(expression, {"__builtins__": {}}, {})
+    except Exception:
+        return await ctx.send("Invalid expression.")
+    await ctx.send(f"🧮 `{expression}` = **{result}**")
+
+
+@bot.command(name="weather_fake")
+async def weather_fake(ctx, *, city: str):
+    temp = random.randint(45, 102)
+    condition = random.choice(["Sunny", "Cloudy", "Rainy", "Windy", "Foggy"])
+    await ctx.send(f"🌤️ **{city.title()}**: {temp}°F, {condition}. (fun simulator)")
+
+
+@bot.command(name="serverstats")
+async def serverstats(ctx):
+    if not ctx.guild:
+        return await ctx.send("Use this in a server.")
+    humans = len([m for m in ctx.guild.members if not m.bot])
+    bots = len([m for m in ctx.guild.members if m.bot])
+    await ctx.send(
+        f"📈 **{ctx.guild.name} Stats**\nMembers: {ctx.guild.member_count}\nHumans: {humans}\nBots: {bots}\nChannels: {len(ctx.guild.channels)}"
+    )
+
+
+@bot.command(name="motivate")
+async def motivate(ctx):
+    lines = [
+        "Small progress is still progress.",
+        "Stay consistent. Results will follow.",
+        "Build habits, not excuses.",
+        "You can do hard things."
+    ]
+    await ctx.send(f"💡 {random.choice(lines)}")
+
+
+@bot.command(name="poll")
+async def poll(ctx, *, question: str):
+    msg = await ctx.send(f"📊 **Poll:** {question}\nReact with 👍 or 👎")
+    await msg.add_reaction("👍")
+    await msg.add_reaction("👎")
+
+
+@bot.command(name="bigtext")
+async def bigtext(ctx, *, text: str):
+    converted = []
+    for ch in text.lower()[:40]:
+        if "a" <= ch <= "z":
+            converted.append(f":regional_indicator_{ch}:")
+        elif ch == " ":
+            converted.append("   ")
+    await ctx.send(" ".join(converted) if converted else "Use letters only.")
+
+
+@bot.command(name="wrap")
+async def wrap(ctx, width: int, *, text: str):
+    width = max(10, min(80, width))
+    wrapped = textwrap.fill(text, width=width)
+    await ctx.send(f"```{wrapped[:1800]}```")
 # register done (functions decorated — nothing to return)
 # (No explicit return necessary)
 
